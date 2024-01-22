@@ -16,7 +16,7 @@ permissions:
   contents: read
 
 jobs:
-  build:
+  DOCKER_BUILD_PUSH:
 
     runs-on: ubuntu-latest
 
@@ -45,3 +45,20 @@ jobs:
     - name: Build and push Docker image
       run: |
         docker buildx build --platform linux/arm64,linux/amd64 -t 2tory/mars5_statement:latest-arm64 -t 2tory/mars5_statement:latest-amd64 --file Dockerfile . --push
+
+  Deploy:
+    runs-on: ubuntu-latest
+    needs: DOCKER_BUILD_PUSH
+    steps:
+    - name: executing remote ssh commands using ssh key
+      uses: appleboy/ssh-action@v1.0.3
+      with:
+        host: ${{ secrets.HOST }}
+        username: ${{ secrets.USERNAME }}
+        key: ${{ secrets.KEY }}
+        port: ${{ secrets.PORT }}
+        script: |
+          sudo docker stop statement
+          sudo docker rm statement
+          sudo docker rmi 2tory/mars5_statement:latest-amd64
+          sudo docker run -d -p 8080:8080 --name statement --restart always 2tory/mars5_statement:latest-amd64
