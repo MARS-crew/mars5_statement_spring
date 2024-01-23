@@ -1,7 +1,7 @@
 package com.mars.statement.global.service;
 
-import com.mars.statement.domain.user.User;
-import com.mars.statement.domain.user.repository.UserRepository;
+import com.mars.statement.api.user.domain.User;
+import com.mars.statement.api.user.repository.UserRepository;
 import com.mars.statement.global.dto.CustomUserDetails;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -20,8 +20,7 @@ public class CustomUserDetailsService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        User userData = userRepository.findByUsername(username);
-        // System.out.println(userData);
+        User userData = userRepository.findByName(username);
 
         if (userData != null) {
             return new CustomUserDetails(userData);

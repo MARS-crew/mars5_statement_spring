@@ -1,4 +1,4 @@
-package com.mars.statement.domain.user.dto;
+package com.mars.statement.api.user.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -9,7 +9,7 @@ import lombok.Setter;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-public class JoinDTO {
+public class JoinDto {
     private String username;
     private String password;
 }

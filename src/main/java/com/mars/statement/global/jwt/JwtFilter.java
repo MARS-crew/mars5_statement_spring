@@ -1,6 +1,6 @@
 package com.mars.statement.global.jwt;
 
-import com.mars.statement.domain.user.User;
+import com.mars.statement.api.user.domain.User;
 import com.mars.statement.global.dto.CustomUserDetails;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -13,11 +13,11 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 
-public class JWTFilter extends OncePerRequestFilter {
+public class JwtFilter extends OncePerRequestFilter {
 
-    private final JWTUtil jwtUtil;
+    private final JwtUtil jwtUtil;
 
-    public JWTFilter(JWTUtil jwtUtil) {
+    public JwtFilter(JwtUtil jwtUtil) {
         this.jwtUtil = jwtUtil;
     }
 
@@ -53,9 +53,8 @@ public class JWTFilter extends OncePerRequestFilter {
 
         // User를 생성하여 값 set
         User user = new User();
-        user.setUsername(username);
+        user.setName(username);
         user.setRole(role);
-        user.setPassword("temppassword");
 
         // UserDetails에 객체 정보 담기
         CustomUserDetails customUserDetails = new CustomUserDetails(user);

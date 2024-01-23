@@ -4,7 +4,7 @@ import io.jsonwebtoken.security.Keys;
 
 import java.security.Key;
 
-public class JWTSecretKeyGenerator {
+public class JwtSecretKeyGenerator {
 
     public static void main(String[] args) {
         // Generate a random 256-bit (32-byte) secret key

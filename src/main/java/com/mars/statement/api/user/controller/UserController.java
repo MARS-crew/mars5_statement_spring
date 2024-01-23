@@ -1,11 +1,6 @@
-package com.mars.statement.domain.user.controller;
+package com.mars.statement.api.user.controller;
 
-import com.mars.statement.domain.user.dto.JoinDTO;
-import com.mars.statement.domain.user.service.UserService;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
+import com.mars.statement.api.user.service.UserService;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -19,8 +14,8 @@ public class UserController {
         this.userService = userService;
     }
 
-    @PostMapping("/join")
-    public ResponseEntity<String> join(@RequestBody JoinDTO joinDTO){
+    /*@PostMapping("/join")
+    public ResponseEntity<String> join(@RequestBody JoinDto joinDTO){
         try {
             userService.join(joinDTO);
             // 회원가입 성공 시 처리
@@ -29,5 +24,5 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.CONFLICT.value()).body("이미 존재하는 아이디입니다.");
         }
         return ResponseEntity.ok().body("회원가입 성공.");
-    }
+    }*/
 }
