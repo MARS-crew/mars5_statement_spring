@@ -1,14 +1,12 @@
-package com.mars.statement.domain.user.service;
+package com.mars.statement.api.user.service;
 
 
-import com.mars.statement.domain.user.User;
-import com.mars.statement.domain.user.dto.JoinDto;
-import com.mars.statement.domain.user.repository.UserRepository;
+import com.mars.statement.api.user.repository.UserRepository;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
-// @RequiredArgsConstructor <- 이것도 생성자 처리되는 Lombok의 어노테이션 간단하긴한데 순서문제가 생긴다함
+// @RequiredArgsConstructor
 public class UserService {
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder encoder;
@@ -18,9 +16,9 @@ public class UserService {
         this.encoder = encoder;
     }
 
-    public void join(JoinDto joinDTO){
-        String username = joinDTO.getUsername();
-        String password = joinDTO.getPassword();
+    /*public void join(JoinDto joinDto){
+        String username = joinDto.getUsername();
+        String password = joinDto.getPassword();
         System.out.println(username);
         System.out.println(password);
         // 중복체크
@@ -38,5 +36,5 @@ public class UserService {
                 .build();
 
         userRepository.save(user);
-    }
+    }*/
 }

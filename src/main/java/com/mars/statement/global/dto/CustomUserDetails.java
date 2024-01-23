@@ -1,6 +1,6 @@
 package com.mars.statement.global.dto;
 
-import com.mars.statement.domain.user.User;
+import com.mars.statement.api.user.domain.User;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -31,14 +31,12 @@ public class CustomUserDetails implements UserDetails {
 
     // Password 반환
     @Override
-    public String getPassword() {
-        return user.getPassword();
-    }
+    public String getPassword() { return null; }
 
     // ID 반환
     @Override
     public String getUsername() {
-        return user.getUsername();
+        return user.getName();
     }
 
     // 계정이 만료 됐는지

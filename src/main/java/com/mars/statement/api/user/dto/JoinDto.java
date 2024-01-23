@@ -1,4 +1,4 @@
-package com.mars.statement.domain.user.dto;
+package com.mars.statement.api.user.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
