@@ -2,7 +2,7 @@ package com.mars.statement.domain.user.service;
 
 
 import com.mars.statement.domain.user.User;
-import com.mars.statement.domain.user.dto.JoinDTO;
+import com.mars.statement.domain.user.dto.JoinDto;
 import com.mars.statement.domain.user.repository.UserRepository;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -18,7 +18,7 @@ public class UserService {
         this.encoder = encoder;
     }
 
-    public void join(JoinDTO joinDTO){
+    public void join(JoinDto joinDTO){
         String username = joinDTO.getUsername();
         String password = joinDTO.getPassword();
         System.out.println(username);

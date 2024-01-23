@@ -1,6 +1,6 @@
 package com.mars.statement.domain.user.controller;
 
-import com.mars.statement.domain.user.dto.JoinDTO;
+import com.mars.statement.domain.user.dto.JoinDto;
 import com.mars.statement.domain.user.service.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,7 +20,7 @@ public class UserController {
     }
 
     @PostMapping("/join")
-    public ResponseEntity<String> join(@RequestBody JoinDTO joinDTO){
+    public ResponseEntity<String> join(@RequestBody JoinDto joinDTO){
         try {
             userService.join(joinDTO);
             // 회원가입 성공 시 처리
