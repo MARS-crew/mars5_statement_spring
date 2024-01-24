@@ -9,11 +9,9 @@ import org.springframework.stereotype.Service;
 // @RequiredArgsConstructor
 public class UserService {
     private final UserRepository userRepository;
-    private final BCryptPasswordEncoder encoder;
 
-    public UserService(UserRepository userRepository, BCryptPasswordEncoder encoder) {
+    public UserService(UserRepository userRepository) {
         this.userRepository = userRepository;
-        this.encoder = encoder;
     }
 
     /*public void join(JoinDto joinDto){

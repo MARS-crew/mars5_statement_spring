@@ -40,6 +40,8 @@ public class SecurityConfig {
                 //.cors((cors) -> cors.configurationSource(apiConfigurationSource()))
         // csrf 비활성화(jwt방식은 세션 공격 상관 X)
                 .csrf((auth)->auth.disable())
+        // oauth2 설정
+
         // form로그인 방식 비활성
                 .formLogin((auth) -> auth.disable())
         // http basic 인증 방식 비활성화
