@@ -32,7 +32,8 @@ public class Send {
     private ChapterMember to;
 
     @Column(name = "message", nullable = false, columnDefinition = "text")
-    private String message = "";
+    private String message;
+
     @Column(name = "reg_dt")
     @CreatedDate
     private Timestamp reg_dt;

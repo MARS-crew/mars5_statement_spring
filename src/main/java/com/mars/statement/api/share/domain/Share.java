@@ -24,7 +24,7 @@ public class Share {
     @JoinColumn(name = "member_id", nullable = false)
     private ChapterMember chapterMember;
     @Column(name = "opinion", nullable = false, columnDefinition = "text")
-    private String opinion = "";
+    private String opinion;
     @Column(name = "reg_dt")
     @CreatedDate
     private Timestamp reg_dt;

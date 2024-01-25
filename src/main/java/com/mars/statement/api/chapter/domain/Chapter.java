@@ -10,6 +10,8 @@ import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
 
 import java.sql.Timestamp;
+import java.util.List;
+import java.util.Set;
 
 @Builder
 @Entity
@@ -18,22 +20,39 @@ import java.sql.Timestamp;
 @Getter
 @Table(name = "tbl_chapter")
 public class Chapter {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     @ManyToOne
     @JoinColumn(name = "group_id", nullable = false)
     private Group group;
+
     @Column(name = "suggest", length = 100)
-    private String suggest = "";
+    private String suggest;
+
     @CreatedDate
     @Column(name = "reg_dt")
     private Timestamp reg_dt;
+
     @Column(name = "del_dt")
     private Timestamp del_dt;
+
     @Column(name = "type", nullable = false, length = 20)
-    private String type = "";
+    private String type;
+
     @ManyToOne
     @JoinColumn(name = "constructor_id")
     private GroupMember groupMember;
+
+    @OneToMany(mappedBy = "chapter")
+    private Set<ChapterMember> chapterMembers;
+
+    public Set<ChapterMember> getChapterMembersWithUserName(){
+        for(ChapterMember member : chapterMembers){
+            member.setUserName(member.getGroupMember().getUser().getName());
+        }
+        return chapterMembers;
+    }
 }
