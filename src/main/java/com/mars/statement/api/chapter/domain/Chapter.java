@@ -3,10 +3,7 @@ package com.mars.statement.api.chapter.domain;
 import com.mars.statement.api.group.domain.Group;
 import com.mars.statement.api.group.domain.GroupMember;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
 
 import java.sql.Timestamp;
@@ -18,6 +15,7 @@ import java.util.Set;
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
+@Setter
 @Table(name = "tbl_chapter")
 public class Chapter {
 

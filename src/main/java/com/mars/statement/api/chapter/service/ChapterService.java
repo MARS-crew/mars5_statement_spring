@@ -29,17 +29,21 @@ public class ChapterService {
         this.chapterRepository = chapterRepository;
         this.modelMapper = modelMapper;
     }
+
+    public Chapter findChapterById(Long id){
+        return chapterRepository.findById(id).orElse(null);
+    }
 //
 //    /*
 //     * chapter id를 통해서 정보 가져오기
 //     * @param id
 //     * @return chapterDTO
 //     */
-    public ChapterWithMemberDTO getChapterWithMembers(Long chapterId) {
+    public ChapterWithMemberDTO getChapterWithMembers(Long chapter_id) {
 
         ChapterWithMemberDTO chapterDTO = new ChapterWithMemberDTO();
 
-        Chapter chapter = chapterRepository.findChapterWithMembers(chapterId);
+        Chapter chapter = chapterRepository.findChapterWithMembers(chapter_id);
 
         chapterDTO.setChapterId(chapter.getId());
         chapterDTO.setSuggest(chapter.getSuggest());
