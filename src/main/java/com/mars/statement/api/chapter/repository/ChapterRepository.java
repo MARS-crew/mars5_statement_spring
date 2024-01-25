@@ -1,7 +1,6 @@
 package com.mars.statement.api.chapter.repository;
 
 import com.mars.statement.api.chapter.domain.Chapter;
-import jakarta.persistence.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
