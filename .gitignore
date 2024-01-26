@@ -20,6 +20,8 @@ bin/
 
 ### IntelliJ IDEA ###
 application-db.properties
+application-oauth.properties
+
 
 .idea
 *.iws

@@ -27,8 +27,8 @@ public class ChapterMember {
     @JoinColumn(name = "member_id", nullable = false)
     private GroupMember groupMember;
     @Column(name = "summary", columnDefinition = "text")
-    private String summary = "";
+    private String summary;
     @Column(name = "reg_dt")
     @CreatedDate
-    private Timestamp reg_dt;
+    private Timestamp regDate;
 }
