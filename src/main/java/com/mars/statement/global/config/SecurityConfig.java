@@ -1,8 +1,6 @@
 package com.mars.statement.global.config;
 
-import com.mars.statement.global.jwt.JwtFilter;
-import com.mars.statement.global.jwt.JwtUtil;
-import com.mars.statement.global.jwt.LoginFilter;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -16,14 +14,11 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 @Configuration
 @EnableWebSecurity
+@RequiredArgsConstructor
 public class SecurityConfig {
     private final AuthenticationConfiguration authenticationConfiguration;
-    private final JwtUtil jwtUtil;
+    // private final JwtUtil jwtUtil;
 
-    public SecurityConfig(AuthenticationConfiguration authenticationConfiguration, JwtUtil jwtUtil) {
-        this.authenticationConfiguration = authenticationConfiguration;
-        this.jwtUtil = jwtUtil;
-    }
 
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception {
@@ -48,13 +43,12 @@ public class SecurityConfig {
                 .httpBasic((auth) -> auth.disable())
         // 인가 작업
                 .authorizeHttpRequests((auth) -> auth
-                        .requestMatchers("/api/v1/user/join", "/login", "/error", "/favicon.ico").permitAll()
+                        .requestMatchers("/api/v1/auth/login", "/error", "/favicon.ico").permitAll()
                         .requestMatchers("/","/swagger-ui/**", "/v3/api-docs/**", "/swagger-resources/**").permitAll()
                         .requestMatchers("/admin").hasRole("ADMIN")
                         .anyRequest().authenticated())
         // 커스텀 필터 등록
-                .addFilterBefore(new JwtFilter(jwtUtil), LoginFilter.class)
-                .addFilterAt(new LoginFilter(authenticationManager(authenticationConfiguration), jwtUtil), UsernamePasswordAuthenticationFilter.class)
+
         // 세션 설정
                 .sessionManagement((session)->session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS));

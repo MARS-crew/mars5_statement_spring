@@ -1,8 +1,10 @@
 package com.mars.statement.api.user.domain;
 
+import com.mars.statement.global.enums.UserRole;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.sql.Timestamp;
 
@@ -10,8 +12,8 @@ import java.sql.Timestamp;
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
+@EntityListeners(AuditingEntityListener.class)
 @Getter
-@Setter
 @Table(name = "tbl_user")
 public class User {
     @Id
@@ -23,11 +25,11 @@ public class User {
     private String email;
     @Column(name = "img")
     private String img;
-    @Column(name = "refresh_token", nullable = false)
+    @Column(name = "refresh_token")
     private String refreshToken;
     @CreatedDate
     @Column(name = "reg_dt")
     private Timestamp regDate;
     @Column(name = "role", nullable = false, length = 20)
-    private String role;
+    private UserRole role;
 }

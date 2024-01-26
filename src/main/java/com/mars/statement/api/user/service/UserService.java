@@ -1,38 +1,66 @@
 package com.mars.statement.api.user.service;
 
 
+import com.mars.statement.api.user.domain.User;
+import com.mars.statement.api.user.dto.JoinDto;
+import com.mars.statement.api.user.dto.JoinResponse;
+import com.mars.statement.api.user.dto.LoginRequest;
 import com.mars.statement.api.user.repository.UserRepository;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import com.mars.statement.api.user.dto.LoginResponse;
+import com.mars.statement.api.user.dto.SocialAuthResponse;
+import com.mars.statement.api.user.dto.SocialUserResponse;
+import com.mars.statement.global.enums.UserRole;
+import com.mars.statement.global.exception.NotFoundException;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 @Service
-// @RequiredArgsConstructor
+@RequiredArgsConstructor
+@Slf4j
 public class UserService {
     private final UserRepository userRepository;
+    private final AuthService authService;
 
-    public UserService(UserRepository userRepository) {
-        this.userRepository = userRepository;
+    public LoginResponse doSocialLogin(LoginRequest loginRequest) throws NotFoundException {
+        SocialAuthResponse socialAuthResponse = authService.getAccessToken(loginRequest.getCode());
+        SocialUserResponse socialUserResponse = authService.getUserInfo(socialAuthResponse.getAccess_token());
+        log.info("socialUserResponse {} ", socialUserResponse.toString());
+
+        if(userRepository.findByEmail(socialUserResponse.getEmail()).isEmpty()){
+            this.joinUser(
+                    JoinDto.builder()
+                            .email(socialUserResponse.getEmail())
+                            .name(socialUserResponse.getName())
+                            .picture(socialUserResponse.getPicture())
+                            .build()
+            );
+        }
+        User user = userRepository.findByEmail(socialUserResponse.getEmail())
+                .orElseThrow(() -> new NotFoundException(HttpStatus.NOT_FOUND.value(), "유저 정보를 찾을 수 없습니다."));
+
+        // 토큰 생성 로직 작성
+
+        // 리턴 값 변경 -> 토큰으로
+        return LoginResponse.builder()
+                .id(user.getId())
+                .build();
     }
 
-    /*public void join(JoinDto joinDto){
-        String username = joinDto.getUsername();
-        String password = joinDto.getPassword();
-        System.out.println(username);
-        System.out.println(password);
-        // 중복체크
-        Boolean isExist = userRepository.existsByUsername(username);
-        System.out.println(isExist);
-        if(isExist){
-            throw new RuntimeException(username + "는 이미 존재합니다.");
-        }
+    private JoinResponse joinUser(JoinDto joinDto){
+        User user = userRepository.save(
+                User.builder()
+                        .email(joinDto.getEmail())
+                        .img(joinDto.getPicture())
+                        .name(joinDto.getName())
+                        .role(UserRole.ROLE_USER)
+                        .build()
+        );
 
-        // 저장
-        User user = User.builder()
-                .username(username)
-                .password(encoder.encode(password))
-                .role("ROLE_ADMIN")
+        return JoinResponse.builder()
+                .id(user.getId())
                 .build();
+    }
 
-        userRepository.save(user);
-    }*/
 }
