@@ -10,21 +10,28 @@ import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
 
 import java.sql.Timestamp;
-
 @Builder
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
-@Table(name = "tbl_chapter")
-public class Chapter {
+@Table(name = "tbl_suggest")
+public class Suggest {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @ManyToOne
-    @JoinColumn(name = "suggest_id", nullable = false)
-    private Suggest suggest;
+    @JoinColumn(name = "group_id", nullable = false)
+    private Group group;
+    @Column(name = "suggest", length = 100)
+    private String suggest;
     @CreatedDate
     @Column(name = "reg_dt")
     private Timestamp regDate;
+    @Column(name = "type", nullable = false, length = 20)
+    private String type;
+    @ManyToOne
+    @JoinColumn(name = "constructor_id")
+    private GroupMember groupMember;
 }
+
