@@ -28,5 +28,5 @@ public class Like {
     private ChapterMember member;
 
     @Column(name = "like_yn")
-    private Boolean like = false;
+    private Boolean like;
 }
