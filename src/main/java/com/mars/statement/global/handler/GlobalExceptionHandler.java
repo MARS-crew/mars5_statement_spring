@@ -15,7 +15,7 @@ import static org.springframework.http.HttpStatus.*;
 
 @Slf4j
 @NoArgsConstructor
-@RestControllerAdvice(basePackages = {"com.mars"})
+@RestControllerAdvice(basePackages = {"com.mars.statement"})
 public class GlobalExceptionHandler {
     @ExceptionHandler({
             UnAuthenticationException.class
