@@ -24,7 +24,7 @@ public class ShareController {
             return shareService.insertShare(shareDto);
         } catch (Exception e) {
             // 예외 처리 로직 추가
-            return CommonResponse.createResponseMessage(HttpStatus.INTERNAL_SERVER_ERROR.value(), "Share 생성 실패");
+            return CommonResponse.createResponseMessage(HttpStatus.INTERNAL_SERVER_ERROR.value(), "의견 작성 실패");
         }
     }
 }

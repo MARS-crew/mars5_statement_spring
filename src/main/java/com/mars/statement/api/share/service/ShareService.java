@@ -44,6 +44,6 @@ public class ShareService {
                 .build());
 
         // createResponseMessage 메소드를 사용하여 응답 생성
-        return CommonResponse.createResponseMessage(HttpStatus.OK.value(), "Share 생성 성공");
+        return CommonResponse.createResponseMessage(HttpStatus.OK.value(), "의견 작성 성공");
     }
 }
