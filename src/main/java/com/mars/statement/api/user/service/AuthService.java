@@ -21,10 +21,10 @@ import java.nio.charset.StandardCharsets;
 @Slf4j
 @RequiredArgsConstructor
 public class AuthService {
-    private final GoogleAuthApi googleAuthApi;
+    // private final GoogleAuthApi googleAuthApi;
     private final GoogleUserApi googleUserApi;
 
-    @Value("${social.client.google.id}")
+    /*@Value("${social.client.google.id}")
     private String googleAppKey;
     @Value("${social.client.google.secret}")
     private String googleAppSecret;
@@ -51,7 +51,7 @@ public class AuthService {
                 response.getBody().toString(),
                 SocialAuthResponse.class
         );
-    }
+    }*/
 
     public SocialUserResponse getUserInfo(String accessToken) {
         ResponseEntity<?> response = googleUserApi.getUserInfo("Bearer "+accessToken);

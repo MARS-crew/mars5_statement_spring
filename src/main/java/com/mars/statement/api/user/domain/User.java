@@ -32,4 +32,12 @@ public class User {
     private Timestamp regDate;
     @Column(name = "role", nullable = false, length = 20)
     private UserRole role;
+
+    public void updateRefreshToken(String refreshToken) {
+        this.refreshToken = refreshToken;
+    }
+
+    public void updateImg(String img) {
+        this.img = img;
+    }
 }

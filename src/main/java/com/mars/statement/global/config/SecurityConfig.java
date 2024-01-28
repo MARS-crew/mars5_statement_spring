@@ -1,5 +1,7 @@
 package com.mars.statement.global.config;
 
+import com.mars.statement.global.filter.JwtAuthorizationFilter;
+import com.mars.statement.global.jwt.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -11,23 +13,14 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.savedrequest.RequestCacheAwareFilter;
 
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
-    private final AuthenticationConfiguration authenticationConfiguration;
-    // private final JwtUtil jwtUtil;
+    private final JwtTokenProvider jwtTokenProvider;
 
-
-    @Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception {
-        return configuration.getAuthenticationManager();
-    }
-    @Bean
-    public BCryptPasswordEncoder encoder(){
-        return new BCryptPasswordEncoder();
-    }
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception{
         http
@@ -35,8 +28,9 @@ public class SecurityConfig {
                 //.cors((cors) -> cors.configurationSource(apiConfigurationSource()))
         // csrf 비활성화(jwt방식은 세션 공격 상관 X)
                 .csrf((auth)->auth.disable())
-        // oauth2 설정
-
+        // 세션 설정
+                .sessionManagement((session)->session
+                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
         // form로그인 방식 비활성
                 .formLogin((auth) -> auth.disable())
         // http basic 인증 방식 비활성화
@@ -44,27 +38,16 @@ public class SecurityConfig {
         // 인가 작업
                 .authorizeHttpRequests((auth) -> auth
                         .requestMatchers("/api/v1/auth/login", "/error", "/favicon.ico").permitAll()
-                        .requestMatchers("/","/swagger-ui/**", "/v3/api-docs/**", "/swagger-resources/**").permitAll()
+                        .requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/swagger-resources/**").permitAll()
                         .requestMatchers("/admin").hasRole("ADMIN")
+                        .requestMatchers("/").hasRole("USER")
                         .anyRequest().authenticated())
         // 커스텀 필터 등록
+                .addFilterBefore(new JwtAuthorizationFilter(jwtTokenProvider), RequestCacheAwareFilter.class)
+        // 권한 문제
+                ;
 
-        // 세션 설정
-                .sessionManagement((session)->session
-                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 
         return http.build();
     }
-
-    /*public CorsConfigurationSource apiConfigurationSource() {
-        CorsConfiguration configuration = new CorsConfiguration();
-
-        configuration.setAllowedOrigins(Arrays.asList("http://localhost:8080"));
-        configuration.setAllowedMethods(Arrays.asList("GET","POST"));
-
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", configuration);
-
-        return source;
-    }*/
 }
