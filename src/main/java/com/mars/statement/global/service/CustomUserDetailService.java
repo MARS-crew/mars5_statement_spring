@@ -1,7 +1,7 @@
 package com.mars.statement.global.service;
 
-import com.mars.statement.api.user.domain.User;
-import com.mars.statement.api.user.repository.UserRepository;
+import com.mars.statement.api.auth.domain.User;
+import com.mars.statement.api.auth.repository.UserRepository;
 import com.mars.statement.global.dto.CustomUserDetails;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;

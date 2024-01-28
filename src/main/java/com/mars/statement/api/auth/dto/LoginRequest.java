@@ -1,15 +1,15 @@
-package com.mars.statement.api.user.dto;
+package com.mars.statement.api.auth.dto;
 
 import lombok.*;
 
 @Builder
+@Getter
 @AllArgsConstructor
 @NoArgsConstructor
-@Getter
-@ToString
-public class GoogleLoginResponse {
-    private String id;
+public class LoginRequest {
+    private String uid;
     private String email;
     private String name;
     private String picture;
+    private String fcmToken;
 }

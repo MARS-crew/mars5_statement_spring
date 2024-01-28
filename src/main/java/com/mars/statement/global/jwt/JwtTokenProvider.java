@@ -1,8 +1,6 @@
 package com.mars.statement.global.jwt;
 
-import com.mars.statement.api.user.domain.User;
-import com.mars.statement.global.dto.UserDto;
-import com.mars.statement.global.enums.UserRole;
+import com.mars.statement.api.auth.domain.User;
 import com.mars.statement.global.exception.UnAuthenticationException;
 import com.mars.statement.global.service.CustomUserDetailService;
 import io.jsonwebtoken.*;
@@ -36,7 +34,6 @@ public class JwtTokenProvider {
     // accessToken 생성
     public String createAccessToken(User user){
         Claims claims = Jwts.claims().setSubject(String.valueOf(user.getId()));
-        claims.put("role", user.getRole());
         return createToken(claims, Long.valueOf(accessTokenValidationTime));
     }
 

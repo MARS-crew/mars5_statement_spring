@@ -1,11 +1,10 @@
-package com.mars.statement.api.user.service;
+package com.mars.statement.api.auth.service;
 
 
-import com.mars.statement.api.user.domain.User;
-import com.mars.statement.api.user.dto.*;
-import com.mars.statement.api.user.repository.UserRepository;
+import com.mars.statement.api.auth.domain.User;
+import com.mars.statement.api.auth.dto.*;
+import com.mars.statement.api.auth.repository.UserRepository;
 import com.mars.statement.global.dto.CommonResponse;
-import com.mars.statement.global.enums.UserRole;
 import com.mars.statement.global.exception.NotFoundException;
 import com.mars.statement.global.jwt.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
@@ -19,36 +18,36 @@ import java.util.Objects;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class UserService {
+public class AuthService {
     private final UserRepository userRepository;
-    private final AuthService authService;
     private final JwtTokenProvider jwtTokenProvider;
 
     public ResponseEntity<?> doSocialLogin(LoginRequest loginRequest) throws NotFoundException {
-        // 프론트에서 code를 전달할때 사용
-        //SocialAuthResponse socialAuthResponse = authService.getAccessToken(loginRequest.getCode());
-        // 프론트에서 accessToken을 전달하면 여기
-        SocialUserResponse socialUserResponse = authService.getUserInfo(loginRequest.getAccessToken());
-        log.info("socialUserResponse {} ", socialUserResponse.toString());
 
-        if(userRepository.findByEmail(socialUserResponse.getEmail()).isEmpty()){
+        if(userRepository.findByEmail(loginRequest.getEmail()).isEmpty()){
             this.joinUser(
                     JoinDto.builder()
-                            .email(socialUserResponse.getEmail())
-                            .name(socialUserResponse.getName())
-                            .picture(socialUserResponse.getPicture())
+                            .uid(loginRequest.getUid())
+                            .email(loginRequest.getEmail())
+                            .name(loginRequest.getName())
+                            .picture(loginRequest.getPicture())
+                            .fcmToken(loginRequest.getFcmToken())
                             .build()
             );
         }
-        User user = userRepository.findByEmail(socialUserResponse.getEmail())
+        User user = userRepository.findByEmail(loginRequest.getEmail())
                 .orElseThrow(() -> new NotFoundException(HttpStatus.NOT_FOUND.value(), "유저 정보를 찾을 수 없습니다."));
 
+        // 구글 닉네임 변경 시 업데이트
+        if(!Objects.equals(user.getName(), loginRequest.getName())){
+            user.updateImg(loginRequest.getName());
+        }
         // 구글 프로필 이미지 변경 시 업데이트
-        if(Objects.equals(user.getImg(), socialUserResponse.getPicture())){
-            user.updateImg(socialUserResponse.getPicture());
+        if(!Objects.equals(user.getImg(), loginRequest.getPicture())){
+            user.updateImg(loginRequest.getPicture());
         }
 
-        // 토큰 생성 로직 작성
+        // 토큰 생성
         String accessToken = jwtTokenProvider.createAccessToken(user);
         String refreshToken = jwtTokenProvider.createRefreshToken();
 
@@ -61,7 +60,6 @@ public class UserService {
                 .id(user.getId())
                 .accessToken(accessToken)
                 .refreshToken(refreshToken)
-                .role(user.getRole())
                 .build();
         return CommonResponse.createResponse(HttpStatus.OK.value(), "로그인 성공", loginResponse);
     }
@@ -69,10 +67,11 @@ public class UserService {
     private JoinResponse joinUser(JoinDto joinDto){
         User user = userRepository.save(
                 User.builder()
+                        .uid(joinDto.getUid())
                         .email(joinDto.getEmail())
                         .img(joinDto.getPicture())
                         .name(joinDto.getName())
-                        .role(UserRole.ROLE_USER)
+                        .fcmToken(joinDto.getFcmToken())
                         .build()
         );
 

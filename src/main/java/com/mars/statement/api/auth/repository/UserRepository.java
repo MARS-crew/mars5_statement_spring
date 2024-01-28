@@ -1,6 +1,6 @@
-package com.mars.statement.api.user.repository;
+package com.mars.statement.api.auth.repository;
 
-import com.mars.statement.api.user.domain.User;
+import com.mars.statement.api.auth.domain.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;

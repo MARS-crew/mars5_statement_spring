@@ -1,9 +1,6 @@
-package com.mars.statement.api.user.dto;
+package com.mars.statement.api.auth.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Getter
 @AllArgsConstructor

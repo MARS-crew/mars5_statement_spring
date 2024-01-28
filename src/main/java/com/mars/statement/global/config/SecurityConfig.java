@@ -39,8 +39,6 @@ public class SecurityConfig {
                 .authorizeHttpRequests((auth) -> auth
                         .requestMatchers("/api/v1/auth/login", "/error", "/favicon.ico").permitAll()
                         .requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/swagger-resources/**").permitAll()
-                        .requestMatchers("/admin").hasRole("ADMIN")
-                        .requestMatchers("/").hasRole("USER")
                         .anyRequest().authenticated())
         // 커스텀 필터 등록
                 .addFilterBefore(new JwtAuthorizationFilter(jwtTokenProvider), RequestCacheAwareFilter.class)

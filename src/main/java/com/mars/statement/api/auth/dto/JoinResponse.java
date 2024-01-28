@@ -1,4 +1,4 @@
-package com.mars.statement.global.dto;
+package com.mars.statement.api.auth.dto;
 
 import lombok.*;
 
@@ -6,6 +6,6 @@ import lombok.*;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-public class UserDto {
+public class JoinResponse {
     private Long id;
 }

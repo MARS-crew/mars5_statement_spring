@@ -1,6 +1,5 @@
-package com.mars.statement.api.user.domain;
+package com.mars.statement.api.auth.domain;
 
-import com.mars.statement.global.enums.UserRole;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
@@ -19,6 +18,8 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    @Column(name = "uid", nullable = false)
+    private String uid;
     @Column(name = "name", nullable = false, length = 20)
     private String name;
     @Column(name = "email", nullable = false, length = 100)
@@ -27,12 +28,15 @@ public class User {
     private String img;
     @Column(name = "refresh_token")
     private String refreshToken;
+    @Column(name = "fcm_token")
+    private String fcmToken;
     @CreatedDate
     @Column(name = "reg_dt")
     private Timestamp regDate;
-    @Column(name = "role", nullable = false, length = 20)
-    private UserRole role;
 
+    public void updateName(String name) {
+        this.name = name;
+    }
     public void updateRefreshToken(String refreshToken) {
         this.refreshToken = refreshToken;
     }

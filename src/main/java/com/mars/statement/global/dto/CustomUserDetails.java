@@ -1,6 +1,6 @@
 package com.mars.statement.global.dto;
 
-import com.mars.statement.api.user.domain.User;
+import com.mars.statement.api.auth.domain.User;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
