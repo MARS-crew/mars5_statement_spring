@@ -29,6 +29,10 @@ public class GroupController {
     }
 
     @Tag(name="그룹", description = "그룹 주제 조회")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description="그룹 조회 성공 ",
+            content = {@Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = Suggest.class)))})
+    })
     @GetMapping("/{group_id}")
     public ResponseEntity<Object> getGroupSuggest(@PathVariable Long group_id) {
         List<Suggest> suggest = suggestService.getSuggestByGroupId(group_id);
