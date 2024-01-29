@@ -3,6 +3,8 @@ package com.mars.statement.global.config;
 import com.mars.statement.global.jwt.JwtFilter;
 import com.mars.statement.global.jwt.JwtUtil;
 import com.mars.statement.global.jwt.LoginFilter;
+import org.modelmapper.ModelMapper;
+import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -48,6 +50,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests((auth) -> auth
                         .requestMatchers("/api/v1/user/join", "/login", "/error", "/favicon.ico").permitAll()
                         .requestMatchers("/","/swagger-ui/**", "/v3/api-docs/**", "/swagger-resources/**").permitAll()
+                        .requestMatchers("/api/**").permitAll()
                         .requestMatchers("/admin").hasRole("ADMIN")
                         .anyRequest().authenticated())
         // 커스텀 필터 등록
@@ -71,4 +74,17 @@ public class SecurityConfig {
 
         return source;
     }*/
+
+    // model mapper
+    @Bean
+    public ModelMapper modelMapper(){
+        ModelMapper modelMapper = new ModelMapper();
+        modelMapper.getConfiguration()
+                .setFieldAccessLevel(org.modelmapper.config.Configuration.AccessLevel.PRIVATE)
+                .setFieldMatchingEnabled(true)
+                .setMatchingStrategy(MatchingStrategies.STRICT);
+
+        return modelMapper;
+    }
+
 }
