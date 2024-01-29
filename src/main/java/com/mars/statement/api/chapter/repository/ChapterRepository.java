@@ -13,6 +13,6 @@ public interface ChapterRepository extends JpaRepository<Chapter, Long> {
             "LEFT JOIN FETCH c.chapterMembers cm " +
             "LEFT JOIN FETCH cm.groupMember gm " +
             "LEFT JOIN FETCH gm.user " +
-            "WHERE c.id = :chapterId")
-    Chapter findChapterWithMembers(@Param("chapterId") Long chapterId);
+            "WHERE c.id = :chapter_id")
+    Chapter findChapterWithMembers(@Param("chapter_id") Long chapter_id);
 }
