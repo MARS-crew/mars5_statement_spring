@@ -50,6 +50,8 @@ public class SecurityConfig {
                 .authorizeHttpRequests((auth) -> auth
                         .requestMatchers("/api/v1/user/join", "/login", "/error", "/favicon.ico").permitAll()
                         .requestMatchers("/","/swagger-ui/**", "/v3/api-docs/**", "/swagger-resources/**").permitAll()
+                        .requestMatchers("/share/**").permitAll()
+                        .requestMatchers("/group/**").permitAll()
                         .requestMatchers("/admin").hasRole("ADMIN")
                         .anyRequest().authenticated())
         // 커스텀 필터 등록

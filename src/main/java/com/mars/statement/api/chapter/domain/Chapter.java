@@ -2,6 +2,7 @@ package com.mars.statement.api.chapter.domain;
 
 import com.mars.statement.api.group.domain.Group;
 import com.mars.statement.api.group.domain.GroupMember;
+import com.mars.statement.api.share.dto.OpinionDTO;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
@@ -24,10 +25,6 @@ public class Chapter {
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "group_id", nullable = false)
-    private Group group;
-
-    @ManyToOne
     @JoinColumn(name = "suggest_id", nullable = false)
     private Suggest suggest;
 
@@ -45,4 +42,5 @@ public class Chapter {
         }
         return chapterMembers;
     }
+
 }

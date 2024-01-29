@@ -2,6 +2,7 @@ package com.mars.statement.api.chapter.service;
 
 import com.mars.statement.api.chapter.domain.Chapter;
 import com.mars.statement.api.chapter.domain.ChapterMember;
+import com.mars.statement.api.chapter.dto.ChapterDTO;
 import com.mars.statement.api.chapter.dto.ChapterMemberDTO;
 import com.mars.statement.api.chapter.dto.ChapterWithMemberDTO;
 import com.mars.statement.api.chapter.repository.ChapterRepository;
@@ -12,6 +13,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -50,6 +52,15 @@ public class ChapterService {
         }
 
         return null;
+    }
+
+    public List<Chapter> getChaptersByMemberId(Long chapter_id, Long suggest_id){
+        List<ChapterMember> chapterMembers = chapterRepository.findChaptersByMemberId(chapter_id, suggest_id);
+        List<Chapter> chapters = new ArrayList<>();;
+        for(ChapterMember chapterMember: chapterMembers){
+            chapters.add(chapterMember.getChapter());
+        }
+        return chapters;
     }
 
 }
