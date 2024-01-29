@@ -27,22 +27,14 @@ public class Chapter {
     @JoinColumn(name = "group_id", nullable = false)
     private Group group;
 
-    @Column(name = "suggest", length = 100)
-    private String suggest;
+    @ManyToOne
+    @JoinColumn(name = "suggest_id", nullable = false)
+    private Suggest suggest;
 
     @CreatedDate
     @Column(name = "reg_dt")
     private Timestamp reg_dt;
 
-    @Column(name = "del_dt")
-    private Timestamp del_dt;
-
-    @Column(name = "type", nullable = false, length = 20)
-    private String type;
-
-    @ManyToOne
-    @JoinColumn(name = "constructor_id")
-    private GroupMember groupMember;
 
     @OneToMany(mappedBy = "chapter")
     private Set<ChapterMember> chapterMembers;

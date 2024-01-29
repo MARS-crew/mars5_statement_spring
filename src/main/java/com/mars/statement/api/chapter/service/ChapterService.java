@@ -46,7 +46,7 @@ public class ChapterService {
                             chapterMember.getSummary(),
                             chapterMember.getGroupMember().getUser().getName()
                     )).toList();
-            return new ChapterWithMemberDTO(chapter.getId(),chapter.getSuggest().getSuggest(), chapter.getSuggest().getType(), chapterMemberDTOList);
+            return new ChapterWithMemberDTO(chapter.getId(), chapter.getSuggest().getSuggest(),chapter.getSuggest().getType(), chapterMemberDTOList);
         }
 
         return null;
