@@ -53,4 +53,11 @@ public class Send {
 
     @Column(name = "location", length = 100)
     private String location;
+
+    public Send(Chapter chapter, ChapterMember from, ChapterMember to, String message) {
+        this.chapter = chapter;
+        this.from = from;
+        this.to = to;
+        this.message = message;
+    }
 }

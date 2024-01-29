@@ -9,6 +9,9 @@ import org.springframework.data.repository.query.Param;
 import java.util.Optional;
 
 public interface ChapterMemberRepository extends JpaRepository<ChapterMember, Long> {
+    @Query
+    ChapterMember findByChapterIdAndGroupMember(Long chapterId, Long memberId);
+
 
 
 }

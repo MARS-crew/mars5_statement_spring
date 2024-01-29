@@ -41,13 +41,8 @@ public class ChapterService {
 //     */
     public ChapterWithMemberDTO getChapterWithMembers(Long chapter_id) {
 
-        ChapterWithMemberDTO chapterDTO = new ChapterWithMemberDTO();
-
         Chapter chapter = chapterRepository.findChapterWithMembers(chapter_id);
 
-        chapterDTO.setChapterId(chapter.getId());
-        chapterDTO.setSuggest(chapter.getSuggest());
-        chapterDTO.setType(chapter.getType());
 
         List<ChapterMemberDTO> chapterMemberDTOList = chapter.getChapterMembers()
                 .stream()
@@ -56,9 +51,8 @@ public class ChapterService {
                         chapterMember.getSummary(),
                         chapterMember.getGroupMember().getUser().getName()
                 )).toList();
-        chapterDTO.setChapterMembers(chapterMemberDTOList);
 
-        return chapterDTO;
+        return new ChapterWithMemberDTO(chapter.getId(), chapter.getSuggest(), chapter.getType(),chapterMemberDTOList);
 
     }
 

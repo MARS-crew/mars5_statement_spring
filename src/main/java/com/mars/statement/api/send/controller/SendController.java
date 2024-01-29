@@ -1,13 +1,10 @@
 package com.mars.statement.api.send.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.mars.statement.api.chapter.domain.Chapter;
 import com.mars.statement.api.chapter.dto.ChapterWithMemberDTO;
 import com.mars.statement.api.chapter.service.ChapterService;
 import com.mars.statement.api.send.dto.MessageDTO;
 import com.mars.statement.api.send.service.SendService;
-import com.mars.statement.global.dto.ApiResponse;
 import com.mars.statement.global.dto.CommonResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +22,6 @@ public class SendController {
     private final SendService sendService;
 
 
-    @Autowired
     public SendController(ChapterService chapterService, SendService sendService) {
         this.chapterService = chapterService;
         this.sendService = sendService;
@@ -34,7 +30,7 @@ public class SendController {
 
     @Tag(name = "전달", description = "회차멤버 조회")
     @GetMapping("/{chapter_id}")
-    public ResponseEntity<?> getChapterWithMembers(@PathVariable Long chapter_id) throws JsonProcessingException {
+    public ResponseEntity<Object> getChapterWithMembers(@PathVariable Long chapter_id) throws JsonProcessingException {
         ChapterWithMemberDTO chapter = chapterService.getChapterWithMembers(chapter_id);
 
         return CommonResponse.createResponse(200, "회차 멤버 조회 성공", chapter);
@@ -42,7 +38,7 @@ public class SendController {
 
     @Tag(name = "전달", description = "메세진 작성")
     @PostMapping("/write/{chapter_id}")
-    public ResponseEntity<?> writeMessage(@PathVariable Long chapter_id, @RequestBody List<MessageDTO> messageDTOList) {
+    public ResponseEntity<Object> writeMessage(@PathVariable Long chapter_id, @RequestBody List<MessageDTO> messageDTOList) {
 
         int code;
         String message;

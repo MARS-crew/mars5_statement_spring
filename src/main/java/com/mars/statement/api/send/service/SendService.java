@@ -38,21 +38,20 @@ public class SendService {
 
     @Transactional
     public int saveSendMessage(Long chapter_id, List<MessageDTO> messageDTOList, Long from_id){
-        Chapter chapter = new Chapter();
-        ChapterMember from = new ChapterMember();
+
+        Chapter chapter = chapterService.findChapterById(chapter_id);
+        ChapterMember from = chapterMemberService.findChapterMemberById(chapter.getId(), from_id);
         chapter.setId(chapter_id);
         from.setId(from_id);
 
         List<Send> sendList = new ArrayList<>();
 
         for(MessageDTO messageDTO : messageDTOList){
-            ChapterMember to = new ChapterMember();
-            to.setId(messageDTO.getTo_id());
-            Send send = modelMapper.map(messageDTO,Send.class);
+            ChapterMember to = chapterMemberService.findChapterMemberById(chapter.getId(), messageDTO.getTo_id());
 
-            send.setChapter(chapter);
-            send.setFrom(from);
-            send.setTo(to);
+            Send send = new Send(chapter, from, to, messageDTO.getMessage());
+
+
 
             sendList.add(send);
         };
