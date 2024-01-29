@@ -10,7 +10,7 @@ import java.util.Optional;
 
 public interface ChapterMemberRepository extends JpaRepository<ChapterMember, Long> {
     @Query
-    ChapterMember findByChapterIdAndGroupMember(Long chapterId, Long memberId);
+    ChapterMember findByChapterIdAndGroupMember_Id(Long chapterId, Long memberId);
 
 
 

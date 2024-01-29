@@ -26,10 +26,10 @@ public class Invitation {
     private String email;
     @Column(name = "invite_dt")
     @CreatedDate
-    private Timestamp invite_dt;
-    @Column(name = "accepted_yn", nullable = false)
-    private Boolean accepted_yn = false;
+    private Timestamp inviteDate;
+    @Column(name = "is_accept", nullable = false)
+    private Boolean accepted;
 
     @Column(name = "accept_dt")
-    private Timestamp accept_dt;
+    private Timestamp acceptDate;
 }

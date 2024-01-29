@@ -21,12 +21,10 @@ public class Group {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @Column(name = "name", nullable = false, length = 100)
-    private String name = "";
+    private String name;
     @Column(name = "img")
-    private String img = "";
+    private String img;
     @CreatedDate
     @Column(name = "reg_dt")
-    private Timestamp reg_dt;
-    @Column(name = "del_dt")
-    private Timestamp del_dt;
+    private Timestamp regDate;
 }

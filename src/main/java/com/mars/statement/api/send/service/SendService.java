@@ -24,48 +24,46 @@ public class SendService {
     private final ChapterMemberService chapterMemberService;
     private final ChapterService chapterService;
 
-    private final ModelMapper modelMapper;
-
 
     @Autowired
-    public SendService(SendRepository sendRepository, ModelMapper modelMapper,
-                       ChapterService chapterService, ChapterMemberService chapterMemberService){
+    public SendService(SendRepository sendRepository,
+                       ChapterService chapterService, ChapterMemberService chapterMemberService) {
         this.sendRepository = sendRepository;
-        this.modelMapper = modelMapper;
         this.chapterService = chapterService;
         this.chapterMemberService = chapterMemberService;
     }
 
     @Transactional
-    public int saveSendMessage(Long chapter_id, List<MessageDTO> messageDTOList, Long from_id){
+    public int saveSendMessage(Long chapter_id, List<MessageDTO> messageDTOList, Long from_id) {
 
-        Chapter chapter = chapterService.findChapterById(chapter_id);
-        ChapterMember from = chapterMemberService.findChapterMemberById(chapter.getId(), from_id);
-        chapter.setId(chapter_id);
-        from.setId(from_id);
+        try {
+            Chapter chapter = chapterService.findChapterById(chapter_id);
+            ChapterMember from = chapterMemberService.findChapterMemberById(chapter.getId(), from_id);
+            System.out.println(chapter.getId()+" "+ from.getId());
 
-        List<Send> sendList = new ArrayList<>();
+            List<Send> sendList = new ArrayList<>();
 
-        for(MessageDTO messageDTO : messageDTOList){
-            ChapterMember to = chapterMemberService.findChapterMemberById(chapter.getId(), messageDTO.getTo_id());
+            for (MessageDTO messageDTO : messageDTOList) {
+                ChapterMember to = chapterMemberService.findChapterMemberById(chapter.getId(), messageDTO.getTo_id());
+                System.out.println(to.getId());
+                Send send = new Send(chapter, from, to, messageDTO.getMessage());
 
-            Send send = new Send(chapter, from, to, messageDTO.getMessage());
+                sendList.add(send);
+            }
 
+            List<Send> savedSends = sendRepository.saveAll(sendList);
 
+            for (Send savedSend : savedSends) {
+                if (savedSend.getId() == null) {
+                    System.out.println("메세지 저장 실패");
+                    return -1;
+                }
+            }
 
-            sendList.add(send);
-        };
-
-        List<Send> savedSends = sendRepository.saveAll(sendList);
-
-        for(Send savedSend : savedSends){
-           if(savedSend.getId() == null){
-               System.out.println("메세지 저장 실패");
-               return -1;
-           }
+            return 0;
+        } catch (Exception e) {
+            throw new RuntimeException("메세지 저장 중에 오류가 발생했습니다.", e);
         }
-
-        return 0;
     }
 
 }

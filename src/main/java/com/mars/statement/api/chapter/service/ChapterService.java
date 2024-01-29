@@ -33,27 +33,23 @@ public class ChapterService {
     public Chapter findChapterById(Long id){
         return chapterRepository.findById(id).orElse(null);
     }
-//
-//    /*
-//     * chapter id를 통해서 정보 가져오기
-//     * @param id
-//     * @return chapterDTO
-//     */
+
     public ChapterWithMemberDTO getChapterWithMembers(Long chapter_id) {
 
         Chapter chapter = chapterRepository.findChapterWithMembers(chapter_id);
 
+        if(chapter != null) {
+            List<ChapterMemberDTO> chapterMemberDTOList = chapter.getChapterMembers()
+                    .stream()
+                    .map(chapterMember -> new ChapterMemberDTO(
+                            chapterMember.getGroupMember().getId(),
+                            chapterMember.getSummary(),
+                            chapterMember.getGroupMember().getUser().getName()
+                    )).toList();
+            return new ChapterWithMemberDTO(chapter.getId(),chapter.getSuggest().getSuggest(), chapter.getSuggest().getType(), chapterMemberDTOList);
+        }
 
-        List<ChapterMemberDTO> chapterMemberDTOList = chapter.getChapterMembers()
-                .stream()
-                .map(chapterMember -> new ChapterMemberDTO(
-                        chapterMember.getId(),
-                        chapterMember.getSummary(),
-                        chapterMember.getGroupMember().getUser().getName()
-                )).toList();
-
-        return new ChapterWithMemberDTO(chapter.getId(), chapter.getSuggest(), chapter.getType(),chapterMemberDTOList);
-
+        return null;
     }
 
 }

@@ -27,9 +27,7 @@ public class User {
     private String refreshToken;
     @CreatedDate
     @Column(name = "reg_dt")
-    private Timestamp reg_dt;
-    @Column(name = "del_dt")
-    private Timestamp del_dt;
+    private Timestamp regDate;
     @Column(name = "role", nullable = false, length = 20)
-    private String role = "ROLE_USER";
+    private String role;
 }

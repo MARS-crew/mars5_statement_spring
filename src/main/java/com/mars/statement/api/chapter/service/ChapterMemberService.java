@@ -16,7 +16,7 @@ public class ChapterMemberService {
     }
 
     public ChapterMember findChapterMemberById(Long chapter_id, Long member_id){
-        return chapterMemberRepository.findByChapterIdAndGroupMember(chapter_id, member_id);
+        return chapterMemberRepository.findByChapterIdAndGroupMember_Id(chapter_id, member_id);
     }
 
 }

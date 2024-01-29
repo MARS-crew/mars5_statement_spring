@@ -25,9 +25,7 @@ public class GroupMember {
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
-    @Column(name = "del_dt")
-    private Timestamp del_dt;
     @Column(name = "is_constructor")
-    private Boolean constructor = false;
+    private Boolean constructor;
 
 }

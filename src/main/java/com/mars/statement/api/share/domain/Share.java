@@ -27,7 +27,7 @@ public class Share {
     private String opinion;
     @Column(name = "reg_dt")
     @CreatedDate
-    private Timestamp reg_dt;
+    private Timestamp regDate;
     @Column(name = "location", length = 100)
     private String location;
 }
