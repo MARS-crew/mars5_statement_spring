@@ -36,6 +36,9 @@ public class ChapterMember {
     @CreatedDate
     private Timestamp reg_dt;
 
+    @Column(name = "is_constructor")
+    private Boolean constructor;
+
     @Transient
     private String userName;
 
