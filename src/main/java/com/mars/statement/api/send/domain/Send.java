@@ -11,6 +11,7 @@ import java.sql.Timestamp;
 
 @Builder
 @Entity
+@EntityListeners(AuditingEntityListener.class)
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
