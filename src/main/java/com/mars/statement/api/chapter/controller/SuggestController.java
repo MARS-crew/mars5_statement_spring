@@ -17,8 +17,8 @@ public class SuggestController {
     private final SuggestService suggestService;
 
     @PostMapping
-    public ResponseEntity<Long> createSuggest(@RequestBody SuggestDto suggestDto) {
-        Long suggestId = suggestService.createSuggest(suggestDto);
-        return ResponseEntity.ok(suggestId);
+    public ResponseEntity<?> createSuggest(@RequestBody SuggestDto suggestDto) throws Exception {
+
+        return suggestService.createSuggest(suggestDto);
     }
 }

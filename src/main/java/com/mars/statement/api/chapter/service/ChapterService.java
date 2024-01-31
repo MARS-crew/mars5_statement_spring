@@ -4,11 +4,19 @@ import com.mars.statement.api.chapter.domain.Chapter;
 import com.mars.statement.api.chapter.domain.Suggest;
 import com.mars.statement.api.chapter.dto.ChapterMemberDTO;
 import com.mars.statement.api.chapter.dto.ChapterWithMemberDTO;
+import com.mars.statement.api.chapter.dto.CreateChapterDto;
 import com.mars.statement.api.chapter.repository.ChapterRepository;
 import com.mars.statement.api.chapter.repository.SuggestRepository;
 import com.mars.statement.api.group.domain.Group;
+import com.mars.statement.api.group.domain.GroupMember;
+import com.mars.statement.api.group.service.GroupMemberService;
+import com.mars.statement.global.dto.CommonResponse;
+import com.mars.statement.global.exception.ForbiddenException;
+import com.mars.statement.global.exception.NotFoundException;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,17 +28,19 @@ public class ChapterService {
     private final ChapterRepository chapterRepository;
     private final ChapterMemberService chapterMemberService;
     private final SuggestRepository suggestRepository;
+    private final GroupMemberService groupMemberService;
     private final ModelMapper modelMapper;
 
     @Autowired
-    public ChapterService(ChapterRepository chapterRepository, ChapterMemberService chapterMemberService, SuggestRepository suggestRepository, ModelMapper modelMapper) {
+    public ChapterService(ChapterRepository chapterRepository, ChapterMemberService chapterMemberService, SuggestRepository suggestRepository, GroupMemberService groupMemberService, ModelMapper modelMapper) {
         this.chapterRepository = chapterRepository;
         this.chapterMemberService = chapterMemberService;
         this.suggestRepository = suggestRepository;
+        this.groupMemberService = groupMemberService;
         this.modelMapper = modelMapper;
     }
 
-    public Chapter findChapterById(Long id){
+    public Chapter findChapterById(Long id) {
         return chapterRepository.findById(id).orElse(null);
     }
 
@@ -38,7 +48,7 @@ public class ChapterService {
 
         Chapter chapter = chapterRepository.findChapterWithMembers(chapter_id);
 
-        if(chapter != null) {
+        if (chapter != null) {
             List<ChapterMemberDTO> chapterMemberDTOList = chapter.getChapterMembers()
                     .stream()
                     .map(chapterMember -> new ChapterMemberDTO(
@@ -46,48 +56,37 @@ public class ChapterService {
                             chapterMember.getSummary(),
                             chapterMember.getGroupMember().getUser().getName()
                     )).toList();
-            return new ChapterWithMemberDTO(chapter.getId(), chapter.getSuggest().getSuggest(),chapter.getSuggest().getType(), chapterMemberDTOList);
+            return new ChapterWithMemberDTO(chapter.getId(), chapter.getSuggest().getSuggest(), chapter.getSuggest().getType(), chapterMemberDTOList);
         }
 
         return null;
     }
-/*    @Transactional
-    public Long createChapterAndAddMembers(Long suggestId, Long creatorId) {
-        // 1회차 생성
-        Suggest suggest = suggestRepository.findById(suggestId)
-                .orElseThrow(() -> new RuntimeException("Suggest not found"));
 
+    @Transactional
+    public ResponseEntity<?> createChapterAndAddMembers(CreateChapterDto createChapterDto) throws Exception {
+        // 1. 주제 조회
+        Suggest suggest = suggestRepository.findById(createChapterDto.getSuggestId())
+                .orElseThrow(() -> new NotFoundException("Suggest not found"));
+
+        // 2. 그룹 조회 (주제의 그룹)
+        // 그룹 아이디로 주제를 소유한 그룹인지 판단
+        GroupMember groupMember = groupMemberService.findGroupMemberById(createChapterDto.getConstructorId());
+        Group group = suggest.getGroup();
+
+        if (!groupMember.getGroup().equals(group)) {
+            throw new ForbiddenException("Constructor is not a member of the group that owns the suggest.");
+        }
+
+        // 3. 회차 생성 및 그룹 설정
         Chapter chapter = Chapter.builder()
                 .suggest(suggest)
+                .group(group)
                 .build();
         Chapter savedChapter = chapterRepository.save(chapter);
 
-        // 1회차에 생성자 추가
-        chapterMemberService.addMemberToChapter(savedChapter.getId(), creatorId);
+        // 4. 회차에 생성자와 멤버 추가
+        chapterMemberService.addMemberToChapter(savedChapter.getId(), createChapterDto.getConstructorId(), createChapterDto.getMemberIds());
 
-        return savedChapter.getId();
-    }*/
-@Transactional
-public Long createChapterAndAddMembers(Long suggestId, Long creatorId) {
-    // 1. 주제 조회
-    Suggest suggest = suggestRepository.findById(suggestId)
-            .orElseThrow(() -> new RuntimeException("Suggest not found"));
-
-    // 2. 그룹 조회 (주제의 그룹)
-    Group group = suggest.getGroup();
-
-    // 3. 회차 생성 및 그룹 설정
-    Chapter chapter = Chapter.builder()
-            .suggest(suggest)
-            .group(group)  // 그룹 설정 추가
-            .build();
-    Chapter savedChapter = chapterRepository.save(chapter);
-
-    // 4. 회차에 생성자 추가
-    chapterMemberService.addMemberToChapter(savedChapter.getId(), creatorId);
-
-    return savedChapter.getId();
-}
-
-
+        return CommonResponse.createResponse(HttpStatus.OK.value(), "주제생성 완료", savedChapter.getId());
+    }
 }

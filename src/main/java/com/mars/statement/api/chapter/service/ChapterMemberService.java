@@ -7,9 +7,12 @@ import com.mars.statement.api.chapter.repository.ChapterRepository;
 
 import com.mars.statement.api.group.domain.GroupMember;
 import com.mars.statement.api.group.repository.GroupMemberRepository;
+import com.mars.statement.global.exception.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Service
 public class ChapterMemberService {
@@ -30,19 +33,24 @@ public class ChapterMemberService {
     }
 
     @Transactional
-    public void addMemberToChapter(Long chapterId, Long memberId) {
+    public void addMemberToChapter(Long chapterId, Long constructorId,List<Long> memberIds) throws NotFoundException {
         Chapter chapter = chapterRepository.findById(chapterId)
-                .orElseThrow(() -> new RuntimeException("Chapter not found"));
+                .orElseThrow(() -> new NotFoundException("Chapter not found"));
 
-        GroupMember member = groupMemberRepository.findById(memberId)
-                .orElseThrow(() -> new RuntimeException("Group member not found"));
+        for (Long memberId : memberIds) {
+            GroupMember member = groupMemberRepository.findById(memberId)
+                    .orElseThrow(() -> new NotFoundException("Group member not found"));
 
-        ChapterMember chapterMember = ChapterMember.builder()
-                .chapter(chapter)
-                .groupMember(member)
-                .build();
+            Boolean isConstructor = memberId.equals(constructorId); // 생성자 ID와 현재 회원 ID가 일치하는지 확인
 
-        chapterMemberRepository.save(chapterMember);
+            ChapterMember chapterMember = ChapterMember.builder()
+                    .chapter(chapter)
+                    .groupMember(member)
+                    .constructor(isConstructor) // 생성자 여부 설정
+                    .build();
+
+            chapterMemberRepository.save(chapterMember);
+        }
     }
 
 

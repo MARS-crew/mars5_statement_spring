@@ -6,15 +6,13 @@ import lombok.*;
 import java.util.List;
 
 @Getter
-@Setter
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class SuggestDto {
+public class CreateChapterDto {
 
     private Long groupId;
-    private String suggest;
-    private String type;
+    private Long suggestId;
     private Long constructorId;
 
     @JsonProperty("memberIds")

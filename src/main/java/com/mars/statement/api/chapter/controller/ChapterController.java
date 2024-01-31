@@ -1,8 +1,7 @@
 package com.mars.statement.api.chapter.controller;
 
-import com.mars.statement.api.chapter.dto.SuggestDto;
+import com.mars.statement.api.chapter.dto.CreateChapterDto;
 import com.mars.statement.api.chapter.service.ChapterService;
-import com.mars.statement.api.chapter.service.SuggestService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -16,16 +15,9 @@ import org.springframework.web.bind.annotation.RestController;
 public class ChapterController {
 
     private final ChapterService chapterService;
-    private final SuggestService suggestService;
 
-/*    @PostMapping("/create")
-    public ResponseEntity<Long> createChapter(@RequestBody SuggestDto suggestDto) {
-        Long chapterId = chapterService.createChapterAndAddMembers( suggestDto.getGroupId(), suggestDto.getConstructorId());
-        return ResponseEntity.ok(chapterId);
-    }*/
 @PostMapping("/create")
-public ResponseEntity<Long> createChapter(@RequestBody SuggestDto suggestDto) {
-    Long chapterId = suggestService.createSuggest(suggestDto);
-    return ResponseEntity.ok(chapterId);
+public ResponseEntity<?> createChapter(@RequestBody CreateChapterDto createChapterDto) throws Exception {
+    return chapterService.createChapterAndAddMembers( createChapterDto);
 }
 }

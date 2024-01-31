@@ -1,6 +1,7 @@
 package com.mars.statement.api.chapter.service;
 
 import com.mars.statement.api.chapter.domain.Suggest;
+import com.mars.statement.api.chapter.dto.CreateChapterDto;
 import com.mars.statement.api.chapter.dto.SuggestDto;
 import com.mars.statement.api.chapter.repository.SuggestRepository;
 import com.mars.statement.api.group.domain.Group;
@@ -8,6 +9,7 @@ import com.mars.statement.api.group.domain.GroupMember;
 import com.mars.statement.api.group.service.GroupMemberService;
 import com.mars.statement.api.group.service.GroupService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,28 +20,27 @@ public class SuggestService {
     private final SuggestRepository suggestRepository;
     private final GroupService groupService;
     private final GroupMemberService groupMemberService;
-
     private final ChapterService chapterService;
 
-
-
     @Transactional
-    public Long createSuggest(SuggestDto suggestDto) {
+    public ResponseEntity<?> createSuggest(SuggestDto suggestDto) throws Exception {
         Group group = groupService.findGroupById(suggestDto.getGroupId());
         GroupMember groupMember = groupMemberService.findGroupMemberById(suggestDto.getConstructorId());
 
-        Suggest suggest = Suggest.builder()
+        Suggest savedSuggest = suggestRepository.save(Suggest.builder()
                 .group(group)
                 .suggest(suggestDto.getSuggest())
                 .type(suggestDto.getType())
                 .groupMember(groupMember)
+                .build());
+
+        CreateChapterDto createChapterDto = CreateChapterDto.builder()
+                .constructorId(suggestDto.getConstructorId())
+                .suggestId(savedSuggest.getId())
+                .groupId(suggestDto.getGroupId())
+                .memberIds(suggestDto.getMemberIds())
                 .build();
 
-        Suggest savedSuggest = suggestRepository.save(suggest);
-        //return savedSuggest.getId();
-        Long chapterId = chapterService.createChapterAndAddMembers(savedSuggest.getId(), suggestDto.getConstructorId());
-
-
-        return chapterId;
+        return chapterService.createChapterAndAddMembers(createChapterDto);
     }
 }
