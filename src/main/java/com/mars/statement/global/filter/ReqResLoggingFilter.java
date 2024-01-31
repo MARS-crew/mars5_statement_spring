@@ -28,14 +28,10 @@ public class ReqResLoggingFilter extends OncePerRequestFilter {
         ContentCachingResponseWrapper responseWrapper = new ContentCachingResponseWrapper(response);
         filterChain.doFilter(requestWrapper, responseWrapper);
 
-        log.info("=======URI: [{}], METHOD: [{}]=======", request.getRequestURI(), request.getMethod());
-        log.info("Headers: {}", getHeaders(request));
-        log.info("QueryString: {}", getQueryParameter(request));
-        log.info("Request Body: {}", contentBody(requestWrapper.getContentAsByteArray()));
-        log.info("Response Status: {}", responseWrapper.getStatus());
-        log.info("Response Body: {}", contentBody(responseWrapper.getContentAsByteArray()));
-
-
+        log.info("====URI: [{}], METHOD: [{}]==== Headers: {} QueryString: {} Request Body: {} Response Status: {} Response Body: {}"
+                , request.getRequestURI(), request.getMethod(), getHeaders(request), getQueryParameter(request)
+                , contentBody(requestWrapper.getContentAsByteArray()), responseWrapper.getStatus()
+                , contentBody(responseWrapper.getContentAsByteArray()));
 
         responseWrapper.copyBodyToResponse();
     }
