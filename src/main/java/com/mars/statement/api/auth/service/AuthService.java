@@ -5,6 +5,7 @@ import com.mars.statement.api.auth.domain.User;
 import com.mars.statement.api.auth.dto.*;
 import com.mars.statement.api.auth.repository.UserRepository;
 import com.mars.statement.global.dto.CommonResponse;
+import com.mars.statement.global.dto.TokenDto;
 import com.mars.statement.global.exception.NotFoundException;
 import com.mars.statement.global.jwt.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
@@ -22,12 +23,13 @@ public class AuthService {
     private final UserRepository userRepository;
     private final JwtTokenProvider jwtTokenProvider;
 
-    public ResponseEntity<?> doSocialLogin(LoginRequest loginRequest) throws NotFoundException {
+    public ResponseEntity<?> login(LoginRequest loginRequest) throws NotFoundException {
 
         if(userRepository.findByEmail(loginRequest.getEmail()).isEmpty()){
             this.joinUser(
                     JoinDto.builder()
                             .uid(loginRequest.getUid())
+
                             .email(loginRequest.getEmail())
                             .name(loginRequest.getName())
                             .picture(loginRequest.getPicture())
@@ -40,26 +42,29 @@ public class AuthService {
 
         // 구글 닉네임 변경 시 업데이트
         if(!Objects.equals(user.getName(), loginRequest.getName())){
-            user.updateImg(loginRequest.getName());
+            user.updateName(loginRequest.getName());
         }
         // 구글 프로필 이미지 변경 시 업데이트
         if(!Objects.equals(user.getImg(), loginRequest.getPicture())){
             user.updateImg(loginRequest.getPicture());
         }
+        // fcm token 변경 시 업데이트
+        if(!Objects.equals(user.getFcmToken(), loginRequest.getFcmToken())){
+            user.updateFcmToken(loginRequest.getFcmToken());
+        }
 
         // 토큰 생성
-        String accessToken = jwtTokenProvider.createAccessToken(user);
-        String refreshToken = jwtTokenProvider.createRefreshToken();
+        TokenDto tokenDto = jwtTokenProvider.issueToken(user.getId());
 
-        user.updateRefreshToken(refreshToken);
+        user.updateRefreshToken(tokenDto.getRefreshToken());
 
         userRepository.save(user);
 
         // 리턴 값 변경 -> 토큰으로
         LoginResponse loginResponse = LoginResponse.builder()
                 .id(user.getId())
-                .accessToken(accessToken)
-                .refreshToken(refreshToken)
+                .accessToken(tokenDto.getAccessToken())
+                .refreshToken(tokenDto.getRefreshToken())
                 .build();
         return CommonResponse.createResponse(HttpStatus.OK.value(), "로그인 성공", loginResponse);
     }
@@ -80,4 +85,14 @@ public class AuthService {
                 .build();
     }
 
+    public ResponseEntity<?> reissueToken(TokenReissueRequest request){
+        if(jwtTokenProvider.validateToken(request.getRefreshToken())){
+            String id = jwtTokenProvider.getUserId(request.getRefreshToken());
+
+            TokenDto tokenDto = jwtTokenProvider.reissueToken(Long.valueOf(id), request.getRefreshToken());
+
+            return CommonResponse.createResponse(HttpStatus.OK.value(), "토큰 재발급 성공", tokenDto);
+        }
+        return CommonResponse.createResponseMessage(HttpStatus.BAD_REQUEST.value(), "refresh token이 만료되었습니다.");
+    }
 }

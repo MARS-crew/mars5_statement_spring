@@ -1,6 +1,7 @@
 package com.mars.statement.global.jwt;
 
 import com.mars.statement.api.auth.domain.User;
+import com.mars.statement.global.dto.TokenDto;
 import com.mars.statement.global.exception.UnAuthenticationException;
 import com.mars.statement.global.service.CustomUserDetailService;
 import io.jsonwebtoken.*;
@@ -31,23 +32,30 @@ public class JwtTokenProvider {
     @Value("${jwt.secret}")
     private String secret;
 
-    // accessToken 생성
-    public String createAccessToken(User user){
-        Claims claims = Jwts.claims().setSubject(String.valueOf(user.getId()));
-        return createToken(claims, Long.valueOf(accessTokenValidationTime));
+    // token 발급
+    public TokenDto issueToken(Long id) {
+        final String accessToken = createToken(id, Long.valueOf(accessTokenValidationTime));
+        final String refreshToken = createToken(id, Long.valueOf(refreshTokenValidationTime));
+
+        return TokenDto.builder()
+                .accessToken(accessToken)
+                .refreshToken(refreshToken)
+                .build();
     }
 
-    // refreshToken 생성
-    public String createRefreshToken(){
-        byte[] array = new byte[7];
-        new Random().nextBytes(array);
-        String generatedString = new String(array, StandardCharsets.UTF_8);
-        Claims claims = Jwts.claims().setSubject(generatedString);
-        return createToken(claims, Long.valueOf(refreshTokenValidationTime));
+    // token 재발급
+    public TokenDto reissueToken(Long id, String refreshToken) {
+        final String accessToken = createToken(id, Long.valueOf(accessTokenValidationTime));
+
+        return TokenDto.builder()
+                .accessToken(accessToken)
+                .refreshToken(refreshToken)
+                .build();
     }
 
-    // token 생성 로직
-    public String createToken(Claims claims, Long expireLength){
+    // token 발급 로직
+    public String createToken(Long id, Long expireLength){
+        Claims claims = Jwts.claims().setSubject(String.valueOf(id));
         Date now = new Date();
         Date validity = new Date(now.getTime() + expireLength * 1000);
         return Jwts.builder()

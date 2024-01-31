@@ -44,4 +44,8 @@ public class User {
     public void updateImg(String img) {
         this.img = img;
     }
+
+    public void updateFcmToken(String fcmToken) {
+        this.fcmToken = fcmToken;
+    }
 }
