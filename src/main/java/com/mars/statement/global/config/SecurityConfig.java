@@ -51,6 +51,8 @@ public class SecurityConfig {
                         .requestMatchers("/api/v1/user/join", "/login", "/error", "/favicon.ico").permitAll()
                         .requestMatchers("/","/swagger-ui/**", "/v3/api-docs/**", "/swagger-resources/**").permitAll()
                         .requestMatchers("/share/**").permitAll()
+                        .requestMatchers("/send/**").permitAll()
+
                         .requestMatchers("/group/**").permitAll()
                         .requestMatchers("/admin").hasRole("ADMIN")
                         .anyRequest().authenticated())

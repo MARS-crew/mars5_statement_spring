@@ -18,14 +18,9 @@ public class MemberOpinionDTO {
     private Long memberId;
     private String memberName;
     private String memberImg;
-//    private Set<OpinionDTO> opinionDTOSet = new HashSet<>();
 
     private OpinionDTO opinionDTO;
-//    private List<OpinionDTO> opinionDTOList = new ArrayList<>();
 
-//    public void addOpinion(OpinionDTO opinionDTO){
-//        this.opinionDTOSet.add(opinionDTO);
-//    }
     @Transient
     private List<OpinionDTO> opinionDTOList;
 

@@ -14,7 +14,8 @@ import java.util.List;
 public class SendDTO {
     private Long chapter_id;
 
-    private List<MessageDTO> messageDTOList;
+    private List<SendMessageDTO> messageDTOList;
+
 
 
 }

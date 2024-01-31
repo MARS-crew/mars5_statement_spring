@@ -4,8 +4,16 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.mars.statement.api.chapter.dto.ChapterWithMemberDTO;
 import com.mars.statement.api.chapter.service.ChapterService;
 import com.mars.statement.api.send.dto.MessageDTO;
+import com.mars.statement.api.send.dto.PersonalSendDTO;
+import com.mars.statement.api.send.dto.SendMessageDTO;
 import com.mars.statement.api.send.service.SendService;
+import com.mars.statement.api.share.dto.ShareDTO;
 import com.mars.statement.global.dto.CommonResponse;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -15,7 +23,7 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/api/send")
+@RequestMapping("/send")
 public class SendController {
 
     private final ChapterService chapterService;
@@ -37,8 +45,8 @@ public class SendController {
     }
 
     @Tag(name = "전달", description = "메세진 작성")
-    @PostMapping("/write/{chapter_id}")
-    public ResponseEntity<Object> writeMessage(@PathVariable Long chapter_id, @RequestBody List<MessageDTO> messageDTOList) {
+    @PostMapping("/api/write/{chapter_id}")
+    public ResponseEntity<Object> writeMessage(@PathVariable Long chapter_id, @RequestBody List<SendMessageDTO> messageDTOList) {
 
         int code;
         String message;
@@ -61,5 +69,20 @@ public class SendController {
 
         return CommonResponse.createResponseMessage(code, message);
     }
+
+    @Tag(name="전달", description = "인물별 조회")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description="전달 인물별 조회 성공 ",
+                    content = {@Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = PersonalSendDTO.class)))})
+    })
+    @GetMapping("/{group_id}/{suggest_id}")
+    public ResponseEntity<Object> getPersonalSendDatas(@PathVariable Long group_id, @PathVariable Long suggest_id) {
+        Long my_id = 3L; // 로그인 데이터
+        List<PersonalSendDTO> personalSendList = sendService.getPersonalSendData(group_id,suggest_id, my_id);
+
+        return CommonResponse.createResponse(200, "그룹 주제 조회 성공", personalSendList);
+    }
+
+
 
 }

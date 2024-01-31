@@ -19,13 +19,8 @@ public class ShareDTO {
 
     private Long suggestId;
     private String suggest;
-    //    private Set<MemberOpinionDTO> memberOpinionDTOSet = new HashSet<>();
-//    private List<MemberOpinionDTO> memberOpinionDTOList;
     private MemberOpinionDTO memberOpinionDTO;
 
 
-//    public void addMemberOpinion(MemberOpinionDTO memberOpinionDTO){
-//        this.memberOpinionDTOSet.add(memberOpinionDTO);
-//    }
 }
 

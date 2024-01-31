@@ -42,15 +42,14 @@ public class ShareService {
     }
 
     public List<ShareDTO> getPersonalShareData(Long group_id, Long suggest_id, Long my_id){
-        GroupMember member = groupMemberService.getGroupMemberByGroupIdAndUser(group_id, my_id);
-        Suggest suggest = suggestService.getSuggestById(suggest_id);
-        List<Chapter> chapters = chapterService.getChaptersByMemberId(member.getId(),suggest.getId());
+
+        List<Chapter> chapters = chapterService.getChaptersByMemberId(group_id, my_id, suggest_id);
         List<Long> chapterIds = chapters.stream().map(Chapter::getId).toList();
 
 
         List<ShareDTO> personalShares = shareRepository.findPersonalSharesByIds(chapterIds);
 
-        List<ShareDTO> result = personalShares.stream()
+        return personalShares.stream()
                 .collect(Collectors.groupingBy(
                         ShareDTO::getSuggestId,
                         Collectors.groupingBy(
@@ -76,8 +75,6 @@ public class ShareService {
                             return new ShareDTO(suggestId, shareDTOs.get(0).getSuggest(), mergedMemberOpinionDTO);
                         }))
                 .toList();
-
-        return result;
     }
 
 }

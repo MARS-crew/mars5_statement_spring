@@ -3,13 +3,18 @@ package com.mars.statement.api.send.dto;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
+
+import java.sql.Timestamp;
 
 @Getter
-@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class MessageDTO {
-    private Long to_id;
+
+    private Long chapterId;
+    private Long chapterMemberId;
+    private Timestamp regDt;
     private String message;
+    private String location;
+
 }
