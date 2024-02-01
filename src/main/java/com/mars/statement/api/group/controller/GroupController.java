@@ -19,7 +19,7 @@ import javax.swing.text.html.parser.Entity;
 import java.util.List;
 
 @RestController
-@RequestMapping("/group")
+@RequestMapping("/api/v1/group")
 public class GroupController {
 
     private final SuggestService suggestService;

@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 @RestController
-@RequestMapping("/share")
+@RequestMapping("/api/v1/share")
 public class ShareController {
 
     private final ShareService shareService;

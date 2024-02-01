@@ -23,7 +23,7 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/send")
+@RequestMapping("/api/v1/send")
 public class SendController {
 
     private final ChapterService chapterService;
@@ -45,7 +45,7 @@ public class SendController {
     }
 
     @Tag(name = "전달", description = "메세진 작성")
-    @PostMapping("/api/write/{chapter_id}")
+    @PostMapping("/write/{chapter_id}")
     public ResponseEntity<Object> writeMessage(@PathVariable Long chapter_id, @RequestBody List<SendMessageDTO> messageDTOList) {
 
         int code;
