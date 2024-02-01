@@ -37,7 +37,6 @@ public class AuthService {
             this.joinUser(
                     JoinDto.builder()
                             .uid(loginRequest.getUid())
-
                             .email(loginRequest.getEmail())
                             .name(loginRequest.getName())
                             .picture(loginRequest.getPicture())
