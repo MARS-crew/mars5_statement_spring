@@ -1,13 +1,11 @@
 package com.mars.statement.api.group.domain;
 
-import com.mars.statement.api.user.domain.User;
+import com.mars.statement.api.auth.domain.User;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-
-import java.sql.Timestamp;
 
 @Builder
 @Entity
