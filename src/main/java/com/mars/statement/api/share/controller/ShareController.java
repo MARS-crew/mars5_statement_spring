@@ -24,8 +24,11 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 @RestController
+<<<<<<< HEAD
 @Tag(name="공유")
 @RequiredArgsConstructor
+=======
+>>>>>>> 2353432 (api url 통일)
 @RequestMapping("/api/v1/share")
 public class ShareController {
 

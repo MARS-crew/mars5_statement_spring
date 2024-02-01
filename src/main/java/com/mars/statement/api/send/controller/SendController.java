@@ -25,8 +25,11 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
+<<<<<<< HEAD
 @Tag(name="전달")
 @RequiredArgsConstructor
+=======
+>>>>>>> 2353432 (api url 통일)
 @RequestMapping("/api/v1/send")
 public class SendController {
 
@@ -41,10 +44,16 @@ public class SendController {
         return CommonResponse.createResponse(200, "회차 멤버 조회 성공", chapter);
     }
 
+<<<<<<< HEAD
     @Tag(name = "전달", description = "메세지 작성")
     @PostMapping("/write/{chapterId}")
     public ResponseEntity<Object> writeMessage(@PathVariable Long chapterId, @RequestBody List<SendMessageDto> messageDtoList) {
 
+=======
+    @Tag(name = "전달", description = "메세진 작성")
+    @PostMapping("/write/{chapter_id}")
+    public ResponseEntity<Object> writeMessage(@PathVariable Long chapter_id, @RequestBody List<SendMessageDTO> messageDTOList) {
+>>>>>>> 2353432 (api url 통일)
 
         int code;
         String message;

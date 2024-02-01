@@ -19,10 +19,14 @@ import lombok.extern.slf4j.Slf4j;
 import java.util.List;
 
 @RestController
+<<<<<<< HEAD
 @RequiredArgsConstructor
 @Slf4j
 @RequestMapping("/api/v1/group")
 @Tag(name = "Group", description = "그룹 API")
+=======
+@RequestMapping("/api/v1/group")
+>>>>>>> 2353432 (api url 통일)
 public class GroupController {
     private final GroupService groupService;
     private final SuggestService suggestService;
