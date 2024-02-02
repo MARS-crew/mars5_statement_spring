@@ -26,11 +26,14 @@ public class ShareService {
 
     private final ChapterService chapterService;
     private final ModelMapper modelMapper;
-    public List<ShareDto> getPersonalShareData(Long group_id, Long suggest_id, Long my_id){
+    public List<ShareDto> getPersonalShareData(Long groupId, Long suggestId, Long myId){
 
-        List<Chapter> chapters = chapterService.getChaptersByMemberId(group_id, my_id, suggest_id);
+        List<Chapter> chapters = chapterService.getChaptersByMemberId(groupId, myId, suggestId);
         List<Long> chapterIds = chapters.stream().map(Chapter::getId).toList();
 
+        for(Long id : chapterIds){
+            System.out.println(id);
+        }
 
         List<ShareDto> personalShares = shareRepository.findPersonalSharesByIds(chapterIds);
 
@@ -38,29 +41,30 @@ public class ShareService {
                 .collect(Collectors.groupingBy(
                         ShareDto::getSuggestId,
                         Collectors.groupingBy(
-                                shareDto -> shareDto.getMemberOpinionDtoList().get(0).getMemberId()
+                                shareDto -> shareDto.getMemberOpinionDtoList().get(0).getMemberId(),
+                                Collectors.toList()
                         )
                 ))
                 .entrySet().stream()
                 .flatMap(suggestEntry -> suggestEntry.getValue().entrySet().stream()
                         .map(memberEntry -> {
-                            Long suggestId = suggestEntry.getKey();
+                            Long sId = suggestEntry.getKey();
                             Long memberId = memberEntry.getKey();
-                            List<ShareDto> shareDtos = memberEntry.getValue();
+                            List<ShareDto> shareDto = memberEntry.getValue();
 
-                            List<OpinionDto> opinionDtoList = shareDtos.stream()
+                            List<OpinionDto> opinionDtoList = shareDto.stream()
                                     .flatMap(dto -> dto.getMemberOpinionDtoList().stream())
                                     .map(MemberOpinionDto::getOpinionDtoList)
                                     .flatMap(List::stream)
                                     .collect(Collectors.toList());
 
                             MemberOpinionDto mergedMemberOpinionDto = new MemberOpinionDto(memberId,
-                                    shareDtos.get(0).getMemberOpinionDtoList().get(0).getMemberName(),
-                                    shareDtos.get(0).getMemberOpinionDtoList().get(0).getMemberImg(), opinionDtoList);
+                                    shareDto.get(0).getMemberOpinionDtoList().get(0).getMemberName(),
+                                    shareDto.get(0).getMemberOpinionDtoList().get(0).getMemberImg(), opinionDtoList);
 
 
 
-                            return new ShareDto(suggestId, shareDtos.get(0).getSuggest(), mergedMemberOpinionDto);
+                            return new ShareDto(sId, shareDto.get(0).getSuggest(), mergedMemberOpinionDto);
                         }))
                 .toList();
     }
