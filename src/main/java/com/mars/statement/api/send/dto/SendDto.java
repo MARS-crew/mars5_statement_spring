@@ -11,11 +11,9 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class SendDTO {
+public class SendDto {
+
     private Long chapter_id;
-
-    private List<SendMessageDTO> messageDTOList;
-
-
+    private List<SendMessageDto> messageDtoList;
 
 }

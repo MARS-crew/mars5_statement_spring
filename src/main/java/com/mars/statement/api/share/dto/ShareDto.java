@@ -15,11 +15,11 @@ import java.util.Set;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class ShareDTO {
+public class ShareDto {
 
     private Long suggestId;
     private String suggest;
-    private MemberOpinionDTO memberOpinionDTO;
+    private MemberOpinionDto memberOpinionDTO;
 
 
 }

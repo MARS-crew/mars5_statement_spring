@@ -1,35 +1,36 @@
 package com.mars.statement.api.share.dto;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+
 import jakarta.persistence.Transient;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.util.ArrayList;
-import java.util.HashSet;
+
+import java.util.Collections;
 import java.util.List;
-import java.util.Set;
+
 
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class MemberOpinionDTO {
+public class MemberOpinionDto {
+
     private Long memberId;
     private String memberName;
     private String memberImg;
-
-    private OpinionDTO opinionDTO;
-
+    private OpinionDto opinionDto;
     @Transient
-    private List<OpinionDTO> opinionDTOList;
+    private List<OpinionDto> opinionDtoList;
 
-    public MemberOpinionDTO(Long memberId, String memberName, String memberImg, OpinionDTO opinionDTO) {
+    public MemberOpinionDto(Long memberId, String memberName, String memberImg, OpinionDto opinionDto) {
         this.memberId = memberId; this.memberName=memberName;
-        this.memberImg = memberImg; this.opinionDTO = opinionDTO;
+        this.memberImg = memberImg; this.opinionDto = opinionDto;
+        this.opinionDtoList = Collections.singletonList(opinionDto);
     }
-    public MemberOpinionDTO(Long memberId, String memberName, String memberImg, List<OpinionDTO> opinionDTOList) {
+    public MemberOpinionDto(Long memberId, String memberName, String memberImg, List<OpinionDto> opinionDtoList) {
         this.memberId = memberId; this.memberName=memberName;
-        this.memberImg = memberImg; this.opinionDTOList = opinionDTOList;
+        this.memberImg = memberImg; this.opinionDtoList = opinionDtoList;
+
     }
 }

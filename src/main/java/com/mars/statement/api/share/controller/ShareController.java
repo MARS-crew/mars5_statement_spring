@@ -1,9 +1,7 @@
 package com.mars.statement.api.share.controller;
 
 
-import com.mars.statement.api.chapter.domain.Suggest;
-import com.mars.statement.api.chapter.dto.ChapterDTO;
-import com.mars.statement.api.share.dto.ShareDTO;
+import com.mars.statement.api.share.dto.PersonalShareDto;
 import com.mars.statement.api.share.service.ShareService;
 import com.mars.statement.global.dto.CommonResponse;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
@@ -21,7 +19,8 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 @RestController
-@RequestMapping("/share")
+@RequestMapping("/api/v1/share")
+
 public class ShareController {
 
     private final ShareService shareService;
@@ -33,13 +32,15 @@ public class ShareController {
     @Tag(name="공유", description = "인물별 조회")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description="공유 인물별 조회 성공 ",
-                    content = {@Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = ShareDTO.class)))})
-    })
-    @GetMapping("/{group_id}/{suggest_id}")
-    public ResponseEntity<Object> getPersonalShareDatas(@PathVariable Long group_id, @PathVariable Long suggest_id) {
-        Long my_id = 1L; // 로그인 데이터
-        List<ShareDTO> chapterDTOList = shareService.getPersonalShareData(group_id,suggest_id, my_id);
+                    content = {@Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = PersonalShareDto.class)))})
 
-        return CommonResponse.createResponse(200, "그룹 주제 조회 성공", chapterDTOList);
+    })
+    @GetMapping("/{groupId}/{suggestId}")
+    public ResponseEntity<Object> getPersonalShareDataList(@PathVariable Long groupId, @PathVariable Long suggestId) {
+        Long myId = 1L; // 로그인 데이터
+        List<PersonalShareDto> chapterDtoList = shareService.getPersonalShareData(groupId,suggestId, myId);
+
+        return CommonResponse.createResponse(200, "공유 인물별 조회 성공", chapterDtoList);
+
     }
 }

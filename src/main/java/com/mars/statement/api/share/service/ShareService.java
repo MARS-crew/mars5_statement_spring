@@ -1,80 +1,64 @@
 package com.mars.statement.api.share.service;
 
 import com.mars.statement.api.chapter.domain.Chapter;
-import com.mars.statement.api.chapter.domain.Suggest;
-import com.mars.statement.api.chapter.dto.ChapterDTO;
 import com.mars.statement.api.chapter.service.ChapterService;
 import com.mars.statement.api.chapter.service.SuggestService;
-import com.mars.statement.api.group.domain.GroupMember;
 import com.mars.statement.api.group.service.GroupMemberService;
-import com.mars.statement.api.share.domain.Share;
-import com.mars.statement.api.share.dto.MemberOpinionDTO;
-import com.mars.statement.api.share.dto.OpinionDTO;
-import com.mars.statement.api.share.dto.ShareDTO;
+import com.mars.statement.api.share.dto.MemberOpinionDto;
+import com.mars.statement.api.share.dto.OpinionDto;
+import com.mars.statement.api.share.dto.PersonalShareDto;
 import com.mars.statement.api.share.repository.ShareRepository;
-import org.modelmapper.ModelMapper;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 public class ShareService {
 
-    private final GroupMemberService groupMemberService;
 
+    private final GroupMemberService groupMemberService;
     private final SuggestService suggestService;
+    private final ChapterService chapterService;
+
     private final ShareRepository shareRepository;
 
-    private final ChapterService chapterService;
-    private final ModelMapper modelMapper;
-
-    public ShareService(GroupMemberService groupMemberService, SuggestService suggestService, ShareRepository shareRepository,
-                        ChapterService chapterService, ModelMapper modelMapper){
-        this.groupMemberService = groupMemberService;
-        this.suggestService = suggestService;
-        this.shareRepository = shareRepository;
-        this.chapterService = chapterService;
-        this.modelMapper = modelMapper;
-    }
-
-    public List<ShareDTO> getPersonalShareData(Long group_id, Long suggest_id, Long my_id){
-
-        List<Chapter> chapters = chapterService.getChaptersByMemberId(group_id, my_id, suggest_id);
+    public List<PersonalShareDto> getPersonalShareData(Long groupId, Long suggestId, Long myId) {
+        List<Chapter> chapters = chapterService.getChaptersByMemberId(groupId, myId, suggestId);
         List<Long> chapterIds = chapters.stream().map(Chapter::getId).toList();
 
-
-        List<ShareDTO> personalShares = shareRepository.findPersonalSharesByIds(chapterIds);
+        List<PersonalShareDto> personalShares = shareRepository.findPersonalSharesByIds(chapterIds);
 
         return personalShares.stream()
                 .collect(Collectors.groupingBy(
-                        ShareDTO::getSuggestId,
+                        PersonalShareDto::getSuggestId,
                         Collectors.groupingBy(
-                                shareDTO -> shareDTO.getMemberOpinionDTO().getMemberId()
+                                PersonalShareDto -> PersonalShareDto.getMemberOpinionDtoList().get(0).getMemberId(),
+                                Collectors.toList()
                         )
                 ))
                 .entrySet().stream()
                 .flatMap(suggestEntry -> suggestEntry.getValue().entrySet().stream()
                         .map(memberEntry -> {
-                            Long suggestId = suggestEntry.getKey();
+                            Long sId = suggestEntry.getKey();
                             Long memberId = memberEntry.getKey();
-                            List<ShareDTO> shareDTOs = memberEntry.getValue();
+                            List<PersonalShareDto> PersonalShareDtos = memberEntry.getValue();
 
-                            List<OpinionDTO> opinionDTOList = shareDTOs.stream()
-                                    .map(ShareDTO::getMemberOpinionDTO)
-                                    .map(MemberOpinionDTO::getOpinionDTO)
+                            List<OpinionDto> opinionDtoList = PersonalShareDtos.stream()
+                                    .flatMap(dto -> dto.getMemberOpinionDtoList().stream())
+                                    .map(MemberOpinionDto::getOpinionDtoList)
+                                    .flatMap(List::stream)
                                     .collect(Collectors.toList());
 
-                            MemberOpinionDTO mergedMemberOpinionDTO = new MemberOpinionDTO(memberId,
-                                    shareDTOs.get(0).getMemberOpinionDTO().getMemberName(),
-                                    shareDTOs.get(0).getMemberOpinionDTO().getMemberImg(), opinionDTOList);
+                            MemberOpinionDto mergedMemberOpinionDto = new MemberOpinionDto(memberId,
+                                    PersonalShareDtos.get(0).getMemberOpinionDto().getMemberName(),
+                                    PersonalShareDtos.get(0).getMemberOpinionDto().getMemberImg(), opinionDtoList);
 
-                            return new ShareDTO(suggestId, shareDTOs.get(0).getSuggest(), mergedMemberOpinionDTO);
+                            return new PersonalShareDto(sId, PersonalShareDtos.get(0).getSuggest(), mergedMemberOpinionDto);
+
                         }))
                 .toList();
     }
-
 }
