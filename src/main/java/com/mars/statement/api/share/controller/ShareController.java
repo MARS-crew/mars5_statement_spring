@@ -1,6 +1,7 @@
 package com.mars.statement.api.share.controller;
 
 
+import com.mars.statement.api.share.dto.PersonalShareDto;
 import com.mars.statement.api.share.dto.ShareDto;
 import com.mars.statement.api.share.service.ShareService;
 import com.mars.statement.global.dto.CommonResponse;
@@ -31,12 +32,12 @@ public class ShareController {
     @Tag(name="공유", description = "인물별 조회")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description="공유 인물별 조회 성공 ",
-                    content = {@Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = ShareDto.class)))})
+                    content = {@Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = PersonalShareDto.class)))})
     })
-    @GetMapping("/{group_id}/{suggest_id}")
-    public ResponseEntity<Object> getPersonalShareDatas(@PathVariable Long group_id, @PathVariable Long suggest_id) {
-        Long my_id = 1L; // 로그인 데이터
-        List<ShareDto> chapterDtoList = shareService.getPersonalShareData(group_id,suggest_id, my_id);
+    @GetMapping("/{groupId}/{suggestId}")
+    public ResponseEntity<Object> getPersonalShareDatas(@PathVariable Long groupId, @PathVariable Long suggestId) {
+        Long myId = 1L; // 로그인 데이터
+        List<PersonalShareDto> chapterDtoList = shareService.getPersonalShareData(suggestId, myId);
 
         return CommonResponse.createResponse(200, "공유 인물별 조회 성공", chapterDtoList);
     }

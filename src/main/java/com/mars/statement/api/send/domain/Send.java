@@ -24,7 +24,6 @@ import java.sql.Timestamp;
                 )
         }
 )
-@EntityListeners(AuditingEntityListener.class)
 public class Send {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

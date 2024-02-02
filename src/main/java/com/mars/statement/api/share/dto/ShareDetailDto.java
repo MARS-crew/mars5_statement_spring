@@ -22,15 +22,15 @@ public class ShareDetailDto {
     private Long chapterId;
     private String summary;
 
-    @JsonIgnore
-    private ShareMemberDtailDto shareMemberDtailDto;
-
-    @Transient
-    private List<ShareMemberDtailDto> shareMemberList;
-
-    public ShareDetailDto(Long suggestId, String suggest, Long chapterTimes, Long chapterId, List<ShareMemberDtailDto> shareMemberList){
-        this.suggestId = suggestId; this.suggest = suggest;
-        this.chapterTimes = chapterTimes; this.chapterId = chapterId;
-        this.shareMemberList = shareMemberList;
-    }
+//    @JsonIgnore
+//    private ShareMemberDtailDto shareMemberDtailDto;
+//
+//    @Transient
+//    private List<ShareMemberDtailDto> shareMemberList;
+//
+//    public ShareDetailDto(Long suggestId, String suggest, Long chapterTimes, Long chapterId, List<ShareMemberDtailDto> shareMemberList){
+//        this.suggestId = suggestId; this.suggest = suggest;
+//        this.chapterTimes = chapterTimes; this.chapterId = chapterId;
+//        this.shareMemberList = shareMemberList;
+//    }
 }
