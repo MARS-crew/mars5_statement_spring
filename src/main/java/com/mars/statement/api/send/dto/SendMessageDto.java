@@ -10,6 +10,8 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class SendMessageDto {
+
     private Long to_id;
     private String message;
+
 }

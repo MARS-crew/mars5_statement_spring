@@ -16,5 +16,4 @@ public class OpinionDto {
     private String opinion;
     private String location;
 
-
 }

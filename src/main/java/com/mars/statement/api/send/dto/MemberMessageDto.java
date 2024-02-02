@@ -15,9 +15,7 @@ public class MemberMessageDto {
     private Long memberId;
     private String memberName;
     private String memberImg;
-
     private MessageDto messageDto;
-
     @Transient
     private List<MessageDto> messageDtoList;
 

@@ -18,10 +18,8 @@ public class PersonalSendDto {
 
     private Long suggestId;
     private String suggest;
-
     @JsonIgnore
     private MemberMessageDto memberMessageDto;
-
     @Transient
     private List<MemberMessageDto> memberMessageDtoList;
 

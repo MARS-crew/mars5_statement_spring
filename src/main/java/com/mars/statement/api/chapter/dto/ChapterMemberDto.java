@@ -12,7 +12,6 @@ public class ChapterMemberDto {
 
     private Long memberId;
     private String summary;
-
     @JsonProperty("userName")
     private String userName;
 }

@@ -15,6 +15,7 @@ public class ShareMemberDto {
     private Timestamp regDt;
     private String opinion;
     private String location;
+
     public ShareMemberDto(Long memberId, String memberName, String email, Timestamp regDt, String opinion, String location) {
         this.memberId = memberId;
         this.memberName = memberName;

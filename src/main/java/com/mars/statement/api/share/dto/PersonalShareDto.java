@@ -17,13 +17,10 @@ public class PersonalShareDto {
 
     private Long suggestId;
     private String suggest;
-
     @JsonIgnore
     private MemberOpinionDto memberOpinionDto;
-
     @Transient
     private List<MemberOpinionDto> memberOpinionDtoList;
-
 
     public PersonalShareDto(Long suggestId, String suggest, MemberOpinionDto memberOpinionDto){
         this.suggestId = suggestId; this.suggest = suggest; this.memberOpinionDto = memberOpinionDto;

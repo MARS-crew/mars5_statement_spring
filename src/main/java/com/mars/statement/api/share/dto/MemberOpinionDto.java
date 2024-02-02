@@ -12,12 +12,11 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class MemberOpinionDto {
+
     private Long memberId;
     private String memberName;
     private String memberImg;
-
     private OpinionDto opinionDto;
-
     @Transient
     private List<OpinionDto> opinionDtoList;
 
@@ -25,7 +24,6 @@ public class MemberOpinionDto {
         this.memberId = memberId; this.memberName=memberName;
         this.memberImg = memberImg; this.opinionDto = opinionDto;
         this.opinionDtoList = Collections.singletonList(opinionDto);
-
     }
     public MemberOpinionDto(Long memberId, String memberName, String memberImg, List<OpinionDto> opinionDtoList) {
         this.memberId = memberId; this.memberName=memberName;
