@@ -25,8 +25,8 @@ public class ShareService {
 
     private final ShareRepository shareRepository;
 
-    public List<PersonalShareDto> getPersonalShareData(Long group_id, Long suggest_id, Long my_id) {
-        List<Chapter> chapters = chapterService.getChaptersByMemberId(group_id, my_id, suggest_id);
+    public List<PersonalShareDto> getPersonalShareData(Long groupId, Long suggestId, Long myId) {
+        List<Chapter> chapters = chapterService.getChaptersByMemberId(groupId, myId, suggestId);
         List<Long> chapterIds = chapters.stream().map(Chapter::getId).toList();
 
         List<PersonalShareDto> personalShares = shareRepository.findPersonalSharesByIds(chapterIds);
@@ -42,7 +42,7 @@ public class ShareService {
                 .entrySet().stream()
                 .flatMap(suggestEntry -> suggestEntry.getValue().entrySet().stream()
                         .map(memberEntry -> {
-                            Long suggestId = suggestEntry.getKey();
+                            Long sId = suggestEntry.getKey();
                             Long memberId = memberEntry.getKey();
                             List<PersonalShareDto> PersonalShareDtos = memberEntry.getValue();
 
@@ -56,7 +56,7 @@ public class ShareService {
                                     PersonalShareDtos.get(0).getMemberOpinionDto().getMemberName(),
                                     PersonalShareDtos.get(0).getMemberOpinionDto().getMemberImg(), opinionDtoList);
 
-                            return new PersonalShareDto(suggestId, PersonalShareDtos.get(0).getSuggest(), mergedMemberOpinionDto);
+                            return new PersonalShareDto(sId, PersonalShareDtos.get(0).getSuggest(), mergedMemberOpinionDto);
 
                         }))
                 .toList();

@@ -35,10 +35,10 @@ public class ShareController {
                     content = {@Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = PersonalShareDto.class)))})
 
     })
-    @GetMapping("/{group_id}/{suggest_id}")
-    public ResponseEntity<Object> getPersonalShareDatas(@PathVariable Long group_id, @PathVariable Long suggest_id) {
-        Long my_id = 1L; // 로그인 데이터
-        List<PersonalShareDto> chapterDtoList = shareService.getPersonalShareData(group_id,suggest_id, my_id);
+    @GetMapping("/{groupId}/{suggestId}")
+    public ResponseEntity<Object> getPersonalShareDataList(@PathVariable Long groupId, @PathVariable Long suggestId) {
+        Long myId = 1L; // 로그인 데이터
+        List<PersonalShareDto> chapterDtoList = shareService.getPersonalShareData(groupId,suggestId, myId);
 
         return CommonResponse.createResponse(200, "공유 인물별 조회 성공", chapterDtoList);
 

@@ -32,9 +32,9 @@ public class GroupController {
             @ApiResponse(responseCode = "200", description="그룹 조회 성공 ",
             content = {@Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = Suggest.class)))})
     })
-    @GetMapping("/{group_id}")
-    public ResponseEntity<Object> getGroupSuggest(@PathVariable Long group_id) {
-        List<Suggest> suggest = suggestService.getSuggestByGroupId(group_id);
+    @GetMapping("/{groupId}")
+    public ResponseEntity<Object> getGroupSuggest(@PathVariable Long groupId) {
+        List<Suggest> suggest = suggestService.getSuggestByGroupId(groupId);
 
         return CommonResponse.createResponse(200, "그룹 주제 조회 성공", suggest);
     }

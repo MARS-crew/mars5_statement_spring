@@ -14,7 +14,7 @@ public class GroupMemberService {
         this.groupMemberRepository = groupMemberRepository;
     }
 
-    public GroupMember getGroupMemberByGroupIdAndUser(Long group_id, Long user_id) {
-        return groupMemberRepository.findByGroupIdAndUser_Id(group_id, user_id);
+    public GroupMember getGroupMemberByGroupIdAndUser(Long groupId, Long userId) {
+        return groupMemberRepository.findByGroupIdAndUser_Id(groupId, userId);
     }
 }

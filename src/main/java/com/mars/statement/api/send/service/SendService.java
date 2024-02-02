@@ -33,11 +33,11 @@ public class SendService {
     private final SendRepository sendRepository;
 
     @Transactional
-    public int saveSendMessage(Long chapter_id, List<SendMessageDto> messageDtoList, Long from_id) {
+    public int saveSendMessage(Long chapterId, List<SendMessageDto> messageDtoList, Long fromId) {
 
         try {
-            Chapter chapter = chapterService.findChapterById(chapter_id);
-            ChapterMember from = chapterMemberService.findChapterMemberById(chapter.getId(), from_id);
+            Chapter chapter = chapterService.findChapterById(chapterId);
+            ChapterMember from = chapterMemberService.findChapterMemberById(chapter.getId(), fromId);
 
             List<Send> sendList = new ArrayList<>();
 
