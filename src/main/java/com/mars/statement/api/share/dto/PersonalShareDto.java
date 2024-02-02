@@ -13,7 +13,7 @@ import java.util.List;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class ShareDto {
+public class PersonalShareDto {
 
     private Long suggestId;
     private String suggest;
@@ -25,7 +25,7 @@ public class ShareDto {
     private List<MemberOpinionDto> memberOpinionDtoList;
 
 
-    public ShareDto(Long suggestId, String suggest, MemberOpinionDto memberOpinionDto){
+    public PersonalShareDto(Long suggestId, String suggest, MemberOpinionDto memberOpinionDto){
         this.suggestId = suggestId; this.suggest = suggest; this.memberOpinionDto = memberOpinionDto;
         this.memberOpinionDtoList = Collections.singletonList(memberOpinionDto);  // 수정된 부분
 
