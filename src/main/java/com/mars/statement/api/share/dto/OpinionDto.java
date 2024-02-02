@@ -9,7 +9,7 @@ import java.sql.Timestamp;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class OpinionDTO {
+public class OpinionDto {
 
     private Long chapterId;
     private Timestamp regDt;

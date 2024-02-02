@@ -1,15 +1,11 @@
 package com.mars.statement.api.chapter.domain;
 
-import com.mars.statement.api.group.domain.Group;
-import com.mars.statement.api.group.domain.GroupMember;
-import com.mars.statement.api.share.dto.OpinionDTO;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.sql.Timestamp;
-import java.util.List;
 import java.util.Set;
 
 @Builder

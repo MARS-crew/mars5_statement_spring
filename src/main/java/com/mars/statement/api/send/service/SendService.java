@@ -43,7 +43,7 @@ public class SendService {
 
 
     @Transactional
-    public int saveSendMessage(Long chapter_id, List<SendMessageDTO> messageDTOList, Long from_id) {
+    public int saveSendMessage(Long chapter_id, List<SendMessageDto> messageDtoList, Long from_id) {
 
         try {
             Chapter chapter = chapterService.findChapterById(chapter_id);
@@ -52,10 +52,10 @@ public class SendService {
 
             List<Send> sendList = new ArrayList<>();
 
-            for (SendMessageDTO messageDTO : messageDTOList) {
-                ChapterMember to = chapterMemberService.findChapterMemberById(chapter.getId(), messageDTO.getTo_id());
+            for (SendMessageDto messageDto : messageDtoList) {
+                ChapterMember to = chapterMemberService.findChapterMemberById(chapter.getId(), messageDto.getTo_id());
                 System.out.println(to.getId());
-                Send send = new Send(chapter, from, to, messageDTO.getMessage());
+                Send send = new Send(chapter, from, to, messageDto.getMessage());
 
                 sendList.add(send);
             }
@@ -75,52 +75,40 @@ public class SendService {
         }
     }
 
-    public List<PersonalSendDTO> getPersonalSendData(Long group_id, Long suggest_id, Long my_id){
+    public List<PersonalSendDto> getPersonalSendData(Long groupId, Long suggestId, Long myId){
 
-        GroupMember member = groupMemberService.getGroupMemberByGroupIdAndUser(group_id,my_id);
+        GroupMember member = groupMemberService.getGroupMemberByGroupIdAndUser(groupId,myId);
 
 
         // 챕터 조회
-        List<Chapter> chapters = chapterService.getChaptersByMemberId(group_id, my_id, suggest_id);
+        List<Chapter> chapters = chapterService.getChaptersByMemberId(groupId, myId, suggestId);
         List<Long> chapterIds = chapters.stream().map(Chapter::getId).toList();
         // 리스트
         System.out.println(chapterIds);
-        List<PersonalSendDTO> personalSends = sendRepository.findPersonalSharesByIds(chapterIds, member.getId());
+        List<PersonalSendDto> personalSends = sendRepository.findPersonalSharesByIds(chapterIds, member.getId());
 
 
-        Map<Long, Map<Long, List<PersonalSendDTO>>> groupedSends = personalSends.stream()
+        Map<Long, Map<Long, List<PersonalSendDto>>> groupedSends = personalSends.stream()
                 .collect(Collectors.groupingBy(
-                        PersonalSendDTO:: getSuggestId,
+                        PersonalSendDto:: getSuggestId,
                         Collectors.groupingBy(
-                                sendDTO-> sendDTO.getMemberMessageDTO().getMemberId()
+                                sendDto-> sendDto.getMemberMessageDtoList().get(0).getMemberId()
                         )
                 ));
-        return personalSends.stream()
-                .collect(Collectors.groupingBy(
-                        PersonalSendDTO::getSuggestId,
-                        Collectors.groupingBy(
-                                PersonalSendDTO -> PersonalSendDTO.getMemberMessageDTO().getMemberId()
-                        )
-                ))
-                .entrySet().stream()
-                .flatMap(suggestEntry -> suggestEntry.getValue().entrySet().stream()
-                        .map(memberEntry ->{
-                            Long suggestId = suggestEntry.getKey();
-                            Long memberId = memberEntry.getKey();
-                            List<PersonalSendDTO> sendDTOs = memberEntry.getValue();
 
-                            List<MessageDTO> messageList = sendDTOs.stream()
-                                    .map(PersonalSendDTO:: getMemberMessageDTO)
-                                    .map(MemberMessageDTO::getMessageDTO)
+
+
+        return groupedSends.entrySet().stream()
+                .flatMap(suggestEntry -> suggestEntry.getValue().values().stream()
+                        .map(sendDtoS -> {
+                            Long sId = suggestEntry.getKey();
+
+                            List<MemberMessageDto> memberMessageList = sendDtoS.stream()
+                                    .map(PersonalSendDto::getMemberMessageDtoList)
+                                    .flatMap(List::stream)
                                     .toList();
-                            MemberMessageDTO mergedMemberMessageDTO
-                                    = new MemberMessageDTO(memberId, sendDTOs.get(0).getMemberMessageDTO().getMemberName(),
-                                    sendDTOs.get(0).getMemberMessageDTO().getMemberImg(), messageList);
 
-                            List<MemberMessageDTO> memberMessageList = new ArrayList<>();
-                            memberMessageList.add(mergedMemberMessageDTO);
-
-                            return new PersonalSendDTO(suggestId, sendDTOs.get(0).getSuggest(), memberMessageList);
+                            return new PersonalSendDto(suggestId, sendDtoS.get(0).getSuggest(), memberMessageList);
                         }))
                 .toList();
 

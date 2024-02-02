@@ -3,8 +3,8 @@ package com.mars.statement.api.chapter.service;
 import com.mars.statement.api.chapter.domain.Chapter;
 import com.mars.statement.api.chapter.domain.ChapterMember;
 import com.mars.statement.api.chapter.domain.Suggest;
-import com.mars.statement.api.chapter.dto.ChapterMemberDTO;
-import com.mars.statement.api.chapter.dto.ChapterWithMemberDTO;
+import com.mars.statement.api.chapter.dto.ChapterMemberDto;
+import com.mars.statement.api.chapter.dto.ChapterWithMemberDto;
 import com.mars.statement.api.chapter.repository.ChapterRepository;
 import com.mars.statement.api.group.domain.GroupMember;
 import com.mars.statement.api.group.service.GroupMemberService;
@@ -39,19 +39,19 @@ public class ChapterService {
         return chapterRepository.findById(id).orElse(null);
     }
 
-    public ChapterWithMemberDTO getChapterWithMembers(Long chapter_id) {
+    public ChapterWithMemberDto getChapterWithMembers(Long chapter_id) {
 
         Chapter chapter = chapterRepository.findChapterWithMembers(chapter_id);
 
         if(chapter != null) {
-            List<ChapterMemberDTO> chapterMemberDTOList = chapter.getChapterMembers()
+            List<ChapterMemberDto> chapterMemberDtoList = chapter.getChapterMembers()
                     .stream()
-                    .map(chapterMember -> new ChapterMemberDTO(
+                    .map(chapterMember -> new ChapterMemberDto(
                             chapterMember.getGroupMember().getId(),
                             chapterMember.getSummary(),
                             chapterMember.getGroupMember().getUser().getName()
                     )).toList();
-            return new ChapterWithMemberDTO(chapter.getId(), chapter.getSuggest().getSuggest(),chapter.getSuggest().getType(), chapterMemberDTOList);
+            return new ChapterWithMemberDto(chapter.getId(), chapter.getSuggest().getSuggest(),chapter.getSuggest().getType(), chapterMemberDtoList);
         }
 
         return null;

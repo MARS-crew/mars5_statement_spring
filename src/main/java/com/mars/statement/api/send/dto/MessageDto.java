@@ -9,7 +9,7 @@ import java.sql.Timestamp;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class MessageDTO {
+public class MessageDto {
 
     private Long chapterId;
     private Long chapterMemberId;
