@@ -20,6 +20,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/share")
+
 public class ShareController {
 
     private final ShareService shareService;
@@ -32,6 +33,7 @@ public class ShareController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description="공유 인물별 조회 성공 ",
                     content = {@Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = PersonalShareDto.class)))})
+
     })
     @GetMapping("/{group_id}/{suggest_id}")
     public ResponseEntity<Object> getPersonalShareDatas(@PathVariable Long group_id, @PathVariable Long suggest_id) {
@@ -39,5 +41,6 @@ public class ShareController {
         List<PersonalShareDto> chapterDtoList = shareService.getPersonalShareData(group_id,suggest_id, my_id);
 
         return CommonResponse.createResponse(200, "공유 인물별 조회 성공", chapterDtoList);
+
     }
 }

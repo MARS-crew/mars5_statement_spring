@@ -17,14 +17,21 @@ public class PersonalShareDto {
 
     private Long suggestId;
     private String suggest;
+
     @JsonIgnore
     private MemberOpinionDto memberOpinionDto;
+
     @Transient
     private List<MemberOpinionDto> memberOpinionDtoList;
 
     public PersonalShareDto(Long suggestId, String suggest, MemberOpinionDto memberOpinionDto){
         this.suggestId = suggestId; this.suggest = suggest; this.memberOpinionDto = memberOpinionDto;
-        this.memberOpinionDtoList = Collections.singletonList(memberOpinionDto);  // 수정된 부분
+        this.memberOpinionDtoList = Collections.singletonList(memberOpinionDto);
+
+    }
+    public PersonalShareDto(Long suggestId, String suggest, List<MemberOpinionDto> memberOpinionDtoList){
+        this.suggestId = suggestId; this.suggest = suggest;
+        this.memberOpinionDtoList = memberOpinionDtoList;
 
     }
 

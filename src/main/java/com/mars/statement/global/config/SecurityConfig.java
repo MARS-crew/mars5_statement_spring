@@ -3,8 +3,6 @@ package com.mars.statement.global.config;
 import com.mars.statement.global.filter.JwtAuthorizationFilter;
 import com.mars.statement.global.jwt.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
-import org.modelmapper.ModelMapper;
-import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -20,14 +18,14 @@ public class SecurityConfig {
     private final JwtTokenProvider jwtTokenProvider;
 
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception{
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
                 // cors 설정
                 //.cors((cors) -> cors.configurationSource(apiConfigurationSource()))
                 // csrf 비활성화(jwt방식은 세션 공격 상관 X)
-                .csrf((auth)->auth.disable())
+                .csrf((auth) -> auth.disable())
                 // 세션 설정
-                .sessionManagement((session)->session
+                .sessionManagement((session) -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 // form로그인 방식 비활성
                 .formLogin((auth) -> auth.disable())
@@ -46,15 +44,5 @@ public class SecurityConfig {
 
 
         return http.build();
-    }
-    @Bean
-    public ModelMapper modelMapper() {
-        ModelMapper modelMapper = new ModelMapper();
-        modelMapper.getConfiguration()
-                .setFieldAccessLevel(org.modelmapper.config.Configuration.AccessLevel.PRIVATE)
-                .setFieldMatchingEnabled(true)
-                .setMatchingStrategy(MatchingStrategies.STRICT);
-
-        return modelMapper;
     }
 }

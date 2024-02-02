@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.util.Collections;
+
 import java.util.List;
 
 @Getter
@@ -20,8 +21,10 @@ public class MemberMessageDto {
     private List<MessageDto> messageDtoList;
 
     public MemberMessageDto(Long memberId, String memberName, String memberImg, MessageDto messageDto) {
-        this.memberId = memberId; this.memberName=memberName;
-        this.memberImg = memberImg; this.messageDto = messageDto;
+        this.memberId = memberId;
+        this.memberName = memberName;
+        this.memberImg = memberImg;
+        this.messageDto = messageDto;
         this.messageDtoList = Collections.singletonList(messageDto);
 
     }
@@ -32,5 +35,4 @@ public class MemberMessageDto {
         this.memberImg = memberImg;
         this.messageDtoList = messageDtoList;
     }
-
 }

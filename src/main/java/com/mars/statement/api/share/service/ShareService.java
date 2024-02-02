@@ -9,7 +9,6 @@ import com.mars.statement.api.share.dto.OpinionDto;
 import com.mars.statement.api.share.dto.PersonalShareDto;
 import com.mars.statement.api.share.repository.ShareRepository;
 import lombok.RequiredArgsConstructor;
-import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -19,7 +18,6 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class ShareService {
 
-    private final ModelMapper modelMapper;
 
     private final GroupMemberService groupMemberService;
     private final SuggestService suggestService;
@@ -37,7 +35,7 @@ public class ShareService {
                 .collect(Collectors.groupingBy(
                         PersonalShareDto::getSuggestId,
                         Collectors.groupingBy(
-                                PersonalShareDto -> PersonalShareDto.getMemberOpinionDto().getMemberId(),
+                                PersonalShareDto -> PersonalShareDto.getMemberOpinionDtoList().get(0).getMemberId(),
                                 Collectors.toList()
                         )
                 ))
@@ -59,9 +57,8 @@ public class ShareService {
                                     PersonalShareDtos.get(0).getMemberOpinionDto().getMemberImg(), opinionDtoList);
 
                             return new PersonalShareDto(suggestId, PersonalShareDtos.get(0).getSuggest(), mergedMemberOpinionDto);
+
                         }))
                 .toList();
     }
-
-
 }

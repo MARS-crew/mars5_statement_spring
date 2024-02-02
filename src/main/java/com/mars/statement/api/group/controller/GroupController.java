@@ -9,6 +9,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -19,14 +20,12 @@ import javax.swing.text.html.parser.Entity;
 import java.util.List;
 
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/api/v1/group")
 public class GroupController {
 
     private final SuggestService suggestService;
 
-    public GroupController(SuggestService suggestService){
-        this.suggestService = suggestService;
-    }
 
     @Tag(name="그룹", description = "그룹 주제 조회")
     @ApiResponses(value = {

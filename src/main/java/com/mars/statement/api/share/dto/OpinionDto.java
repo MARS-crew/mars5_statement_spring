@@ -11,6 +11,7 @@ import java.sql.Timestamp;
 @AllArgsConstructor
 public class OpinionDto {
 
+
     private Long chapterId;
     private Timestamp regDt;
     private String opinion;

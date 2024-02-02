@@ -12,6 +12,7 @@ import com.mars.statement.api.send.dto.*;
 import com.mars.statement.api.send.repository.SendRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -37,7 +38,6 @@ public class SendService {
         try {
             Chapter chapter = chapterService.findChapterById(chapter_id);
             ChapterMember from = chapterMemberService.findChapterMemberById(chapter.getId(), from_id);
-            System.out.println(chapter.getId() + " " + from.getId());
 
             List<Send> sendList = new ArrayList<>();
 
@@ -45,7 +45,6 @@ public class SendService {
                 ChapterMember to = chapterMemberService.findChapterMemberById(chapter.getId(), messageDto.getTo_id());
                 System.out.println(to.getId());
                 Send send = new Send(chapter, from, to, messageDto.getMessage());
-
                 sendList.add(send);
             }
 
@@ -101,7 +100,6 @@ public class SendService {
                                     personalSendDto.get(0).getMemberMessageDtoList().get(0).getMemberImg(),
                                     messageDtoList
                             );
-
                             return new PersonalSendDto(sId, personalSendDto.get(0).getSuggest(), mergedMemberMessageDto);
                         }))
                 .toList();

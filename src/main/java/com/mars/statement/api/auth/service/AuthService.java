@@ -10,6 +10,8 @@ import com.mars.statement.global.exception.NotFoundException;
 import com.mars.statement.global.jwt.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -22,6 +24,12 @@ import java.util.Objects;
 public class AuthService {
     private final UserRepository userRepository;
     private final JwtTokenProvider jwtTokenProvider;
+
+    @Autowired
+    public AuthService(@Lazy JwtTokenProvider jwtTokenProvider, UserRepository userRepository) {
+        this.jwtTokenProvider = jwtTokenProvider;
+        this.userRepository = userRepository;
+    }
 
     public ResponseEntity<?> login(LoginRequest loginRequest) throws NotFoundException {
 

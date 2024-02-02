@@ -9,10 +9,12 @@ import java.sql.Timestamp;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
+
 public class MessageDto {
     private Long chapterId;
     private Long chapterMemberId;
     private Timestamp regDt;
     private String message;
     private String location;
+
 }
