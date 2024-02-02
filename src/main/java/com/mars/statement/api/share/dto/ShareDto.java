@@ -6,11 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import javax.crypto.SecretKey;
-import java.lang.reflect.Member;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 @Getter
 @NoArgsConstructor
@@ -19,7 +15,21 @@ public class ShareDto {
 
     private Long suggestId;
     private String suggest;
-    private MemberOpinionDto memberOpinionDTO;
+    private MemberOpinionDto memberOpinionDto;
+
+    @Transient
+    private List<MemberOpinionDto> memberOpinionDtoList;
+
+
+    public ShareDto(Long suggestId, String suggest, MemberOpinionDto memberOpinionDto){
+        this.suggestId = suggestId; this.suggest = suggest; this.memberOpinionDto = memberOpinionDto;
+    }
+
+    public ShareDto(Long suggestId, String suggest, List<MemberOpinionDto> memberOpinionDtoList){
+        this.suggestId=suggestId; this.suggest=suggest;
+        this.memberOpinionDtoList = memberOpinionDtoList;
+    }
+
 
 
 }

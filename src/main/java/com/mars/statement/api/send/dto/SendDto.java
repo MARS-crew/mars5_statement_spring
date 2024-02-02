@@ -12,8 +12,10 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class SendDto {
-
     private Long chapter_id;
+
     private List<SendMessageDto> messageDtoList;
+
+
 
 }

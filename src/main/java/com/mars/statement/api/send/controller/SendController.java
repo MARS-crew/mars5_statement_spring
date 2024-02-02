@@ -2,58 +2,47 @@ package com.mars.statement.api.send.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.mars.statement.api.chapter.dto.ChapterWithMemberDto;
-import com.mars.statement.api.chapter.dto.CheckChapterDto;
 import com.mars.statement.api.chapter.service.ChapterService;
 import com.mars.statement.api.send.dto.PersonalSendDto;
 import com.mars.statement.api.send.dto.SendMessageDto;
 import com.mars.statement.api.send.service.SendService;
 import com.mars.statement.global.dto.CommonResponse;
-import com.mars.statement.global.dto.UserDto;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
-
-import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
-<<<<<<< HEAD
-@Tag(name="전달")
-@RequiredArgsConstructor
-=======
->>>>>>> 2353432 (api url 통일)
 @RequestMapping("/api/v1/send")
 public class SendController {
 
     private final ChapterService chapterService;
     private final SendService sendService;
 
-    @GetMapping("/{chapterId}")
-    public ResponseEntity<Object> getChapterWithMembers(@PathVariable Long chapterId) throws JsonProcessingException {
-        ChapterWithMemberDto chapter = chapterService.getChapterWithMembers(chapterId);
 
+    public SendController(ChapterService chapterService, SendService sendService) {
+        this.chapterService = chapterService;
+        this.sendService = sendService;
+    }
+
+
+    @Tag(name = "전달", description = "회차멤버 조회")
+    @GetMapping("/{chapter_id}")
+    public ResponseEntity<Object> getChapterWithMembers(@PathVariable Long chapter_id) throws JsonProcessingException {
+        ChapterWithMemberDto chapter = chapterService.getChapterWithMembers(chapter_id);
 
         return CommonResponse.createResponse(200, "회차 멤버 조회 성공", chapter);
     }
 
-<<<<<<< HEAD
-    @Tag(name = "전달", description = "메세지 작성")
-    @PostMapping("/write/{chapterId}")
-    public ResponseEntity<Object> writeMessage(@PathVariable Long chapterId, @RequestBody List<SendMessageDto> messageDtoList) {
-
-=======
     @Tag(name = "전달", description = "메세진 작성")
     @PostMapping("/write/{chapter_id}")
-    public ResponseEntity<Object> writeMessage(@PathVariable Long chapter_id, @RequestBody List<SendMessageDTO> messageDTOList) {
->>>>>>> 2353432 (api url 통일)
+    public ResponseEntity<Object> writeMessage(@PathVariable Long chapter_id, @RequestBody List<SendMessageDto> messageDtoList) {
 
         int code;
         String message;
@@ -62,9 +51,8 @@ public class SendController {
             code = 400;
             message = "메세지 전달 실패: 요청 데이터 null";
         } else {
-            Long toId = 1L; // 로그인 데이터
-            int result = sendService.saveSendMessage(chapterId, messageDtoList, toId);
-
+            Long to_id = 1L; // 로그인 데이터
+            int result = sendService.saveSendMessage(chapter_id, messageDtoList, to_id);
             if (result == 0) {
                 code = 200;
                 message = "메세지 전달 성공";
@@ -78,30 +66,19 @@ public class SendController {
         return CommonResponse.createResponseMessage(code, message);
     }
 
-    @Operation(summary = "전달 인물별 조회")
+    @Tag(name="전달", description = "인물별 조회")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "전달 인물별 조회 성공 ",
+            @ApiResponse(responseCode = "200", description="전달 인물별 조회 성공 ",
                     content = {@Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = PersonalSendDto.class)))})
     })
-    @GetMapping("/personal/{groupId}/{suggestId}")
-    public ResponseEntity<?> getPersonalSendDataList(@PathVariable Long groupId, @PathVariable Long suggestId) {
-        Long myId = 3L; // 로그인 데이터
-        List<PersonalSendDto> personalSendDataList = sendService.getPersonalSendData(groupId, suggestId, myId);
+    @GetMapping("/{group_id}/{suggest_id}")
+    public ResponseEntity<Object> getPersonalSendDatas(@PathVariable Long group_id, @PathVariable Long suggest_id) {
+        Long my_id = 3L; // 로그인 데이터
+        List<PersonalSendDto> personalSendList = sendService.getPersonalSendData(group_id,suggest_id, my_id);
 
-        return CommonResponse.createResponse(200, "전달 인물별 조회 성공", personalSendDataList);
-
+        return CommonResponse.createResponse(200, "전달 인물별 조회 성공", personalSendList);
     }
 
-    @Operation(summary = "전달 회차별 조회")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description="전달 회차별 조회 성공 ",
-                    content = {@Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = CheckChapterDto.class)))})
-    })
-    @GetMapping("/chapter/{suggestId}")
-    public ResponseEntity<?> getChapterSendDataList( @PathVariable Long suggestId, @Parameter(hidden = true) UserDto userDto) {
-        CheckChapterDto chapterDtoList = sendService.getChapterSendData(suggestId, userDto.getId());
 
-        return CommonResponse.createResponse(200, "전달 회차별 조회 성공", chapterDtoList);
 
-    }
 }
