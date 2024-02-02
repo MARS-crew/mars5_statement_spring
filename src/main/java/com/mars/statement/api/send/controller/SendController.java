@@ -40,7 +40,7 @@ public class SendController {
         return CommonResponse.createResponse(200, "회차 멤버 조회 성공", chapter);
     }
 
-    @Tag(name = "전달", description = "메세진 작성")
+    @Tag(name = "전달", description = "메세지 작성")
     @PostMapping("/write/{chapter_id}")
     public ResponseEntity<Object> writeMessage(@PathVariable Long chapter_id, @RequestBody List<SendMessageDto> messageDtoList) {
 
@@ -72,11 +72,11 @@ public class SendController {
                     content = {@Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = PersonalSendDto.class)))})
     })
     @GetMapping("/{group_id}/{suggest_id}")
-    public ResponseEntity<Object> getPersonalSendDatas(@PathVariable Long group_id, @PathVariable Long suggest_id) {
+    public ResponseEntity<Object> getPersonalSendDataList(@PathVariable Long group_id, @PathVariable Long suggest_id) {
         Long my_id = 3L; // 로그인 데이터
-        List<PersonalSendDto> personalSendList = sendService.getPersonalSendData(group_id,suggest_id, my_id);
+        List<PersonalSendDto> personalSendDataList = sendService.getPersonalSendData(group_id,suggest_id, my_id);
 
-        return CommonResponse.createResponse(200, "전달 인물별 조회 성공", personalSendList);
+        return CommonResponse.createResponse(200, "전달 인물별 조회 성공", personalSendDataList);
     }
 
 

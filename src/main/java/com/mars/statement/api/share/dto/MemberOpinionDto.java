@@ -24,7 +24,7 @@ public class MemberOpinionDto {
     public MemberOpinionDto(Long memberId, String memberName, String memberImg, OpinionDto opinionDto) {
         this.memberId = memberId; this.memberName=memberName;
         this.memberImg = memberImg; this.opinionDto = opinionDto;
-        this.opinionDtoList = Collections.singletonList(opinionDto); // 수정된 부분
+        this.opinionDtoList = Collections.singletonList(opinionDto);
 
     }
     public MemberOpinionDto(Long memberId, String memberName, String memberImg, List<OpinionDto> opinionDtoList) {
