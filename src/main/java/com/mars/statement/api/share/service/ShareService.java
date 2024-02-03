@@ -4,14 +4,13 @@ import com.mars.statement.api.chapter.domain.Chapter;
 import com.mars.statement.api.chapter.service.ChapterService;
 import com.mars.statement.api.chapter.service.SuggestService;
 import com.mars.statement.api.group.service.GroupMemberService;
-import com.mars.statement.api.share.dto.MemberOpinionDto;
-import com.mars.statement.api.share.dto.OpinionDto;
-import com.mars.statement.api.share.dto.PersonalShareDto;
+import com.mars.statement.api.share.dto.*;
 import com.mars.statement.api.share.repository.ShareRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -60,5 +59,29 @@ public class ShareService {
 
                         }))
                 .toList();
+    }
+
+    public ChapterShareDto getChapterShareData(Long groupId, Long suggestId, Long myId) {
+        List<Chapter> chapters = chapterService.getChaptersByMemberId(groupId, myId, suggestId);
+        List<Long> chapterIds = chapters.stream().map(Chapter::getId).toList();
+
+        List<ChapterShareDto> chapterShareDtoList = shareRepository.findChapterSharesByIds(chapterIds);
+
+        Map<Long, List<ChapterShareDto>> groupedData = chapterShareDtoList.stream()
+                .collect(Collectors.groupingBy(ChapterShareDto::getSuggestId));
+
+        List<ChapterShareDto> result = groupedData.entrySet().stream()
+                .map(entry -> {
+                    Long suggestIdResult = entry.getKey();
+                    String suggest = entry.getValue().get(0).getSuggest(); // 가정: 모든 suggest 값이 동일하다고 가정
+                    List<ChapterSummaryDto> chapterDtoList = entry.getValue().stream()
+                            .map(ChapterShareDto::getChapterSummaryDto)
+                            .collect(Collectors.toList());
+
+                    return new ChapterShareDto(suggestIdResult, suggest, chapterDtoList);
+                })
+                .collect(Collectors.toList());
+
+        return (ChapterShareDto) result;
     }
 }
