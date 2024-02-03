@@ -25,24 +25,24 @@ import org.springframework.web.bind.annotation.*;
 public class AuthController {
     private final AuthService authService;
 
-    @Operation(summary = "Login", description = "계정 정보가 없다면 회원가입 후 로그인")
+    @Operation(summary = "로그인", description = "계정 정보가 없다면 회원가입, 그룹 초대 수락 후 로그인")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "로그인 성공", content =
             @Content(mediaType = "application/json", examples = @ExampleObject(value = SwaggerExampleValue.LOGIN_SUCCESS_RESPONSE))),
             @ApiResponse(responseCode = "404", description = "유저를 찾을 수 없습니다.", content =
-            @Content(mediaType = "application/json", examples = @ExampleObject(value = "{\"status\":404,\"message\":\"유저를 찾을 수 없습니다.\"}")))
+            @Content(mediaType = "application/json", examples = @ExampleObject(value = "{\"code\":404,\"status\":\"NOT_FOUND\",\"message\":\"유저를 찾을 수 없습니다.\"}")))
     })
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody @Valid LoginRequest loginRequest) throws NotFoundException {
         return authService.login(loginRequest);
     }
 
-    @Operation(summary = "Reissue access-token", description = "access-token 재발급")
+    @Operation(summary = "토큰 재발급", description = "access-token 재발급")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "토큰 재발급 성공", content =
             @Content(mediaType = "application/json", examples = @ExampleObject(value = SwaggerExampleValue.REISSUE_SUCCESS_RESPONSE))),
             @ApiResponse(responseCode = "400", description = "refresh token이 만료되었습니다.", content =
-            @Content(mediaType = "application/json", examples = @ExampleObject(value = "{\"status\":400,\"message\":\"refresh token이 만료되었습니다.\"}")))
+            @Content(mediaType = "application/json", examples = @ExampleObject(value = "{\"code\":400,\"status\":\"BAD_REQUEST\",\"message\":\"refresh token이 만료되었습니다.\"}")))
     })
     @PostMapping("/reissue")
     public ResponseEntity<?> reissueToken(@RequestBody @Valid TokenReissueRequest request){
