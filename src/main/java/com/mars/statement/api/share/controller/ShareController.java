@@ -1,7 +1,9 @@
 package com.mars.statement.api.share.controller;
 
 
+import com.mars.statement.api.chapter.dto.ChapterMemberDto;
 import com.mars.statement.api.chapter.dto.CheckChapterDto;
+import com.mars.statement.api.share.dto.ChapterShareDto;
 import com.mars.statement.api.share.dto.PersonalShareDto;
 import com.mars.statement.api.share.service.ShareService;
 import com.mars.statement.global.dto.CommonResponse;
@@ -23,8 +25,8 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 @RestController
+@Tag(name="공유")
 @RequestMapping("/api/v1/share")
-
 public class ShareController {
 
     private final ShareService shareService;
@@ -33,7 +35,7 @@ public class ShareController {
         this.shareService = shareService;
     }
 
-    @Tag(name="공유", description = "인물별 조회")
+    @Operation(summary = "공유 인물별 조회")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description="공유 인물별 조회 성공 ",
                     content = {@Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = PersonalShareDto.class)))})

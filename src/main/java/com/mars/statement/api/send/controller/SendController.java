@@ -83,19 +83,6 @@ public class SendController {
 
         return CommonResponse.createResponse(200, "전달 인물별 조회 성공", personalSendDataList);
     }
-
-    @Operation(summary = "전달 회차별 조회")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description="전달 회차별 조회 성공 ",
-                    content = {@Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = CheckChapterDto.class)))})
-    })
-    @GetMapping("/chapter/{suggestId}")
-    public ResponseEntity<?> getChapterShareDataList( @PathVariable Long suggestId, @Parameter(hidden = true) UserDto userDto) {
-        CheckChapterDto chapterDtoList = sendService.getChapterSendData(suggestId, userDto.getId());
-
-        return CommonResponse.createResponse(200, "공유 회차별 조회 성공", chapterDtoList);
-
-    }
     @Operation(summary = "전달 회차별 조회")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description="전달 회차별 조회 성공 ",
