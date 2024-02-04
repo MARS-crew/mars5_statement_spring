@@ -11,11 +11,12 @@ import java.util.List;
 
 public interface ShareRepository extends JpaRepository<Share, Long> {
 
-    @Query("SELECT NEW com.mars.statement.api.share.dto.ShareDto(" +
+    @Query("SELECT NEW com.mars.statement.api.share.dto.PersonalShareDto(" +
             "s.id as suggestId, s.suggest, " +
             "NEW com.mars.statement.api.share.dto.MemberOpinionDto(" +
             "gm.id as memberId, gm.user.name as memberName, gm.user.img as memberImg, " +
             "NEW com.mars.statement.api.share.dto.OpinionDto(" +
+
             "ch.id as chapterId, c.reg_dt as regDt, o.opinion, o.location" +
             ")" +
             ")" +
