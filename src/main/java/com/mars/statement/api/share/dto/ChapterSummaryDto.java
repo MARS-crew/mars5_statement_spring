@@ -11,8 +11,8 @@ import java.sql.Timestamp;
 @AllArgsConstructor
 public class ChapterSummaryDto {
 
-    Long chapterId;
-    Timestamp regDt;
-    String memberName;
-    String summary;
+    private Long chapterId;
+    private Timestamp regDt;
+    private String memberName;
+    private String summary;
 }
