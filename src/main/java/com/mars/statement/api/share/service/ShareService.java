@@ -23,8 +23,8 @@ public class ShareService {
 
     private final ChapterService chapterService;
 
-    public List<PersonalShareDto> getPersonalShareData(Long groupId, Long suggestId, Long myId) {
-        List<Chapter> chapters = chapterService.getChaptersByMemberId(groupId, myId, suggestId);
+    public List<PersonalShareDto> getPersonalShareData(Long suggestId, Long myId) {
+        List<Chapter> chapters = chapterService.getChaptersByMemberId(myId, suggestId);
         List<Long> chapterIds = chapters.stream().map(Chapter::getId).toList();
 
         List<PersonalShareDto> personalShares = shareRepository.findPersonalSharesByIds(chapterIds);
@@ -60,8 +60,8 @@ public class ShareService {
                 .toList();
     }
 
-    public ChapterShareDto getChapterShareData(Long groupId, Long suggestId, Long myId) {
-        List<Chapter> chapters = chapterService.getChaptersByMemberId(groupId, myId, suggestId);
+    public ChapterShareDto getChapterShareData(Long suggestId, Long myId) {
+        List<Chapter> chapters = chapterService.getChaptersByMemberId(myId, suggestId);
         List<Long> chapterIds = chapters.stream().map(Chapter::getId).toList();
 
         List<ChapterShareDto> chapterShareDtoList = shareRepository.findChapterSharesByIds(chapterIds);

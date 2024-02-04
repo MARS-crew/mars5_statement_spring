@@ -65,9 +65,11 @@ public class SendService {
 
     public List<PersonalSendDto> getPersonalSendData(Long groupId, Long suggestId, Long myId) {
 
-        GroupMember member = groupMemberService.getGroupMemberByGroupIdAndUser(groupId, myId);
         // 챕터 조회
-        List<Chapter> chapters = chapterService.getChaptersByMemberId(groupId, myId, suggestId);
+        List<Chapter> chapters = chapterService.getChaptersByMemberId(myId, suggestId);
+
+        GroupMember member = groupMemberService.getGroupMemberByGroupIdAndUser(groupId, myId);
+
         List<Long> chapterIds = chapters.stream().map(Chapter::getId).toList();
 
         // 리스트
