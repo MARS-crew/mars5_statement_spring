@@ -1,4 +1,4 @@
-package com.mars.statement.api.share.dto;
+package com.mars.statement.api.chapter.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

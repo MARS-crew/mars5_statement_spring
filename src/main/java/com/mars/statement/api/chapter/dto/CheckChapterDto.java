@@ -1,4 +1,4 @@
-package com.mars.statement.api.share.dto;
+package com.mars.statement.api.chapter.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.Transient;
@@ -12,7 +12,7 @@ import java.util.List;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class ChapterShareDto {
+public class CheckChapterDto {
 
     private Long suggestId;
     private String suggest;
@@ -23,13 +23,13 @@ public class ChapterShareDto {
     @Transient
     private List<ChapterSummaryDto> chapterSummaryDtoList;
 
-    public ChapterShareDto(Long suggestId, String suggest, ChapterSummaryDto chapterSummaryDto){
+    public CheckChapterDto(Long suggestId, String suggest, ChapterSummaryDto chapterSummaryDto){
         this.suggestId = suggestId; this.suggest = suggest;
         this.chapterSummaryDto = chapterSummaryDto;
         this.chapterSummaryDtoList = Collections.singletonList(chapterSummaryDto);
     }
 
-    public ChapterShareDto(Long suggestId, String suggest, List<ChapterSummaryDto> chapterSummaryDtoList){
+    public CheckChapterDto(Long suggestId, String suggest, List<ChapterSummaryDto> chapterSummaryDtoList){
         this.suggestId = suggestId; this.suggest = suggest;
         this.chapterSummaryDtoList = chapterSummaryDtoList;
     }
