@@ -16,8 +16,6 @@ import com.mars.statement.global.exception.NotFoundException;
 import com.mars.statement.global.jwt.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -33,12 +31,6 @@ public class AuthService {
     private final GroupMemberRepository groupMemberRepository;
     private final InvitationRepository invitationRepository;
     private final JwtTokenProvider jwtTokenProvider;
-
-    @Autowired
-    public AuthService(@Lazy JwtTokenProvider jwtTokenProvider, UserRepository userRepository) {
-        this.jwtTokenProvider = jwtTokenProvider;
-        this.userRepository = userRepository;
-    }
 
     public ResponseEntity<?> login(LoginRequest loginRequest) throws NotFoundException {
 
@@ -88,7 +80,8 @@ public class AuthService {
     }
 
     private User joinUser(JoinDto joinDto){
-        User user = userRepository.save(
+
+        return userRepository.save(
                 User.builder()
                         .uid(joinDto.getUid())
                         .email(joinDto.getEmail())
@@ -97,8 +90,6 @@ public class AuthService {
                         .fcmToken(joinDto.getFcmToken())
                         .build()
         );
-
-        return user;
     }
 
     private void checkInvitation (User user){
