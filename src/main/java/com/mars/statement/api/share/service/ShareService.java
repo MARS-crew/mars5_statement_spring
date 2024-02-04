@@ -35,7 +35,7 @@ public class ShareService {
                 .collect(Collectors.groupingBy(
                         PersonalShareDto::getSuggestId,
                         Collectors.groupingBy(
-                                PersonalShareDto -> PersonalShareDto.getMemberOpinionDtoList().get(0).getMemberId(),
+                                PersonalShareDto -> PersonalShareDto.getOpinionList().get(0).getMemberId(),
                                 Collectors.toList()
                         )
                 ))
@@ -47,8 +47,8 @@ public class ShareService {
                             List<PersonalShareDto> PersonalShareDtos = memberEntry.getValue();
 
                             List<OpinionDto> opinionDtoList = PersonalShareDtos.stream()
-                                    .flatMap(dto -> dto.getMemberOpinionDtoList().stream())
-                                    .map(MemberOpinionDto::getOpinionDtoList)
+                                    .flatMap(dto -> dto.getOpinionList().stream())
+                                    .map(MemberOpinionDto::getOpinionList)
                                     .flatMap(List::stream)
                                     .collect(Collectors.toList());
 

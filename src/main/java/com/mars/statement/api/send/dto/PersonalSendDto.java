@@ -22,12 +22,12 @@ public class PersonalSendDto {
     @JsonIgnore
     private MemberMessageDto memberMessageDto;
     @Transient
-    private List<MemberMessageDto> memberMessageDtoList;
+    private List<MemberMessageDto> messageList;
 
     public PersonalSendDto(Long suggestId, String suggest, MemberMessageDto memberOpinionDto){
         this.suggestId = suggestId; this.suggest = suggest;
         this.memberMessageDto = memberOpinionDto;
-        this.memberMessageDtoList = Collections.singletonList(memberMessageDto);
+        this.messageList = Collections.singletonList(memberMessageDto);
     }
 }
 

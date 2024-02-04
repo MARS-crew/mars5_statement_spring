@@ -81,7 +81,7 @@ public class SendService {
                 .collect(Collectors.groupingBy(
                         PersonalSendDto::getSuggestId,
                         Collectors.groupingBy(
-                                personalSendDto -> personalSendDto.getMemberMessageDtoList().get(0).getMemberId(),
+                                personalSendDto -> personalSendDto.getMessageList().get(0).getMemberId(),
                                 Collectors.toList()
                         )
                 ))
@@ -93,15 +93,15 @@ public class SendService {
                             List<PersonalSendDto> personalSendDto = memberEntry.getValue();
 
                             List<MessageDto> messageDtoList = personalSendDto.stream()
-                                    .flatMap(dto -> dto.getMemberMessageDtoList().stream())
-                                    .map(MemberMessageDto::getMessageDtoList)
+                                    .flatMap(dto -> dto.getMessageList().stream())
+                                    .map(MemberMessageDto::getMessageList)
                                     .flatMap(List::stream)
                                     .collect(Collectors.toList());
 
                             MemberMessageDto mergedMemberMessageDto = new MemberMessageDto(
                                     memberId,
-                                    personalSendDto.get(0).getMemberMessageDtoList().get(0).getMemberName(),
-                                    personalSendDto.get(0).getMemberMessageDtoList().get(0).getMemberImg(),
+                                    personalSendDto.get(0).getMessageList().get(0).getMemberName(),
+                                    personalSendDto.get(0).getMessageList().get(0).getMemberImg(),
                                     messageDtoList
                             );
                             return new PersonalSendDto(sId, personalSendDto.get(0).getSuggest(), mergedMemberMessageDto);

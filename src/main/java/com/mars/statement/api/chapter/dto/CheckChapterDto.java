@@ -21,17 +21,16 @@ public class CheckChapterDto {
     private ChapterSummaryDto chapterSummaryDto;
 
     @Transient
-    private List<ChapterSummaryDto> chapterSummaryDtoList;
+    private List<ChapterSummaryDto> summaryList;
 
     public CheckChapterDto(Long suggestId, String suggest, ChapterSummaryDto chapterSummaryDto){
         this.suggestId = suggestId; this.suggest = suggest;
         this.chapterSummaryDto = chapterSummaryDto;
-        this.chapterSummaryDtoList = Collections.singletonList(chapterSummaryDto);
     }
 
-    public CheckChapterDto(Long suggestId, String suggest, List<ChapterSummaryDto> chapterSummaryDtoList){
+    public CheckChapterDto(Long suggestId, String suggest, List<ChapterSummaryDto> summaryList){
         this.suggestId = suggestId; this.suggest = suggest;
-        this.chapterSummaryDtoList = chapterSummaryDtoList;
+        this.summaryList = summaryList;
     }
 
 }
