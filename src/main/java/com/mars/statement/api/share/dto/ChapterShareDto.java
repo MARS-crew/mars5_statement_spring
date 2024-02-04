@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.Collections;
 import java.util.List;
 
 @Getter
@@ -13,18 +14,24 @@ import java.util.List;
 @AllArgsConstructor
 public class ChapterShareDto {
 
-    Long suggestId;
-    String suggest;
+    private Long suggestId;
+    private String suggest;
 
     @JsonIgnore
-    ChapterSummaryDto chapterSummaryDto;
+    private ChapterSummaryDto chapterSummaryDto;
 
     @Transient
-    List<ChapterSummaryDto> chapterShareDtoList;
+    private List<ChapterSummaryDto> chapterSummaryDtoList;
 
-    public ChapterShareDto(Long suggestId, String suggest, List<ChapterSummaryDto> chapterShareDtoList){
+    public ChapterShareDto(Long suggestId, String suggest, ChapterSummaryDto chapterSummaryDto){
         this.suggestId = suggestId; this.suggest = suggest;
-        this.chapterShareDtoList = chapterShareDtoList;
+        this.chapterSummaryDto = chapterSummaryDto;
+        this.chapterSummaryDtoList = Collections.singletonList(chapterSummaryDto);
+    }
+
+    public ChapterShareDto(Long suggestId, String suggest, List<ChapterSummaryDto> chapterSummaryDtoList){
+        this.suggestId = suggestId; this.suggest = suggest;
+        this.chapterSummaryDtoList = chapterSummaryDtoList;
     }
 
 }

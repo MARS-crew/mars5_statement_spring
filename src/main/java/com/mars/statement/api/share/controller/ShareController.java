@@ -45,7 +45,7 @@ public class ShareController {
         return CommonResponse.createResponse(200, "공유 인물별 조회 성공", chapterDtoList);
 
     }
-    @Tag(name="공유", description = "인물별 조회")
+    @Tag(name="공유", description = "회차별 조회")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description="공유 회차별 조회 성공 ",
                     content = {@Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = ChapterMemberDto.class)))})

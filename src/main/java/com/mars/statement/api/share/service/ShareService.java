@@ -9,8 +9,7 @@ import com.mars.statement.api.share.repository.ShareRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -67,22 +66,12 @@ public class ShareService {
 
         List<ChapterShareDto> chapterShareDtoList = shareRepository.findChapterSharesByIds(chapterIds);
 
-        Map<Long, List<ChapterShareDto>> groupedData = chapterShareDtoList.stream()
-                .collect(Collectors.groupingBy(ChapterShareDto::getSuggestId));
+        List<ChapterSummaryDto> allChapterSummaryDtoList = new ArrayList<>();
 
-        List<ChapterShareDto> result = groupedData.entrySet().stream()
-                .map(entry -> {
-                    Long suggestIdResult = entry.getKey();
-                    String suggest = entry.getValue().get(0).getSuggest(); // 가정: 모든 suggest 값이 동일하다고 가정
-                    List<ChapterSummaryDto> chapterDtoList = entry.getValue().stream()
-                            .map(ChapterShareDto::getChapterSummaryDto)
-                            .collect(Collectors.toList());
-
-                    return new ChapterShareDto(suggestIdResult, suggest, chapterDtoList);
-                })
-                .collect(Collectors.toList());
-
-        return (ChapterShareDto) result;
+        for (ChapterShareDto chapterShareDto : chapterShareDtoList) {
+            allChapterSummaryDtoList.add(chapterShareDto.getChapterSummaryDto());
+        }
+        return new ChapterShareDto(chapterShareDtoList.get(0).getSuggestId(),chapterShareDtoList.get(0).getSuggest(),allChapterSummaryDtoList);
     }
 
 }

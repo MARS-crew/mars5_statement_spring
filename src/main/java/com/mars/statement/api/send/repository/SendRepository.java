@@ -27,8 +27,7 @@ public interface SendRepository extends JpaRepository<Send, Long> {
             "LEFT JOIN ChapterMember cm ON cm.id = m.from.id " +
             "INNER JOIN GroupMember gm ON gm.id = cm.groupMember.id " +
             "INNER JOIN User u ON u.id = gm.user.id " +
-            "WHERE c.id IN :chapterIds AND my_cm.groupMember.id = :my_id")
-    List<PersonalSendDto> findPersonalSharesByIds(@Param("chapterIds") List<Long> chapterIds, @Param("my_id") Long my_id);
-
+            "WHERE c.id IN :chapterIds AND my_cm.groupMember.id = :myId")
+    List<PersonalSendDto> findPersonalSharesByIds(@Param("chapterIds") List<Long> chapterIds, @Param("myId") Long myId);
 
 }
