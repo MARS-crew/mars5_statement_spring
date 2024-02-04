@@ -20,9 +20,7 @@ public class Like {
     @ManyToOne
     @JoinColumn(name = "share_id", nullable = false)
     private Share share;
-    @ManyToOne
-    @JoinColumn(name = "writer_id", nullable = false)
-    private ChapterMember writer;
+
     @ManyToOne
     @JoinColumn(name = "member_id", nullable = false)
     private ChapterMember member;

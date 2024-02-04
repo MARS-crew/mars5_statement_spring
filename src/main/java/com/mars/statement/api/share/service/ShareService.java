@@ -1,8 +1,8 @@
 package com.mars.statement.api.share.service;
 
 import com.mars.statement.api.chapter.domain.Chapter;
-import com.mars.statement.api.chapter.dto.CheckChapterDto;
 import com.mars.statement.api.chapter.dto.ChapterSummaryDto;
+import com.mars.statement.api.chapter.dto.CheckChapterDto;
 import com.mars.statement.api.chapter.service.ChapterService;
 import com.mars.statement.api.chapter.service.SuggestService;
 import com.mars.statement.api.group.service.GroupMemberService;
@@ -66,14 +66,14 @@ public class ShareService {
         List<Chapter> chapters = chapterService.getChaptersByMemberId(myId, suggestId);
         List<Long> chapterIds = chapters.stream().map(Chapter::getId).toList();
 
-        List<CheckChapterDto> checkChapterDtoList = shareRepository.findChapterSharesByIds(chapterIds);
+        List<CheckChapterDto> chapterShareDtoList = shareRepository.findChapterSharesByIds(chapterIds);
 
         List<ChapterSummaryDto> allChapterSummaryDtoList = new ArrayList<>();
 
-        for (CheckChapterDto checkChapterDto : checkChapterDtoList) {
-            allChapterSummaryDtoList.add(checkChapterDto.getChapterSummaryDto());
+        for (CheckChapterDto chapterShareDto : chapterShareDtoList) {
+            allChapterSummaryDtoList.add(chapterShareDto.getChapterSummaryDto());
         }
-        return new CheckChapterDto(checkChapterDtoList.get(0).getSuggestId(), checkChapterDtoList.get(0).getSuggest(),allChapterSummaryDtoList);
+        return new CheckChapterDto(chapterShareDtoList.get(0).getSuggestId(),chapterShareDtoList.get(0).getSuggest(),allChapterSummaryDtoList);
     }
 
 }
