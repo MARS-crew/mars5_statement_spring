@@ -34,4 +34,9 @@ public class Invitation {
 
     @Column(name = "accept_dt")
     private Timestamp acceptDate;
+
+    public void inviteAccept(Boolean accepted){
+        this.accepted = accepted;
+        this.acceptDate = new Timestamp(System.currentTimeMillis());
+    }
 }
