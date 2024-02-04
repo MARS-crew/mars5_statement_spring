@@ -1,10 +1,12 @@
 package com.mars.statement.global.jwt;
 
-import com.mars.statement.api.auth.domain.User;
 import com.mars.statement.global.dto.TokenDto;
 import com.mars.statement.global.exception.UnAuthenticationException;
 import com.mars.statement.global.service.CustomUserDetailService;
 import io.jsonwebtoken.*;
+import io.jsonwebtoken.io.Decoders;
+import io.jsonwebtoken.security.Keys;
+import jakarta.annotation.PostConstruct;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -15,7 +17,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
-import java.nio.charset.StandardCharsets;
+import java.security.Key;
 import java.util.*;
 
 @Slf4j
@@ -31,6 +33,13 @@ public class JwtTokenProvider {
 
     @Value("${jwt.secret}")
     private String secret;
+    private Key key;
+    @PostConstruct
+    public void init() {
+        byte[] keyBytes = Decoders.BASE64.decode(secret);
+        this.key = Keys.hmacShaKeyFor(keyBytes);
+    }
+
 
     // token 발급
     public TokenDto issueToken(Long id) {
@@ -62,13 +71,13 @@ public class JwtTokenProvider {
                 .setClaims(claims)
                 .setIssuedAt(now)
                 .setExpiration(validity)
-                .signWith(SignatureAlgorithm.HS256, secret)
+                .signWith(key, SignatureAlgorithm.HS256)
                 .compact();
     }
 
     // 토큰에서 UserId 가져오기
     public String getUserId(String token) {
-        return Jwts.parserBuilder().setSigningKey(secret).build().parseClaimsJws(token).getBody().getSubject();
+        return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody().getSubject();
     }
     // Spring Security 인증 과정 중 권한 확인 필요
     public Authentication getAuthentication(String token){
@@ -120,7 +129,7 @@ public class JwtTokenProvider {
             } else {
                 token = token.split(" ")[1].trim();
             }
-            Jws<Claims> claims = Jwts.parserBuilder().setSigningKey(secret).build().parseClaimsJws(token);
+            Jws<Claims> claims = Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
 
             return !claims.getBody().getExpiration().before(new Date());
         } catch (io.jsonwebtoken.security.SecurityException | MalformedJwtException e) {
