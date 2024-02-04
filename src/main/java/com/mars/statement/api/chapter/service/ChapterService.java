@@ -51,10 +51,10 @@ public class ChapterService {
         return null;
     }
 
-    public List<Chapter> getChaptersByMemberId(Long groupId, Long myId, Long suggestId){
+    public List<Chapter> getChaptersByMemberId(Long myId, Long suggestId){
 
-        GroupMember member = groupMemberService.getGroupMemberByGroupIdAndUser(groupId,myId);
         Suggest suggest = suggestService.getSuggestById(suggestId);
+        GroupMember member = groupMemberService.getGroupMemberByGroupIdAndUser(suggest.getGroup().getId(),myId);
 
         List<ChapterMember> chapterMembers = chapterRepository.findChaptersByMemberId(member.getId(), suggestId);
 

@@ -4,29 +4,27 @@ import com.mars.statement.api.chapter.domain.Chapter;
 import com.mars.statement.api.chapter.service.ChapterService;
 import com.mars.statement.api.chapter.service.SuggestService;
 import com.mars.statement.api.group.service.GroupMemberService;
-import com.mars.statement.api.share.dto.MemberOpinionDto;
-import com.mars.statement.api.share.dto.OpinionDto;
-import com.mars.statement.api.share.dto.PersonalShareDto;
+import com.mars.statement.api.share.dto.*;
 import com.mars.statement.api.share.repository.ShareRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class ShareService {
 
-
     private final GroupMemberService groupMemberService;
-    private final SuggestService suggestService;
-    private final ChapterService chapterService;
 
+    private final SuggestService suggestService;
     private final ShareRepository shareRepository;
 
-    public List<PersonalShareDto> getPersonalShareData(Long groupId, Long suggestId, Long myId) {
-        List<Chapter> chapters = chapterService.getChaptersByMemberId(groupId, myId, suggestId);
+    private final ChapterService chapterService;
+
+    public List<PersonalShareDto> getPersonalShareData(Long suggestId, Long myId) {
+        List<Chapter> chapters = chapterService.getChaptersByMemberId(myId, suggestId);
         List<Long> chapterIds = chapters.stream().map(Chapter::getId).toList();
 
         List<PersonalShareDto> personalShares = shareRepository.findPersonalSharesByIds(chapterIds);
@@ -61,4 +59,19 @@ public class ShareService {
                         }))
                 .toList();
     }
+
+    public ChapterShareDto getChapterShareData(Long suggestId, Long myId) {
+        List<Chapter> chapters = chapterService.getChaptersByMemberId(myId, suggestId);
+        List<Long> chapterIds = chapters.stream().map(Chapter::getId).toList();
+
+        List<ChapterShareDto> chapterShareDtoList = shareRepository.findChapterSharesByIds(chapterIds);
+
+        List<ChapterSummaryDto> allChapterSummaryDtoList = new ArrayList<>();
+
+        for (ChapterShareDto chapterShareDto : chapterShareDtoList) {
+            allChapterSummaryDtoList.add(chapterShareDto.getChapterSummaryDto());
+        }
+        return new ChapterShareDto(chapterShareDtoList.get(0).getSuggestId(),chapterShareDtoList.get(0).getSuggest(),allChapterSummaryDtoList);
+    }
+
 }

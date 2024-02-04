@@ -41,4 +41,8 @@ public class ChapterMember {
     @Transient
     private String userName;
 
+    @Column(name= "is_constructor", nullable=true)
+    private Long is_constructor;
+
+
 }

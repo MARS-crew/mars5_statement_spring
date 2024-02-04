@@ -6,7 +6,6 @@ import com.mars.statement.api.chapter.service.ChapterService;
 import com.mars.statement.api.send.dto.PersonalSendDto;
 import com.mars.statement.api.send.dto.SendMessageDto;
 import com.mars.statement.api.send.service.SendService;
-
 import com.mars.statement.global.dto.CommonResponse;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -72,7 +71,7 @@ public class SendController {
             @ApiResponse(responseCode = "200", description = "전달 인물별 조회 성공 ",
                     content = {@Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = PersonalSendDto.class)))})
     })
-    @GetMapping("/{groupId}/{suggestId}")
+    @GetMapping("/personal/{groupId}/{suggestId}")
     public ResponseEntity<Object> getPersonalSendDataList(@PathVariable Long groupId, @PathVariable Long suggestId) {
         Long myId = 3L; // 로그인 데이터
         List<PersonalSendDto> personalSendDataList = sendService.getPersonalSendData(groupId, suggestId, myId);
@@ -80,6 +79,4 @@ public class SendController {
         return CommonResponse.createResponse(200, "전달 인물별 조회 성공", personalSendDataList);
 
     }
-
-
 }
