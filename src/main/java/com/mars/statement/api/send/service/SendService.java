@@ -2,6 +2,8 @@ package com.mars.statement.api.send.service;
 
 import com.mars.statement.api.chapter.domain.Chapter;
 import com.mars.statement.api.chapter.domain.ChapterMember;
+import com.mars.statement.api.chapter.dto.ChapterSummaryDto;
+import com.mars.statement.api.chapter.dto.CheckChapterDto;
 import com.mars.statement.api.chapter.service.ChapterMemberService;
 import com.mars.statement.api.chapter.service.ChapterService;
 import com.mars.statement.api.chapter.service.SuggestService;
@@ -107,5 +109,20 @@ public class SendService {
                 .toList();
 
     }
+
+    public CheckChapterDto getChapterSendData(Long suggestId, Long myId) {
+        List<Chapter> chapters = chapterService.getChaptersByMemberId(myId, suggestId);
+        List<Long> chapterIds = chapters.stream().map(Chapter::getId).toList();
+
+        List<CheckChapterDto> checkChapterDtoList = sendRepository.findChapterSendsByIds(chapterIds,myId);
+
+        List<ChapterSummaryDto> allChapterSummaryDtoList = new ArrayList<>();
+
+        for (CheckChapterDto checkChapterDto : checkChapterDtoList) {
+            allChapterSummaryDtoList.add(checkChapterDto.getChapterSummaryDto());
+        }
+        return new CheckChapterDto(checkChapterDtoList.get(0).getSuggestId(), checkChapterDtoList.get(0).getSuggest(),allChapterSummaryDtoList);
+    }
+
 
 }

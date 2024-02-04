@@ -1,5 +1,6 @@
 package com.mars.statement.api.send.repository;
 
+import com.mars.statement.api.chapter.dto.CheckChapterDto;
 import com.mars.statement.api.send.domain.Send;
 import com.mars.statement.api.send.dto.PersonalSendDto;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -30,4 +31,17 @@ public interface SendRepository extends JpaRepository<Send, Long> {
             "WHERE c.id IN :chapterIds AND my_cm.groupMember.id = :myId")
     List<PersonalSendDto> findPersonalSharesByIds(@Param("chapterIds") List<Long> chapterIds, @Param("myId") Long myId);
 
+    @Query("SELECT NEW com.mars.statement.api.chapter.dto.CheckChapterDto(" +
+            "s.id as suggestId, s.suggest, " +
+            "NEW com.mars.statement.api.chapter.dto.ChapterSummaryDto(" +
+            "ch.id as chapterId, c.reg_dt as regDt, u.name as memberName, c.summary" +
+            ")" +
+            ")" +
+            "FROM ChapterMember c " +
+            "JOIN c.chapter ch " +
+            "JOIN ch.suggest s " +
+            "JOIN c.groupMember gm " +
+            "JOIN gm.user u " +
+            "WHERE ch.id IN :chapterIds AND u.id = :myId")
+    List<CheckChapterDto> findChapterSendsByIds(@Param("chapterIds") List<Long> chapterIds, Long myId);
 }
