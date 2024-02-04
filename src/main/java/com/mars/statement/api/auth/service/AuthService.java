@@ -1,21 +1,26 @@
 package com.mars.statement.api.auth.service;
 
-
 import com.mars.statement.api.auth.domain.User;
-import com.mars.statement.api.auth.dto.*;
+import com.mars.statement.api.auth.dto.JoinDto;
+import com.mars.statement.api.auth.dto.LoginRequest;
+import com.mars.statement.api.auth.dto.LoginResponse;
+import com.mars.statement.api.auth.dto.TokenReissueRequest;
 import com.mars.statement.api.auth.repository.UserRepository;
+import com.mars.statement.api.group.domain.GroupMember;
+import com.mars.statement.api.group.domain.Invitation;
+import com.mars.statement.api.group.repository.GroupMemberRepository;
+import com.mars.statement.api.group.repository.InvitationRepository;
 import com.mars.statement.global.dto.CommonResponse;
 import com.mars.statement.global.dto.TokenDto;
 import com.mars.statement.global.exception.NotFoundException;
 import com.mars.statement.global.jwt.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Objects;
 
 @Service
@@ -23,27 +28,24 @@ import java.util.Objects;
 @Slf4j
 public class AuthService {
     private final UserRepository userRepository;
+    private final GroupMemberRepository groupMemberRepository;
+    private final InvitationRepository invitationRepository;
     private final JwtTokenProvider jwtTokenProvider;
-
-    @Autowired
-    public AuthService(@Lazy JwtTokenProvider jwtTokenProvider, UserRepository userRepository) {
-        this.jwtTokenProvider = jwtTokenProvider;
-        this.userRepository = userRepository;
-    }
 
     public ResponseEntity<?> login(LoginRequest loginRequest) throws NotFoundException {
 
         if(userRepository.findByEmail(loginRequest.getEmail()).isEmpty()){
-            this.joinUser(
+            User join = joinUser(
                     JoinDto.builder()
                             .uid(loginRequest.getUid())
-
                             .email(loginRequest.getEmail())
                             .name(loginRequest.getName())
                             .picture(loginRequest.getPicture())
                             .fcmToken(loginRequest.getFcmToken())
                             .build()
             );
+
+            checkInvitation(join);
         }
         User user = userRepository.findByEmail(loginRequest.getEmail())
                 .orElseThrow(() -> new NotFoundException(HttpStatus.NOT_FOUND.value(), "유저 정보를 찾을 수 없습니다."));
@@ -77,8 +79,9 @@ public class AuthService {
         return CommonResponse.createResponse(HttpStatus.OK.value(), "로그인 성공", loginResponse);
     }
 
-    private JoinResponse joinUser(JoinDto joinDto){
-        User user = userRepository.save(
+    private User joinUser(JoinDto joinDto){
+
+        return userRepository.save(
                 User.builder()
                         .uid(joinDto.getUid())
                         .email(joinDto.getEmail())
@@ -87,10 +90,19 @@ public class AuthService {
                         .fcmToken(joinDto.getFcmToken())
                         .build()
         );
+    }
 
-        return JoinResponse.builder()
-                .id(user.getId())
-                .build();
+    private void checkInvitation (User user){
+        List<Invitation> invitationList = invitationRepository.findByEmail(user.getEmail());
+
+        for (Invitation invitation:invitationList){
+            groupMemberRepository.save(GroupMember.builder()
+                    .group(invitation.getGroup())
+                    .user(user)
+                    .constructor(false)
+                    .build());
+            invitation.inviteAccept(true);
+        }
     }
 
     public ResponseEntity<?> reissueToken(TokenReissueRequest request){
