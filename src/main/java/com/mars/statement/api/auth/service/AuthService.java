@@ -6,6 +6,7 @@ import com.mars.statement.api.auth.dto.LoginRequest;
 import com.mars.statement.api.auth.dto.LoginResponse;
 import com.mars.statement.api.auth.dto.TokenReissueRequest;
 import com.mars.statement.api.auth.repository.UserRepository;
+import com.mars.statement.api.group.domain.Group;
 import com.mars.statement.api.group.domain.GroupMember;
 import com.mars.statement.api.group.domain.Invitation;
 import com.mars.statement.api.group.repository.GroupMemberRepository;
@@ -22,6 +23,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -70,11 +72,16 @@ public class AuthService {
 
         userRepository.save(user);
 
+        Long lastGroupId = Optional.ofNullable(user.getGroup())
+                .map(Group::getId)
+                .orElse(0L);
+
         // 리턴 값 변경 -> 토큰으로
         LoginResponse loginResponse = LoginResponse.builder()
                 .id(user.getId())
                 .accessToken(tokenDto.getAccessToken())
                 .refreshToken(tokenDto.getRefreshToken())
+                .lastGroupId(lastGroupId)
                 .build();
         return CommonResponse.createResponse(HttpStatus.OK.value(), "로그인 성공", loginResponse);
     }
@@ -101,6 +108,7 @@ public class AuthService {
                     .user(user)
                     .constructor(false)
                     .build());
+            user.updateLastGroupId(invitation.getGroup());
             invitation.inviteAccept(true);
         }
     }

@@ -15,10 +15,7 @@ public class SuggestService {
 
     private final SuggestRepository suggestRepository;
 
-
     public List<Suggest> getSuggestByGroupId(Long groupId){ return suggestRepository.findByGroupId(groupId); }
     public Suggest getSuggestById(Long suggestId){ return suggestRepository.findById(suggestId).orElse(null);}
-
-
 
 }
