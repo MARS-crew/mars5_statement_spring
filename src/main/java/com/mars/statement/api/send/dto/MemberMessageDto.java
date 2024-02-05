@@ -5,28 +5,34 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.Collections;
+
 import java.util.List;
 
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class MemberMessageDTO {
+public class MemberMessageDto {
     private Long memberId;
     private String memberName;
     private String memberImg;
-
-    private MessageDTO messageDTO;
-
+    private MessageDto messageDto;
     @Transient
-    private List<MessageDTO> messageDTOList;
+    private List<MessageDto> messageList;
 
-    public MemberMessageDTO(Long memberId, String memberName, String memberImg, MessageDTO messageDTO) {
-        this.memberId = memberId; this.memberName=memberName;
-        this.memberImg = memberImg; this.messageDTO = messageDTO;
+    public MemberMessageDto(Long memberId, String memberName, String memberImg, MessageDto messageDto) {
+        this.memberId = memberId;
+        this.memberName = memberName;
+        this.memberImg = memberImg;
+        this.messageDto = messageDto;
+        this.messageList = Collections.singletonList(messageDto);
+
     }
 
-    public MemberMessageDTO(Long memberId, String memberName, String memberImg, List<MessageDTO> messageDTOList) {
-        this.memberId = memberId; this.memberName=memberName;
-        this.memberImg = memberImg; this.messageDTOList = messageDTOList;
+    public MemberMessageDto(Long memberId, String memberName, String memberImg, List<MessageDto> messageList) {
+        this.memberId = memberId;
+        this.memberName = memberName;
+        this.memberImg = memberImg;
+        this.messageList = messageList;
     }
 }

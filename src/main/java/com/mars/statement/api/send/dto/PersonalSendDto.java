@@ -1,33 +1,32 @@
 package com.mars.statement.api.send.dto;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.Transient;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.Collections;
 import java.util.List;
 
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class PersonalSendDTO {
+
+public class PersonalSendDto {
 
     private Long suggestId;
     private String suggest;
-    private MemberMessageDTO memberMessageDTO;
-
+    @JsonIgnore
+    private MemberMessageDto memberMessageDto;
     @Transient
-    private List<MemberMessageDTO> memberMessageDTOList;
+    private List<MemberMessageDto> messageList;
 
-    public PersonalSendDTO(Long suggestId, String suggest, MemberMessageDTO memberMessageDTO){
-        this.suggestId = suggestId; this.suggest = suggest; this.memberMessageDTO = memberMessageDTO;
+    public PersonalSendDto(Long suggestId, String suggest, MemberMessageDto memberOpinionDto) {
+        this.suggestId = suggestId;
+        this.suggest = suggest;
+        this.memberMessageDto = memberOpinionDto;
+        this.messageList = Collections.singletonList(memberMessageDto);
     }
-
-    public PersonalSendDTO(Long suggestId, String suggest, List<MemberMessageDTO> memberMessageDTOList){
-        this.suggestId = suggestId; this.suggest = suggest; this.memberMessageDTOList = memberMessageDTOList;
-    }
-
-
 }
-

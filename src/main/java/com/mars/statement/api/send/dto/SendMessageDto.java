@@ -9,7 +9,7 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class SendMessageDTO {
+public class SendMessageDto {
     private Long to_id;
     private String message;
 }
