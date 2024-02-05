@@ -31,4 +31,8 @@ public class MemberOpinionDto {
         this.memberId = memberId; this.memberName=memberName;
         this.memberImg = memberImg; this.opinionList = opinionList;
     }
+
+    public MemberOpinionDto(List<OpinionDto> opinionList){
+        this.opinionList = opinionList;
+    }
 }

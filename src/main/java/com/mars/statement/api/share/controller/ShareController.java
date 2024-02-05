@@ -41,10 +41,8 @@ public class ShareController {
 
     })
     @GetMapping("/personal/{suggestId}")
-    public ResponseEntity<?> getPersonalShareDataList(@PathVariable Long suggestId) {
-        Long myId = 1L; // 로그인 데이터
-        List<PersonalShareDto> chapterDtoList = shareService.getPersonalShareData(suggestId, myId);
-
+    public ResponseEntity<?> getPersonalShareDataList(@PathVariable Long suggestId, @Parameter(hidden = true) UserDto userDto) {
+        PersonalShareDto chapterDtoList = shareService.getPersonalShareData(suggestId, userDto.getId());
         return CommonResponse.createResponse(200, "공유 인물별 조회 성공", chapterDtoList);
 
     }
