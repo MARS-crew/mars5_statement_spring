@@ -43,5 +43,4 @@ public class GroupMemberService {
     public GroupMember findGroupMemberByIdAndGroupId(Long memberId, Long groupId) {
         return groupMemberRepository.findByUserIdAndGroupId(memberId, groupId);
     }
-
 }
