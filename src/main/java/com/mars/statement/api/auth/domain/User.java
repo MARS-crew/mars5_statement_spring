@@ -1,5 +1,6 @@
 package com.mars.statement.api.auth.domain;
 
+import com.mars.statement.api.group.domain.Group;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
@@ -24,6 +25,9 @@ public class User {
     private String name;
     @Column(name = "email", nullable = false, length = 100)
     private String email;
+    @ManyToOne
+    @JoinColumn(name = "last_group_id")
+    private Group group;
     @Column(name = "img")
     private String img;
     @Column(name = "refresh_token")
@@ -47,5 +51,8 @@ public class User {
 
     public void updateFcmToken(String fcmToken) {
         this.fcmToken = fcmToken;
+    }
+    public void updateLastGroupId(Group group){
+        this.group = group;
     }
 }
