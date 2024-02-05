@@ -55,22 +55,17 @@ public class ChapterService {
         return null;
     }
 
-    public List<Chapter> getChaptersByMemberId(Long myId, Long suggestId) throws NotFoundException {
-        try {
-            Suggest suggest = suggestService.getSuggestById(suggestId);
-            GroupMember member = groupMemberService.getGroupMemberByGroupIdAndUser(suggest.getGroup().getId(), myId);
+    public List<Chapter> getChaptersByMemberId(Long myId, Suggest suggest) throws NotFoundException {
+        GroupMember member = groupMemberService.getGroupMemberByGroupIdAndUser(suggest.getGroup().getId(), myId);
 
-            List<ChapterMember> chapterMembers = chapterRepository.findChaptersByMemberId(member.getId(), suggestId);
+        List<ChapterMember> chapterMembers = chapterRepository.findChaptersByMemberId(member.getId(), suggest.getId());
 
-            List<Chapter> chapters = new ArrayList<>();
-            for (ChapterMember chapterMember : chapterMembers) {
-                chapters.add(chapterMember.getChapter());
-            }
-
-            return chapters;
-        } catch (NotFoundException e) {
-            throw new NotFoundException(HttpStatus.NOT_FOUND.value(), "해당 챕터 정보를 찾을 수 없습니다.");
+        List<Chapter> chapters = new ArrayList<>();
+        for (ChapterMember chapterMember : chapterMembers) {
+            chapters.add(chapterMember.getChapter());
         }
+
+        return chapters;
     }
 
 }

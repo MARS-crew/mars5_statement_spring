@@ -2,6 +2,7 @@ package com.mars.statement.api.share.service;
 
 import com.mars.statement.api.chapter.domain.Chapter;
 import com.mars.statement.api.chapter.domain.ChapterMember;
+import com.mars.statement.api.chapter.domain.Suggest;
 import com.mars.statement.api.chapter.dto.CheckChapterDto;
 import com.mars.statement.api.chapter.dto.ChapterSummaryDto;
 import com.mars.statement.api.chapter.service.ChapterMemberService;
@@ -35,10 +36,16 @@ public class ShareService {
     }
 
     public PersonalShareDto getPersonalShareData(Long suggestId, Long myId) throws NotFoundException {
-        List<Chapter> chapters = chapterService.getChaptersByMemberId(myId, suggestId);
+        Suggest suggest = suggestService.getSuggestById(suggestId);
+
+        List<Chapter> chapters = chapterService.getChaptersByMemberId(myId, suggest);
         List<Long> chapterIds = chapters.stream().map(Chapter::getId).toList();
 
         List<PersonalShareDto> personalShares = shareRepository.findPersonalSharesByIds(chapterIds);
+
+        if (personalShares.isEmpty()) {
+            throw new NotFoundException(HttpStatus.NOT_FOUND.value(), "해당 공유 정보를 찾을 수 없습니다.");
+        }
 
         List<MemberOpinionDto> allMemberOpinionList = personalShares.stream()
                 .collect(Collectors.groupingBy(
@@ -70,7 +77,13 @@ public class ShareService {
     }
 
     public CheckChapterDto getChapterShareData(Long suggestId, Long myId) throws NotFoundException {
-        List<Chapter> chapters = chapterService.getChaptersByMemberId(myId, suggestId);
+
+        Suggest suggest = suggestService.getSuggestById(suggestId);
+        if(!suggest.getType().equals("share")){
+            throw new NotFoundException(HttpStatus.NOT_FOUND.value(), "공유 주제가 아닙니다.");
+        }
+
+        List<Chapter> chapters = chapterService.getChaptersByMemberId(myId, suggest);
         List<Long> chapterIds = chapters.stream().map(Chapter::getId).toList();
 
         List<CheckChapterDto> checkChapterDtoList = shareRepository.findChapterSharesByIds(chapterIds);

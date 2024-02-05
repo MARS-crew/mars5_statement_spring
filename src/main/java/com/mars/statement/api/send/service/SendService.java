@@ -73,7 +73,7 @@ public class SendService {
     public PersonalSendDto getPersonalSendData(Long suggestId, Long myId) throws NotFoundException {
         Suggest suggest = suggestService.getSuggestById(suggestId);
         // 챕터 조회
-        List<Chapter> chapters = chapterService.getChaptersByMemberId(myId, suggestId);
+        List<Chapter> chapters = chapterService.getChaptersByMemberId(myId, suggest);
         GroupMember member = groupMemberService.getGroupMemberByGroupIdAndUser(suggest.getGroup().getId(), myId);
 
         List<Long> chapterIds = chapters.stream().map(Chapter::getId).toList();
@@ -115,7 +115,11 @@ public class SendService {
     }
 
     public CheckChapterDto getChapterSendData(Long suggestId, Long myId) throws NotFoundException {
-        List<Chapter> chapters = chapterService.getChaptersByMemberId(myId, suggestId);
+        Suggest suggest = suggestService.getSuggestById(suggestId);
+        if(!suggest.getType().equals("send")){
+            throw new NotFoundException(HttpStatus.NOT_FOUND.value(), "전달 주제가 아닙니다.");
+        }
+        List<Chapter> chapters = chapterService.getChaptersByMemberId(myId,suggest);
         List<Long> chapterIds = chapters.stream().map(Chapter::getId).toList();
 
         List<CheckChapterDto> checkChapterDtoList = sendRepository.findChapterSendsByIds(chapterIds, myId);

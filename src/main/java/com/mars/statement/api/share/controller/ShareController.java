@@ -20,6 +20,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -106,7 +107,7 @@ public class ShareController {
             } else if (result == 1) {
                 return CommonResponse.createResponse(200, "공유 의견 좋아요 성공", request);
             } else {
-                return CommonResponse.createResponseMessage(500, "내부 서버 오류");
+                return CommonResponse.createResponseMessage(HttpStatus.INTERNAL_SERVER_ERROR.value(), "내부 서버 오류");
             }
         } catch (NotFoundException e) {
             return CommonResponse.createResponseMessage(404, "챕터 또는 멤버를 찾을 수 없습니다: " + e.getMessage());
