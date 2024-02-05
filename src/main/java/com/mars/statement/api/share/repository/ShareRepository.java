@@ -3,6 +3,8 @@ package com.mars.statement.api.share.repository;
 import com.mars.statement.api.chapter.dto.CheckChapterDto;
 import com.mars.statement.api.share.domain.Share;
 import com.mars.statement.api.share.dto.PersonalShareDto;
+import com.mars.statement.api.share.dto.ShareDetailDto;
+import com.mars.statement.api.share.dto.ShareMemberDetailDto;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -41,4 +43,23 @@ public interface ShareRepository extends JpaRepository<Share, Long> {
             "JOIN c.groupMember gm " +
             "WHERE ch.id IN :chapterIds AND c.is_constructor = 1")
     List<CheckChapterDto> findChapterSharesByIds(@Param("chapterIds") List<Long> chapterIds);
+
+    @Query("SELECT NEW com.mars.statement.api.share.dto.ShareDetailDto(" +
+            "s.id as suggestId, s.suggest, " +
+            "c.id as chapterId, cm.summary, " +
+            "NEW com.mars.statement.api.share.dto.ShareMemberDetailDto(" +
+            "o.id as opinionId, o.chapterMember.id as memberId, u.name as memberName, " +
+            "o.opinion, o.regDt, o.location, " +
+            "l.like" +
+            ")" +
+            ") " +
+            "FROM Chapter c " +
+            "JOIN c.suggest s " +
+            "JOIN c.chapterMembers cm " +
+            "JOIN Share o ON o.chapterMember.id = cm.id " +
+            "LEFT JOIN Like l ON l.share.id = o.id AND l.member.id = :myId " +
+            "JOIN cm.groupMember gm " +
+            "JOIN gm.user u " +
+            "WHERE c.id = :chapterId")
+    List<ShareDetailDto> findShareDetails(@Param("chapterId")Long chapterId, Long myId);
 }
