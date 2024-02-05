@@ -13,8 +13,14 @@ public class ChapterMemberService {
     private final ChapterMemberRepository chapterMemberRepository;
 
 
-    public ChapterMember findChapterMemberById(Long chapterId, Long memberId){
+    public ChapterMember getChapterMemberById(Long chapterId, Long memberId){
         return chapterMemberRepository.findByChapterIdAndGroupMember_Id(chapterId, memberId);
     }
+
+    public ChapterMember getChapterMemberByChapterIdAndUserId(Long chapterId, Long myId){
+        return chapterMemberRepository.findChapterMemberByChapterIdAndUserId(chapterId, myId);
+    }
+
+
 
 }

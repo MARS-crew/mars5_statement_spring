@@ -39,12 +39,12 @@ public class SendService {
 
         try {
             Chapter chapter = chapterService.findChapterById(chapterId);
-            ChapterMember from = chapterMemberService.findChapterMemberById(chapter.getId(), fromId);
+            ChapterMember from = chapterMemberService.getChapterMemberById(chapter.getId(), fromId);
 
             List<Send> sendList = new ArrayList<>();
 
             for (SendMessageDto messageDto : messageDtoList) {
-                ChapterMember to = chapterMemberService.findChapterMemberById(chapter.getId(), messageDto.getTo_id());
+                ChapterMember to = chapterMemberService.getChapterMemberById(chapter.getId(), messageDto.getTo_id());
                 System.out.println(to.getId());
                 Send send = new Send(chapter, from, to, messageDto.getMessage());
                 sendList.add(send);

@@ -1,10 +1,13 @@
 package com.mars.statement.api.share.service;
 
 import com.mars.statement.api.chapter.domain.Chapter;
-import com.mars.statement.api.chapter.dto.ChapterSummaryDto;
+import com.mars.statement.api.chapter.domain.ChapterMember;
 import com.mars.statement.api.chapter.dto.CheckChapterDto;
+import com.mars.statement.api.chapter.dto.ChapterSummaryDto;
+import com.mars.statement.api.chapter.service.ChapterMemberService;
 import com.mars.statement.api.chapter.service.ChapterService;
 import com.mars.statement.api.chapter.service.SuggestService;
+import com.mars.statement.api.group.domain.GroupMember;
 import com.mars.statement.api.group.service.GroupMemberService;
 import com.mars.statement.api.share.dto.*;
 import com.mars.statement.api.share.repository.ShareRepository;
@@ -18,12 +21,11 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class ShareService {
 
-    private final GroupMemberService groupMemberService;
-
-    private final SuggestService suggestService;
     private final ShareRepository shareRepository;
-
+    private final GroupMemberService groupMemberService;
+    private final SuggestService suggestService;
     private final ChapterService chapterService;
+    private final ChapterMemberService chapterMemberService;
 
     public List<PersonalShareDto> getPersonalShareData(Long suggestId, Long myId) {
         List<Chapter> chapters = chapterService.getChaptersByMemberId(myId, suggestId);
@@ -66,14 +68,29 @@ public class ShareService {
         List<Chapter> chapters = chapterService.getChaptersByMemberId(myId, suggestId);
         List<Long> chapterIds = chapters.stream().map(Chapter::getId).toList();
 
-        List<CheckChapterDto> chapterShareDtoList = shareRepository.findChapterSharesByIds(chapterIds);
+        List<CheckChapterDto> checkChapterDtoList = shareRepository.findChapterSharesByIds(chapterIds);
 
         List<ChapterSummaryDto> allChapterSummaryDtoList = new ArrayList<>();
 
-        for (CheckChapterDto chapterShareDto : chapterShareDtoList) {
-            allChapterSummaryDtoList.add(chapterShareDto.getChapterSummaryDto());
+        for (CheckChapterDto checkChapterDto : checkChapterDtoList) {
+            allChapterSummaryDtoList.add(checkChapterDto.getChapterSummaryDto());
         }
-        return new CheckChapterDto(chapterShareDtoList.get(0).getSuggestId(),chapterShareDtoList.get(0).getSuggest(),allChapterSummaryDtoList);
+        return new CheckChapterDto(checkChapterDtoList.get(0).getSuggestId(), checkChapterDtoList.get(0).getSuggest(),allChapterSummaryDtoList);
+    }
+    public ShareDetailDto getShareDetails(Long chapterId, Long myId) {
+        Chapter chapter = chapterService.findChapterById(chapterId);
+        ChapterMember member = chapterMemberService.getChapterMemberByChapterIdAndUserId(chapter.getId(), myId);
+
+        List<ShareDetailDto> shareDetailList = shareRepository.findShareDetails(chapter.getId(),member.getId());
+
+        List<ShareMemberDetailDto> allChapterMemberDetailList = new ArrayList<>();
+        for (ShareDetailDto shareDetailDto : shareDetailList) {
+            allChapterMemberDetailList.add(shareDetailDto.getShareMemberDetailDto());
+        }
+        return new ShareDetailDto(shareDetailList.get(0).getSuggestId(), shareDetailList.get(0).getSuggest(),
+                shareDetailList.get(0).getChapterId(), shareDetailList.get(0).getSummary(),
+                allChapterMemberDetailList);
+
     }
 
 }
