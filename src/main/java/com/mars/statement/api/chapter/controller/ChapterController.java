@@ -3,7 +3,9 @@ package com.mars.statement.api.chapter.controller;
 import com.mars.statement.api.chapter.dto.CreateChapterDto;
 import com.mars.statement.api.chapter.service.CreateChapterService;
 import com.mars.statement.api.share.dto.LikeRequest;
+import com.mars.statement.global.dto.UserDto;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -27,7 +29,7 @@ public class ChapterController {
 
     @Operation(summary = "회차 작성")
     @PostMapping("/create")
-    public ResponseEntity<?> createChapter(@RequestBody CreateChapterDto createChapterDto) throws Exception {
-        return createChapterService.createChapterAndAddMembers(createChapterDto);
+    public ResponseEntity<?> createChapter(@RequestBody CreateChapterDto createChapterDto,@Parameter(hidden = true) UserDto userDto) throws Exception {
+        return createChapterService.createChapterAndAddMembers(createChapterDto,userDto.getId());
     }
 }

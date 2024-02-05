@@ -10,8 +10,10 @@ import com.mars.statement.api.group.service.GroupMemberService;
 import com.mars.statement.api.group.service.GroupService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+
 
 @RequiredArgsConstructor
 @Service
@@ -21,9 +23,9 @@ public class CreateSuggestService {
     private final GroupMemberService groupMemberService;
     private final CreateChapterService createChapterService;
     @Transactional
-    public ResponseEntity<?> createSuggest(SuggestDto suggestDto) throws Exception {
+    public ResponseEntity<?> createSuggest(SuggestDto suggestDto,Long myId) throws Exception {
         Group group = groupService.findGroupById(suggestDto.getGroupId());
-        GroupMember groupMember = groupMemberService.findGroupMemberById(suggestDto.getConstructorId());
+        GroupMember groupMember = groupMemberService.findGroupMemberById(myId);
 
         Suggest savedSuggest = suggestRepository.save(Suggest.builder()
                 .group(group)
@@ -33,12 +35,12 @@ public class CreateSuggestService {
                 .build());
 
         CreateChapterDto createChapterDto = CreateChapterDto.builder()
-                .constructorId(suggestDto.getConstructorId())
+                .constructorId(savedSuggest.getGroupMember().getId())
                 .suggestId(savedSuggest.getId())
-                .groupId(suggestDto.getGroupId())
+                //.groupId(suggestDto.getGroupId())
                 .memberIds(suggestDto.getMemberIds())
                 .build();
 
-        return createChapterService.createChapterAndAddMembers(createChapterDto);
+        return createChapterService.createChapterAndAddMembers(createChapterDto,myId);
     }
 }

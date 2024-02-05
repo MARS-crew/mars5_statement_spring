@@ -2,8 +2,10 @@ package com.mars.statement.api.chapter.controller;
 
 import com.mars.statement.api.chapter.dto.SuggestDto;
 import com.mars.statement.api.chapter.service.CreateSuggestService;
-import com.mars.statement.api.chapter.service.SuggestService;
+
+import com.mars.statement.global.dto.UserDto;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -22,7 +24,7 @@ public class SuggestController {
 
     @Operation(summary = "주제 작성")
     @PostMapping
-    public ResponseEntity<?> createSuggest(@RequestBody SuggestDto suggestDto) throws Exception {
-        return createSuggestService.createSuggest(suggestDto);
+    public ResponseEntity<?> createSuggest(@RequestBody SuggestDto suggestDto,@Parameter(hidden = true) UserDto userDto) throws Exception {
+        return createSuggestService.createSuggest(suggestDto,userDto.getId());
     }
 }
