@@ -46,7 +46,7 @@ public class Send {
 
     @Column(name = "reg_dt")
     @CreatedDate
-    private Timestamp reg_dt;
+    private Timestamp regDt;
 
     @Column(name = "bookmark_yn")
     private Boolean bookmark;

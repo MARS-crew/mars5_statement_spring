@@ -3,6 +3,8 @@ package com.mars.statement.api.send.repository;
 import com.mars.statement.api.chapter.dto.CheckChapterDto;
 import com.mars.statement.api.send.domain.Send;
 import com.mars.statement.api.send.dto.PersonalSendDto;
+import com.mars.statement.api.send.dto.SendDetailDto;
+import com.mars.statement.api.share.dto.ShareDetailDto;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -44,4 +46,23 @@ public interface SendRepository extends JpaRepository<Send, Long> {
             "JOIN gm.user u " +
             "WHERE ch.id IN :chapterIds AND u.id = :myId")
     List<CheckChapterDto> findChapterSendsByIds(@Param("chapterIds") List<Long> chapterIds, Long myId);
+
+    @Query("SELECT NEW com.mars.statement.api.send.dto.SendDetailDto(" +
+            "s.id as suggestId, s.suggest, " +
+            "my.id as chapterId, my.summary, " +
+            "NEW com.mars.statement.api.send.dto.SendMemberDetailDto(" +
+            "m.id as sendId, m.from.id as memberId, u.name as memberName, " +
+            "m.message, m.regDt, m.location, m.bookmark " +
+            ")" +
+            ") " +
+            "FROM Chapter c " +
+            "JOIN c.suggest s " +
+            "JOIN c.chapterMembers my " +
+            "JOIN c.chapterMembers cm " +
+            "JOIN Send m ON m.chapter.id = c.id AND m.from.id = cm.id AND m.to.id = :myId " +
+            "JOIN cm.groupMember gm " +
+            "JOIN gm.user u " +
+            "WHERE c.id = :chapterId and cm.id != :myId AND my.id = :myId")
+    List<SendDetailDto> findSendDetails(@Param("chapterId")Long chapterId, Long myId);
+
 }
