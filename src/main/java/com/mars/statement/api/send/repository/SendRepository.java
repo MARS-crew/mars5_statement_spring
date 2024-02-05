@@ -6,20 +6,23 @@ import com.mars.statement.api.send.dto.PersonalSendDto;
 import com.mars.statement.api.send.dto.SendDetailDto;
 import com.mars.statement.api.share.dto.ShareDetailDto;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface SendRepository extends JpaRepository<Send, Long> {
 
 
     @Query("SELECT NEW com.mars.statement.api.send.dto.PersonalSendDto(" +
-            "s.id as suggestId, s.suggest, " +
+            "s.id AS suggestId, s.suggest, " +
             "NEW com.mars.statement.api.send.dto.MemberMessageDto(" +
-            "gm.id as memberId, u.name as memberName, u.img as memberImg, " +
+            "gm.id AS memberId, u.name AS memberName, u.img AS memberImg, " +
             "NEW com.mars.statement.api.send.dto.MessageDto(" +
-            "c.id as chapterId, cm.id as chapterMemberId, c.reg_dt as regDt, m.message, m.location" +
+            "c.id AS chapterId, cm.id AS chapterMemberId, c.reg_dt AS regDt, m.message, m.location" +
             ")" +
             ")" +
             ")" +
@@ -34,9 +37,9 @@ public interface SendRepository extends JpaRepository<Send, Long> {
     List<PersonalSendDto> findPersonalSharesByIds(@Param("chapterIds") List<Long> chapterIds, @Param("myId") Long myId);
 
     @Query("SELECT NEW com.mars.statement.api.chapter.dto.CheckChapterDto(" +
-            "s.id as suggestId, s.suggest, " +
+            "s.id AS suggestId, s.suggest, " +
             "NEW com.mars.statement.api.chapter.dto.ChapterSummaryDto(" +
-            "ch.id as chapterId, c.reg_dt as regDt, u.name as memberName, c.summary" +
+            "ch.id AS chapterId, c.reg_dt AS regDt, u.name AS memberName, c.summary" +
             ")" +
             ")" +
             "FROM ChapterMember c " +
@@ -48,10 +51,10 @@ public interface SendRepository extends JpaRepository<Send, Long> {
     List<CheckChapterDto> findChapterSendsByIds(@Param("chapterIds") List<Long> chapterIds, Long myId);
 
     @Query("SELECT NEW com.mars.statement.api.send.dto.SendDetailDto(" +
-            "s.id as suggestId, s.suggest, " +
-            "my.id as chapterId, my.summary, " +
+            "s.id AS suggestId, s.suggest, " +
+            "my.id AS chapterId, my.summary, " +
             "NEW com.mars.statement.api.send.dto.SendMemberDetailDto(" +
-            "m.id as sendId, m.from.id as memberId, u.name as memberName, " +
+            "m.id AS sendId, m.from.id AS memberId, u.name AS memberName, " +
             "m.message, m.regDt, m.location, m.bookmark " +
             ")" +
             ") " +
@@ -64,5 +67,12 @@ public interface SendRepository extends JpaRepository<Send, Long> {
             "JOIN gm.user u " +
             "WHERE c.id = :chapterId and cm.id != :myId AND my.id = :myId")
     List<SendDetailDto> findSendDetails(@Param("chapterId")Long chapterId, Long myId);
+
+    @Transactional
+    @Modifying( clearAutomatically=true)
+    @Query("UPDATE Send s " +
+            "SET s.bookmark = CASE WHEN s.bookmark = true THEN false ELSE true END " +
+            "WHERE s.id = :sendId")
+    int updateBookmark(@Param("sendId")Long sendId);
 
 }
