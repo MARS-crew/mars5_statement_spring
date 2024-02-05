@@ -152,8 +152,6 @@ public class SendService {
 
         Send send = getSendById(sendId);
 
-        System.out.println(send.getId()+ " , bool" + send.getBookmark());
-
         return sendRepository.updateBookmark(send.getId());
 
 
