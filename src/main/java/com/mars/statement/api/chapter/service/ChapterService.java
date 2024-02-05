@@ -1,5 +1,6 @@
 package com.mars.statement.api.chapter.service;
 
+import com.mars.statement.api.auth.domain.User;
 import com.mars.statement.api.chapter.domain.Chapter;
 import com.mars.statement.api.chapter.domain.ChapterMember;
 import com.mars.statement.api.chapter.domain.Suggest;
@@ -9,8 +10,10 @@ import com.mars.statement.api.chapter.dto.ChapterWithMemberDto;
 import com.mars.statement.api.chapter.repository.ChapterRepository;
 import com.mars.statement.api.group.domain.GroupMember;
 import com.mars.statement.api.group.service.GroupMemberService;
+import com.mars.statement.global.exception.NotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -26,8 +29,9 @@ public class ChapterService {
 
     private final SuggestService suggestService;
 
-    public Chapter getChapterById(Long id){
-        return chapterRepository.findById(id).orElse(null);
+    public Chapter getChapterById(Long id) throws NotFoundException {
+        return chapterRepository.findById(id).orElseThrow(() ->
+                new NotFoundException(HttpStatus.NOT_FOUND.value(), "챕터 정보를 찾을 수 없습니다."));
     }
 
     public ChapterWithMemberDto getChapterWithMembers(Long chapter_id) {
@@ -51,18 +55,22 @@ public class ChapterService {
         return null;
     }
 
-    public List<Chapter> getChaptersByMemberId(Long myId, Long suggestId){
+    public List<Chapter> getChaptersByMemberId(Long myId, Long suggestId) throws NotFoundException {
+        try {
+            Suggest suggest = suggestService.getSuggestById(suggestId);
+            GroupMember member = groupMemberService.getGroupMemberByGroupIdAndUser(suggest.getGroup().getId(), myId);
 
-        Suggest suggest = suggestService.getSuggestById(suggestId);
-        GroupMember member = groupMemberService.getGroupMemberByGroupIdAndUser(suggest.getGroup().getId(),myId);
+            List<ChapterMember> chapterMembers = chapterRepository.findChaptersByMemberId(member.getId(), suggestId);
 
-        List<ChapterMember> chapterMembers = chapterRepository.findChaptersByMemberId(member.getId(), suggestId);
+            List<Chapter> chapters = new ArrayList<>();
+            for (ChapterMember chapterMember : chapterMembers) {
+                chapters.add(chapterMember.getChapter());
+            }
 
-        List<Chapter> chapters = new ArrayList<>();;
-        for(ChapterMember chapterMember: chapterMembers){
-            chapters.add(chapterMember.getChapter());
+            return chapters;
+        } catch (NotFoundException e) {
+            throw new NotFoundException(HttpStatus.NOT_FOUND.value(), "해당 챕터 정보를 찾을 수 없습니다.");
         }
-        return chapters;
     }
 
 }

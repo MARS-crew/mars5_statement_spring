@@ -69,7 +69,7 @@ public class SendService {
         }
     }
 
-    public List<PersonalSendDto> getPersonalSendData(Long groupId, Long suggestId, Long myId) {
+    public List<PersonalSendDto> getPersonalSendData(Long groupId, Long suggestId, Long myId) throws NotFoundException {
 
         // 챕터 조회
         List<Chapter> chapters = chapterService.getChaptersByMemberId(myId, suggestId);
@@ -114,7 +114,7 @@ public class SendService {
 
     }
 
-    public CheckChapterDto getChapterSendData(Long suggestId, Long myId) {
+    public CheckChapterDto getChapterSendData(Long suggestId, Long myId) throws NotFoundException {
         List<Chapter> chapters = chapterService.getChaptersByMemberId(myId, suggestId);
         List<Long> chapterIds = chapters.stream().map(Chapter::getId).toList();
 
@@ -128,7 +128,7 @@ public class SendService {
         return new CheckChapterDto(checkChapterDtoList.get(0).getSuggestId(), checkChapterDtoList.get(0).getSuggest(), allChapterSummaryDtoList);
     }
 
-    public SendDetailDto getSendDetails(Long chapterId, Long myId) {
+    public SendDetailDto getSendDetails(Long chapterId, Long myId) throws NotFoundException {
         Chapter chapter = chapterService.getChapterById(chapterId);
         ChapterMember member = chapterMemberService.getChapterMemberByChapterIdAndUserId(chapter.getId(), myId);
 

@@ -1,5 +1,6 @@
 package com.mars.statement.api.share.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.Transient;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -16,6 +17,7 @@ public class MemberOpinionDto {
     private String memberName;
     private String memberImg;
 
+    @JsonIgnore
     private OpinionDto opinionDto;
 
     @Transient

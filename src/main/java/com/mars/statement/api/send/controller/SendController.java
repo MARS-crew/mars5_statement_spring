@@ -82,37 +82,44 @@ public class SendController {
                     content = {@Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = PersonalSendDto.class)))})
     })
     @GetMapping("/personal/{groupId}/{suggestId}")
-    public ResponseEntity<?> getPersonalSendDataList(@PathVariable Long groupId, @PathVariable Long suggestId) {
+    public ResponseEntity<?> getPersonalSendDataList(@PathVariable Long groupId, @PathVariable Long suggestId) throws NotFoundException {
         Long myId = 3L; // 로그인 데이터
         List<PersonalSendDto> personalSendDataList = sendService.getPersonalSendData(groupId, suggestId, myId);
 
         return CommonResponse.createResponse(200, "전달 인물별 조회 성공", personalSendDataList);
     }
+
     @Operation(summary = "전달 회차별 조회")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description="전달 회차별 조회 성공 ",
+            @ApiResponse(responseCode = "200", description = "전달 회차별 조회 성공 ",
                     content = {@Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = CheckChapterDto.class)))})
     })
     @GetMapping("/chapter/{suggestId}")
-    public ResponseEntity<?> getChapterSendDataList( @PathVariable Long suggestId, @Parameter(hidden = true) UserDto userDto) {
+    public ResponseEntity<?> getChapterSendDataList(@PathVariable Long suggestId, @Parameter(hidden = true) UserDto userDto) throws NotFoundException {
         CheckChapterDto chapterDtoList = sendService.getChapterSendData(suggestId, userDto.getId());
 
         return CommonResponse.createResponse(200, "전달 회차별 조회 성공", chapterDtoList);
 
     }
+
     @Operation(summary = "전달 회차 디테일 조회")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description="전달 회차 디테일 조회 성공 ",
+            @ApiResponse(responseCode = "200", description = "전달 회차 디테일 조회 성공 ",
                     content = {@Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = SendDetailDto.class)))})
     })
     @GetMapping("/detail/{chapterId}")
-    public ResponseEntity<?> getSendDetailData( @PathVariable Long chapterId, @Parameter(hidden = true)UserDto userDto) {
-        SendDetailDto sendDetails = sendService.getSendDetails(chapterId, userDto.getId());
-        return CommonResponse.createResponse(200, "공유 회차별 조회 성공", sendDetails);
+    public ResponseEntity<?> getSendDetailData(@PathVariable Long chapterId, @Parameter(hidden = true) UserDto userDto) throws NotFoundException {
+        try {
+            SendDetailDto sendDetails = sendService.getSendDetails(chapterId, userDto.getId());
+            return CommonResponse.createResponse(200, "공유 회차별 조회 성공", sendDetails);
+        } catch (NotFoundException e) {
+            return CommonResponse.createResponseMessage(HttpStatus.NOT_FOUND.value(), e.getMessage());
+        }
     }
+
     @Operation(summary = "전달 북마크 처리")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description="전달 북마크 처리 성공 ",
+            @ApiResponse(responseCode = "200", description = "전달 북마크 처리 성공 ",
                     content = {@Content(mediaType = "application/json", schema = @Schema(type = "integer"))})
     })
     @GetMapping("/bookmark/{sendId}")

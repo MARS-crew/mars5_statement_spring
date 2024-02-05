@@ -34,7 +34,7 @@ public class ShareService {
         return shareRepository.findById(shareId).orElseThrow(() -> new NotFoundException(HttpStatus.NOT_FOUND.value(), "공유 정보를 찾을 수 없습니다."));
     }
 
-    public PersonalShareDto getPersonalShareData(Long suggestId, Long myId) {
+    public PersonalShareDto getPersonalShareData(Long suggestId, Long myId) throws NotFoundException {
         List<Chapter> chapters = chapterService.getChaptersByMemberId(myId, suggestId);
         List<Long> chapterIds = chapters.stream().map(Chapter::getId).toList();
 
@@ -54,7 +54,7 @@ public class ShareService {
                     List<OpinionDto> opinionList = memberEntry.getValue().stream()
                             .flatMap(List::stream)
                             .flatMap(dto -> dto.getOpinionList().stream())
-                            .collect(Collectors.toList());  // 수정된 부분
+                            .collect(Collectors.toList());
 
                     MemberOpinionDto memberOpinionDto = personalShares.stream()
                             .filter(dto -> dto.getMemberOpinionDto().getMemberId().equals(memberId))
@@ -69,7 +69,7 @@ public class ShareService {
 
     }
 
-    public CheckChapterDto getChapterShareData(Long suggestId, Long myId) {
+    public CheckChapterDto getChapterShareData(Long suggestId, Long myId) throws NotFoundException {
         List<Chapter> chapters = chapterService.getChaptersByMemberId(myId, suggestId);
         List<Long> chapterIds = chapters.stream().map(Chapter::getId).toList();
 
@@ -83,11 +83,15 @@ public class ShareService {
         return new CheckChapterDto(checkChapterDtoList.get(0).getSuggestId(), checkChapterDtoList.get(0).getSuggest(), allChapterSummaryDtoList);
     }
 
-    public ShareDetailDto getShareDetails(Long chapterId, Long myId) {
+    public ShareDetailDto getShareDetails(Long chapterId, Long myId) throws NotFoundException {
         Chapter chapter = chapterService.getChapterById(chapterId);
         ChapterMember member = chapterMemberService.getChapterMemberByChapterIdAndUserId(chapter.getId(), myId);
 
         List<ShareDetailDto> shareDetailList = shareRepository.findShareDetails(chapter.getId(), member.getId());
+
+        if (shareDetailList.isEmpty()) {
+            throw new NotFoundException(HttpStatus.NOT_FOUND.value(), "해당 공유 상세 정보를 찾을 수 없습니다.");
+        }
 
         List<ShareMemberDetailDto> allChapterMemberDetailList = new ArrayList<>();
         for (ShareDetailDto shareDetailDto : shareDetailList) {
