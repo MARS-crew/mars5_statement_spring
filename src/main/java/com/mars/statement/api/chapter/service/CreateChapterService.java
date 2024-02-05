@@ -3,7 +3,6 @@ package com.mars.statement.api.chapter.service;
 import com.mars.statement.api.chapter.domain.Chapter;
 import com.mars.statement.api.chapter.domain.Suggest;
 import com.mars.statement.api.chapter.dto.CreateChapterDto;
-import com.mars.statement.api.chapter.dto.SuggestDto;
 import com.mars.statement.api.chapter.repository.ChapterRepository;
 import com.mars.statement.api.chapter.repository.SuggestRepository;
 import com.mars.statement.api.group.domain.Group;
@@ -24,8 +23,6 @@ public class CreateChapterService {
     private final ChapterRepository chapterRepository;
 
     private final GroupMemberService groupMemberService;
-
-    private final SuggestService suggestService;
 
     private final ChapterMemberService chapterMemberService;
 
@@ -55,7 +52,7 @@ public class CreateChapterService {
         Chapter savedChapter = chapterRepository.save(chapter);
 
         // 4. 회차에 생성자와 멤버 추가
-        chapterMemberService.addMemberToChapter(savedChapter.getId(), myId, createChapterDto.getMemberIds());
+        chapterMemberService.addMemberToChapter(savedChapter.getId(), myId, createChapterDto.getMemberIds(),group.getId());
 
         return CommonResponse.createResponse(HttpStatus.OK.value(), "주제생성 완료", savedChapter.getId());
     }

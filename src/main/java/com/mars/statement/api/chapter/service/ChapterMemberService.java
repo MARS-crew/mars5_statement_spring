@@ -22,22 +22,29 @@ public class ChapterMemberService {
     private final GroupMemberRepository groupMemberRepository;
 
     @Transactional
-    public void addMemberToChapter(Long chapterId, Long myId, List<Long> memberIds) throws NotFoundException {
+    public void addMemberToChapter(Long chapterId, Long myId, List<Long> memberIds,Long groupId) throws NotFoundException {
         Chapter chapter = chapterRepository.findById(chapterId)
                 .orElseThrow(() -> new NotFoundException(404, "Chapter not found"));
+
+        GroupMember memberMyId = groupMemberRepository.findByGroupIdAndUserId(groupId,myId);
 
         for (Long memberId : memberIds) {
             GroupMember member = groupMemberRepository.findById(memberId)
                     .orElseThrow(() -> new NotFoundException(404, "Group member not found"));
 
+            if (!member.getGroup().getId().equals(groupId)) {
+                throw new NotFoundException(404, "User is not a member of this group");
+            }
+
             // 생성자 여부 설정: 로그인한 사용자의 ID와 멤버의 ID가 일치하면 생성자로 설정
-            Long isConstructor = (memberId.equals(myId) ? 1L : 0L);
+            Long isConstructor = (memberId==(memberMyId.getId()) ? 1L : 0L);
 
             ChapterMember chapterMember = ChapterMember.builder()
                     .chapter(chapter)
                     .groupMember(member)
                     .is_constructor(isConstructor)
                     .build();
+
 
             chapterMemberRepository.save(chapterMember);
         }
