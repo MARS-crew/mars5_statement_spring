@@ -1,9 +1,7 @@
 package com.mars.statement.api.share.controller;
 
 
-import com.mars.statement.api.chapter.dto.ChapterMemberDto;
 import com.mars.statement.api.chapter.dto.CheckChapterDto;
-import com.mars.statement.api.share.dto.ChapterShareDto;
 import com.mars.statement.api.share.dto.PersonalShareDto;
 import com.mars.statement.api.share.dto.ShareDetailDto;
 import com.mars.statement.api.share.service.ShareService;
