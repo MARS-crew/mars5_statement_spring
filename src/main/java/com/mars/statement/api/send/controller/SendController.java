@@ -5,6 +5,7 @@ import com.mars.statement.api.chapter.dto.ChapterWithMemberDto;
 import com.mars.statement.api.chapter.dto.CheckChapterDto;
 import com.mars.statement.api.chapter.service.ChapterService;
 import com.mars.statement.api.send.domain.Send;
+import com.mars.statement.api.send.dto.BookmarkRequest;
 import com.mars.statement.api.send.dto.PersonalSendDto;
 import com.mars.statement.api.send.dto.SendDetailDto;
 import com.mars.statement.api.send.dto.SendMessageDto;
@@ -122,11 +123,11 @@ public class SendController {
             @ApiResponse(responseCode = "200", description = "전달 북마크 처리 성공 ",
                     content = {@Content(mediaType = "application/json", schema = @Schema(type = "integer"))})
     })
-    @GetMapping("/bookmark/{sendId}")
-    public ResponseEntity<?> updateBookmark(@PathVariable Long sendId, @Parameter(hidden = true) UserDto userDto) {
+    @PostMapping("/bookmark")
+    public ResponseEntity<?> updateBookmark(@RequestBody BookmarkRequest request, @Parameter(hidden = true) UserDto userDto) {
         try {
-            int result = sendService.updateBookmark(sendId, userDto.getId());
-            return CommonResponse.createResponse(200, "전달 북마크 처리 성공", sendId);
+            int result = sendService.updateBookmark(request.getSendId(), userDto.getId());
+            return CommonResponse.createResponse(200, "전달 북마크 처리 성공", request);
         } catch (NotFoundException e) {
             return CommonResponse.createResponseMessage(HttpStatus.NOT_FOUND.value(), e.getMessage());
         }
