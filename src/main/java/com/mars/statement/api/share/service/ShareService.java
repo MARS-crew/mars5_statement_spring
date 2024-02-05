@@ -78,7 +78,7 @@ public class ShareService {
         return new CheckChapterDto(checkChapterDtoList.get(0).getSuggestId(), checkChapterDtoList.get(0).getSuggest(),allChapterSummaryDtoList);
     }
     public ShareDetailDto getShareDetails(Long chapterId, Long myId) {
-        Chapter chapter = chapterService.findChapterById(chapterId);
+        Chapter chapter = chapterService.getChapterById(chapterId);
         ChapterMember member = chapterMemberService.getChapterMemberByChapterIdAndUserId(chapter.getId(), myId);
 
         List<ShareDetailDto> shareDetailList = shareRepository.findShareDetails(chapter.getId(),member.getId());

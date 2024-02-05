@@ -26,7 +26,7 @@ public class ChapterService {
 
     private final SuggestService suggestService;
 
-    public Chapter findChapterById(Long id){
+    public Chapter getChapterById(Long id){
         return chapterRepository.findById(id).orElse(null);
     }
 
