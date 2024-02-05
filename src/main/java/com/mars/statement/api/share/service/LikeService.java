@@ -24,14 +24,16 @@ public class LikeService {
         return likeRepository.findByShareId(shareId).orElse(null);
     }
 
-    public int updateLike(Long shareId, Long chapterId, Long myId) throws NotFoundException {
+    public int updateLike(Long chapterId, Long shareId, Long myId) throws NotFoundException {
         Chapter chapter = chapterService.getChapterById(chapterId);
         ChapterMember member = chapterMemberService.getChapterMemberByChapterIdAndUserId(chapter.getId(),myId);
         Like like = getLikeById(shareId);
         if (like != null) {
+            System.out.println("like 있으면 shareId: " + like.getShare().getId());
             likeRepository.delete(like);
             return 0;
         } else {
+            System.out.println("like 없으면 shareId: " + shareId);
             Like newLike = Like.builder()
                     .share(shareService.getShareById(shareId))
                     .member(member)

@@ -2,6 +2,7 @@ package com.mars.statement.api.share.controller;
 
 
 import com.mars.statement.api.chapter.dto.CheckChapterDto;
+import com.mars.statement.api.share.dto.LikeRequest;
 import com.mars.statement.api.share.dto.PersonalShareDto;
 import com.mars.statement.api.share.dto.ShareDetailDto;
 import com.mars.statement.api.share.service.LikeService;
@@ -72,12 +73,12 @@ public class ShareController {
     @Operation(summary = "공유 의견 좋아요 기능")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description="공유 의견 좋아요 기능 성공 ",
-                    content = {@Content(mediaType = "application/json", schema = @Schema(type = "integer"))})
+                    content = {@Content(mediaType = "application/json", schema = @Schema(implementation = LikeRequest.class))})
     })
     @PostMapping("/detail/{chapterId}")
-    public ResponseEntity<?> updateLike(@PathVariable Long chapterId, @RequestBody Long shareId, @Parameter(hidden = true) UserDto userDto) throws NotFoundException {
-        int result = likeService.updateLike(chapterId, shareId, userDto.getId());
-        return CommonResponse.createResponse(200, "공유 의견 좋아요 기능 성공", shareId);
+    public ResponseEntity<?> updateLike(@PathVariable Long chapterId, @RequestBody LikeRequest request, @Parameter(hidden = true) UserDto userDto) throws NotFoundException {
+        int result = likeService.updateLike(chapterId, request.getShareId(), userDto.getId());
+        return CommonResponse.createResponse(200, "공유 의견 좋아요 기능 성공", request);
     }
 
 
