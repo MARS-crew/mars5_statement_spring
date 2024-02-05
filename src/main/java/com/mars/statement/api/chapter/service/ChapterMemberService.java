@@ -8,12 +8,14 @@ import com.mars.statement.api.chapter.repository.ChapterRepository;
 import com.mars.statement.api.group.domain.GroupMember;
 import com.mars.statement.api.group.repository.GroupMemberRepository;
 import com.mars.statement.global.exception.NotFoundException;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
+@RequiredArgsConstructor
 @Service
 public class ChapterMemberService {
 
@@ -21,19 +23,13 @@ public class ChapterMemberService {
     private final ChapterRepository chapterRepository;
     private final GroupMemberRepository groupMemberRepository;
 
-    @Autowired
-    public ChapterMemberService(ChapterMemberRepository chapterMemberRepository, ChapterRepository chapterRepository, GroupMemberRepository groupMemberRepository) {
-        this.chapterMemberRepository = chapterMemberRepository;
-        this.chapterRepository = chapterRepository;
-        this.groupMemberRepository = groupMemberRepository;
-    }
 
-    public ChapterMember findChapterMemberById(Long chapter_id, Long member_id){
+    public ChapterMember findChapterMemberById(Long chapter_id, Long member_id) {
         return chapterMemberRepository.findByChapterIdAndGroupMember_Id(chapter_id, member_id);
     }
 
     @Transactional
-    public void addMemberToChapter(Long chapterId, Long constructorId,List<Long> memberIds) throws NotFoundException {
+    public void addMemberToChapter(Long chapterId, Long constructorId, List<Long> memberIds) throws NotFoundException {
         Chapter chapter = chapterRepository.findById(chapterId)
                 .orElseThrow(() -> new NotFoundException("Chapter not found"));
 
@@ -52,6 +48,4 @@ public class ChapterMemberService {
             chapterMemberRepository.save(chapterMember);
         }
     }
-
-
 }

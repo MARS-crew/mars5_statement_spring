@@ -13,15 +13,21 @@ import com.mars.statement.api.group.service.GroupMemberService;
 import com.mars.statement.global.dto.CommonResponse;
 import com.mars.statement.global.exception.ForbiddenException;
 import com.mars.statement.global.exception.NotFoundException;
+import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.mars.statement.api.chapter.domain.ChapterMember;
+
+
+import java.util.ArrayList;
+
 import java.util.List;
 
+@RequiredArgsConstructor
 @Service
 public class ChapterService {
 
@@ -30,40 +36,30 @@ public class ChapterService {
     private final SuggestRepository suggestRepository;
     private final GroupMemberService groupMemberService;
     private final ModelMapper modelMapper;
-
-    @Autowired
-    public ChapterService(ChapterRepository chapterRepository, ChapterMemberService chapterMemberService, SuggestRepository suggestRepository, GroupMemberService groupMemberService, ModelMapper modelMapper) {
-        this.chapterRepository = chapterRepository;
-        this.chapterMemberService = chapterMemberService;
-        this.suggestRepository = suggestRepository;
-        this.groupMemberService = groupMemberService;
-        this.modelMapper = modelMapper;
-    }
+    private final GroupMemberService groupMemberService;
+    private final SuggestService suggestService;
 
     public Chapter findChapterById(Long id) {
-        return chapterRepository.findById(id).orElse(null);
+            return chapterRepository.findById(id).orElse(null);
     }
 
-    public ChapterWithMemberDTO getChapterWithMembers(Long chapter_id) {
-
+    public ChapterWithMemberDTO getChapterWithMembers (Long chapter_id){
         Chapter chapter = chapterRepository.findChapterWithMembers(chapter_id);
+            if (chapter != null) {
+                List<ChapterMemberDTO> chapterMemberDTOList = chapter.getChapterMembers()
+                        .stream()
+                        .map(chapterMember -> new ChapterMemberDTO(
+                                chapterMember.getGroupMember().getId(),
+                                chapterMember.getSummary(),
+                                chapterMember.getGroupMember().getUser().getName()
+                            )).toList();
+                return new ChapterWithMemberDTO(chapter.getId(), chapter.getSuggest().getSuggest(), chapter.getSuggest().getType(), chapterMemberDTOList);
+            }
 
-        if (chapter != null) {
-            List<ChapterMemberDTO> chapterMemberDTOList = chapter.getChapterMembers()
-                    .stream()
-                    .map(chapterMember -> new ChapterMemberDTO(
-                            chapterMember.getGroupMember().getId(),
-                            chapterMember.getSummary(),
-                            chapterMember.getGroupMember().getUser().getName()
-                    )).toList();
-            return new ChapterWithMemberDTO(chapter.getId(), chapter.getSuggest().getSuggest(), chapter.getSuggest().getType(), chapterMemberDTOList);
-        }
-
-        return null;
+                return null;
     }
-
     @Transactional
-    public ResponseEntity<?> createChapterAndAddMembers(CreateChapterDto createChapterDto) throws Exception {
+    public ResponseEntity<?> createChapterAndAddMembers (CreateChapterDto createChapterDto) throws Exception {
         // 1. 주제 조회
         Suggest suggest = suggestRepository.findById(createChapterDto.getSuggestId())
                 .orElseThrow(() -> new NotFoundException("Suggest not found"));
@@ -89,4 +85,18 @@ public class ChapterService {
 
         return CommonResponse.createResponse(HttpStatus.OK.value(), "주제생성 완료", savedChapter.getId());
     }
+    public List<Chapter> getChaptersByMemberId (Long group_id, Long my_id, Long suggest_id){
+
+        GroupMember member = groupMemberService.getGroupMemberByGroupIdAndUser(group_id, my_id);
+        Suggest suggest = suggestService.getSuggestById(suggest_id);
+
+        List<ChapterMember> chapterMembers = chapterRepository.findChaptersByMemberId(member.getId(), suggest_id);
+
+        List<Chapter> chapters = new ArrayList<>();
+        for (ChapterMember chapterMember : chapterMembers) {
+            chapters.add(chapterMember.getChapter());
+        }
+        return chapters;
+    }
+
 }

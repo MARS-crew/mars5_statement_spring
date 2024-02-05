@@ -22,3 +22,4 @@ public class SuggestController {
         return suggestService.createSuggest(suggestDto);
     }
 }
+

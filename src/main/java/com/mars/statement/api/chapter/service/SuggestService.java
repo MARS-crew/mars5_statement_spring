@@ -1,6 +1,7 @@
 package com.mars.statement.api.chapter.service;
 
 import com.mars.statement.api.chapter.domain.Suggest;
+
 import com.mars.statement.api.chapter.dto.CreateChapterDto;
 import com.mars.statement.api.chapter.dto.SuggestDto;
 import com.mars.statement.api.chapter.repository.SuggestRepository;
@@ -13,6 +14,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+import java.util.Optional;
+
 @Service
 @RequiredArgsConstructor
 public class SuggestService {
@@ -21,6 +25,8 @@ public class SuggestService {
     private final GroupService groupService;
     private final GroupMemberService groupMemberService;
     private final ChapterService chapterService;
+    public List<Suggest> getSuggestByGroupId(Long group_id){ return suggestRepository.findByGroupId(group_id); }
+    public Suggest getSuggestById(Long suggest_id){ return suggestRepository.findById(suggest_id).orElse(null);}
 
     @Transactional
     public ResponseEntity<?> createSuggest(SuggestDto suggestDto) throws Exception {
@@ -44,3 +50,4 @@ public class SuggestService {
         return chapterService.createChapterAndAddMembers(createChapterDto);
     }
 }
+
