@@ -23,6 +23,7 @@ import java.util.List;
 @Slf4j
 @RequestMapping("/api/v1/group")
 @Tag(name = "Group", description = "그룹 API")
+
 public class GroupController {
     private final GroupService groupService;
     private final SuggestService suggestService;

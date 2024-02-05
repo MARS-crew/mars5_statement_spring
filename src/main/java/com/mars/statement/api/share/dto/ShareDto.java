@@ -1,16 +1,14 @@
 package com.mars.statement.api.share.dto;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.Transient;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import javax.crypto.SecretKey;
-import java.lang.reflect.Member;
-import java.util.HashSet;
+import java.util.Collections;
 import java.util.List;
-import java.util.Set;
 
 @Getter
 @NoArgsConstructor
@@ -19,7 +17,22 @@ public class ShareDto {
 
     private Long suggestId;
     private String suggest;
-    private MemberOpinionDto memberOpinionDTO;
+
+    @JsonIgnore
+    private MemberOpinionDto memberOpinionDto;
+
+    @Transient
+    private List<MemberOpinionDto> memberOpinionDtoList;
+
+
+    public ShareDto(Long suggestId, String suggest, MemberOpinionDto memberOpinionDto){
+        this.suggestId = suggestId; this.suggest = suggest; this.memberOpinionDto = memberOpinionDto;
+        this.memberOpinionDtoList = Collections.singletonList(memberOpinionDto);  // 수정된 부분
+
+    }
+
+
+
 
 
 }

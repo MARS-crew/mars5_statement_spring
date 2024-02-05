@@ -8,7 +8,6 @@ import lombok.AllArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ChapterDto {
-
     private Long chapterId;
     private Long suggestId;
     private String suggest;

@@ -2,6 +2,8 @@ package com.mars.statement.api.send.service;
 
 import com.mars.statement.api.chapter.domain.Chapter;
 import com.mars.statement.api.chapter.domain.ChapterMember;
+import com.mars.statement.api.chapter.dto.ChapterSummaryDto;
+import com.mars.statement.api.chapter.dto.CheckChapterDto;
 import com.mars.statement.api.chapter.service.ChapterMemberService;
 import com.mars.statement.api.chapter.service.ChapterService;
 import com.mars.statement.api.chapter.service.SuggestService;
@@ -79,7 +81,7 @@ public class SendService {
                 .collect(Collectors.groupingBy(
                         PersonalSendDto::getSuggestId,
                         Collectors.groupingBy(
-                                personalSendDto -> personalSendDto.getMemberMessageDtoList().get(0).getMemberId(),
+                                personalSendDto -> personalSendDto.getMessageList().get(0).getMemberId(),
                                 Collectors.toList()
                         )
                 ))
@@ -91,15 +93,15 @@ public class SendService {
                             List<PersonalSendDto> personalSendDto = memberEntry.getValue();
 
                             List<MessageDto> messageDtoList = personalSendDto.stream()
-                                    .flatMap(dto -> dto.getMemberMessageDtoList().stream())
-                                    .map(MemberMessageDto::getMessageDtoList)
+                                    .flatMap(dto -> dto.getMessageList().stream())
+                                    .map(MemberMessageDto::getMessageList)
                                     .flatMap(List::stream)
                                     .collect(Collectors.toList());
 
                             MemberMessageDto mergedMemberMessageDto = new MemberMessageDto(
                                     memberId,
-                                    personalSendDto.get(0).getMemberMessageDtoList().get(0).getMemberName(),
-                                    personalSendDto.get(0).getMemberMessageDtoList().get(0).getMemberImg(),
+                                    personalSendDto.get(0).getMessageList().get(0).getMemberName(),
+                                    personalSendDto.get(0).getMessageList().get(0).getMemberImg(),
                                     messageDtoList
                             );
                             return new PersonalSendDto(sId, personalSendDto.get(0).getSuggest(), mergedMemberMessageDto);
@@ -107,5 +109,20 @@ public class SendService {
                 .toList();
 
     }
+
+    public CheckChapterDto getChapterSendData(Long suggestId, Long myId) {
+        List<Chapter> chapters = chapterService.getChaptersByMemberId(myId, suggestId);
+        List<Long> chapterIds = chapters.stream().map(Chapter::getId).toList();
+
+        List<CheckChapterDto> checkChapterDtoList = sendRepository.findChapterSendsByIds(chapterIds,myId);
+
+        List<ChapterSummaryDto> allChapterSummaryDtoList = new ArrayList<>();
+
+        for (CheckChapterDto checkChapterDto : checkChapterDtoList) {
+            allChapterSummaryDtoList.add(checkChapterDto.getChapterSummaryDto());
+        }
+        return new CheckChapterDto(checkChapterDtoList.get(0).getSuggestId(), checkChapterDtoList.get(0).getSuggest(),allChapterSummaryDtoList);
+    }
+
 
 }

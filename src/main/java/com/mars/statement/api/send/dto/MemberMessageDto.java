@@ -18,21 +18,21 @@ public class MemberMessageDto {
     private String memberImg;
     private MessageDto messageDto;
     @Transient
-    private List<MessageDto> messageDtoList;
+    private List<MessageDto> messageList;
 
     public MemberMessageDto(Long memberId, String memberName, String memberImg, MessageDto messageDto) {
         this.memberId = memberId;
         this.memberName = memberName;
         this.memberImg = memberImg;
         this.messageDto = messageDto;
-        this.messageDtoList = Collections.singletonList(messageDto);
+        this.messageList = Collections.singletonList(messageDto);
 
     }
 
-    public MemberMessageDto(Long memberId, String memberName, String memberImg, List<MessageDto> messageDtoList) {
+    public MemberMessageDto(Long memberId, String memberName, String memberImg, List<MessageDto> messageList) {
         this.memberId = memberId;
         this.memberName = memberName;
         this.memberImg = memberImg;
-        this.messageDtoList = messageDtoList;
+        this.messageList = messageList;
     }
 }

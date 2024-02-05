@@ -12,11 +12,9 @@ import java.util.List;
 @AllArgsConstructor
 public class ChapterWithMemberDto {
 
-
     private Long chapterId;
     private String suggest;
     private String type;
     @JsonProperty("chapterMembers")
     private List<ChapterMemberDto> chapterMembers;
-
 }

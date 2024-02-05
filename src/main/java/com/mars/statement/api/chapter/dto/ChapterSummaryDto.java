@@ -1,4 +1,4 @@
-package com.mars.statement.api.send.dto;
+package com.mars.statement.api.chapter.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -9,10 +9,10 @@ import java.sql.Timestamp;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class MessageDto {
+public class ChapterSummaryDto {
+
     private Long chapterId;
-    private Long chapterMemberId;
     private Timestamp regDt;
-    private String message;
-    private String location;
+    private String memberName;
+    private String summary;
 }

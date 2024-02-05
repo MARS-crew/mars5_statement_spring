@@ -22,16 +22,16 @@ public class PersonalShareDto {
     private MemberOpinionDto memberOpinionDto;
 
     @Transient
-    private List<MemberOpinionDto> memberOpinionDtoList;
+    private List<MemberOpinionDto> opinionList;
 
     public PersonalShareDto(Long suggestId, String suggest, MemberOpinionDto memberOpinionDto){
         this.suggestId = suggestId; this.suggest = suggest; this.memberOpinionDto = memberOpinionDto;
-        this.memberOpinionDtoList = Collections.singletonList(memberOpinionDto);
+        this.opinionList = Collections.singletonList(memberOpinionDto);
 
     }
-    public PersonalShareDto(Long suggestId, String suggest, List<MemberOpinionDto> memberOpinionDtoList){
+    public PersonalShareDto(Long suggestId, String suggest, List<MemberOpinionDto> opinionList){
         this.suggestId = suggestId; this.suggest = suggest;
-        this.memberOpinionDtoList = memberOpinionDtoList;
+        this.opinionList = opinionList;
 
     }
 

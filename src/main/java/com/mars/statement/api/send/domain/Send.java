@@ -11,6 +11,7 @@ import java.sql.Timestamp;
 
 @Builder
 @Entity
+@EntityListeners(AuditingEntityListener.class)
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
@@ -23,7 +24,6 @@ import java.sql.Timestamp;
                 )
         }
 )
-@EntityListeners(AuditingEntityListener.class)
 public class Send {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
