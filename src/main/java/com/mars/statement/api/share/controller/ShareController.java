@@ -70,6 +70,6 @@ public class ShareController {
     public ResponseEntity<?> getShareDetailData( @PathVariable Long chapterId, @Parameter(hidden = true)UserDto userDto) {
         ShareDetailDto shareDetails = shareService.getShareDetails(chapterId, userDto.getId());
         return CommonResponse.createResponse(200, "공유 회차별 조회 성공", shareDetails);
-
     }
+
 }
