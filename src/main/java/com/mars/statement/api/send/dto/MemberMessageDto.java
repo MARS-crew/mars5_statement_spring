@@ -1,5 +1,6 @@
 package com.mars.statement.api.send.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.Transient;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -16,6 +17,8 @@ public class MemberMessageDto {
     private Long memberId;
     private String memberName;
     private String memberImg;
+
+    @JsonIgnore
     private MessageDto messageDto;
     @Transient
     private List<MessageDto> messageList;
