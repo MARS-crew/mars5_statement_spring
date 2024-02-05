@@ -35,6 +35,10 @@ public class GroupService {
     private final InvitationRepository invitationRepository;
     private final UserRepository userRepository;
     private final SuggestService suggestService;
+
+    public Group findGroupById(Long id){
+        return groupRepository.findById(id).orElse(null);
+    }
     public ResponseEntity<?> createGroup(GroupCreateRequest request, UserDto userDto) throws Exception {
         User constructor = userRepository.findById(userDto.getId()).orElseThrow(()
                 -> new NotFoundException(HttpStatus.NOT_FOUND.value(), "존재하지 않은 사용자 입니다."));

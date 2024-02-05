@@ -4,12 +4,12 @@ import com.mars.statement.api.chapter.domain.Suggest;
 import com.mars.statement.api.chapter.repository.SuggestRepository;
 import com.mars.statement.global.exception.NotFoundException;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+
 
 @RequiredArgsConstructor
 @Service
