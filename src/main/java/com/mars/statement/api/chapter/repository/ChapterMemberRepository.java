@@ -12,6 +12,9 @@ public interface ChapterMemberRepository extends JpaRepository<ChapterMember, Lo
     @Query
     ChapterMember findByChapterIdAndGroupMember_Id(Long chapterId, Long memberId);
 
+    @Query("SELECT cm FROM ChapterMember cm WHERE cm.chapter.id = :chapterId AND cm.groupMember.user.id = :myId")
+    ChapterMember findChapterMemberByChapterIdAndUserId(@Param("chapterId") Long chapterId, @Param("myId") Long myId);
+
 
 
 }
