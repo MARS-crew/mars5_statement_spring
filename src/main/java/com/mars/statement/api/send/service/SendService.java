@@ -12,6 +12,8 @@ import com.mars.statement.api.group.service.GroupMemberService;
 import com.mars.statement.api.send.domain.Send;
 import com.mars.statement.api.send.dto.*;
 import com.mars.statement.api.send.repository.SendRepository;
+import com.mars.statement.api.share.dto.ShareDetailDto;
+import com.mars.statement.api.share.dto.ShareMemberDetailDto;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 
@@ -124,5 +126,20 @@ public class SendService {
         return new CheckChapterDto(checkChapterDtoList.get(0).getSuggestId(), checkChapterDtoList.get(0).getSuggest(),allChapterSummaryDtoList);
     }
 
+    public SendDetailDto getSendDetails(Long chapterId, Long myId) {
+        Chapter chapter = chapterService.findChapterById(chapterId);
+        ChapterMember member = chapterMemberService.getChapterMemberByChapterIdAndUserId(chapter.getId(), myId);
+
+        List<SendDetailDto> sendDetailList = sendRepository.findSendDetails(chapter.getId(),member.getId());
+
+        List<SendMemberDetailDto> allChapterMemberDetailList = new ArrayList<>();
+        for (SendDetailDto sendDetailDto : sendDetailList) {
+            allChapterMemberDetailList.add(sendDetailDto.getSendMemberDetailDto());
+        }
+        return new SendDetailDto(sendDetailList.get(0).getSuggestId(), sendDetailList.get(0).getSuggest(),
+                sendDetailList.get(0).getChapterId(), sendDetailList.get(0).getSummary(),
+                allChapterMemberDetailList);
+
+    }
 
 }

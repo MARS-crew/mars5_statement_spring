@@ -5,9 +5,11 @@ import com.mars.statement.api.chapter.dto.ChapterWithMemberDto;
 import com.mars.statement.api.chapter.dto.CheckChapterDto;
 import com.mars.statement.api.chapter.service.ChapterService;
 import com.mars.statement.api.send.dto.PersonalSendDto;
+import com.mars.statement.api.send.dto.SendDetailDto;
 import com.mars.statement.api.send.dto.SendMessageDto;
 import com.mars.statement.api.send.service.SendService;
 
+import com.mars.statement.api.share.dto.ShareDetailDto;
 import com.mars.statement.global.dto.CommonResponse;
 import com.mars.statement.global.dto.UserDto;
 import io.swagger.v3.oas.annotations.Operation;
@@ -33,7 +35,7 @@ public class SendController {
 
     private final ChapterService chapterService;
     private final SendService sendService;
-    
+
 
     @GetMapping("/{chapterId}")
     public ResponseEntity<Object> getChapterWithMembers(@PathVariable Long chapterId) throws JsonProcessingException {
@@ -94,5 +96,15 @@ public class SendController {
 
         return CommonResponse.createResponse(200, "전달 회차별 조회 성공", chapterDtoList);
 
+    }
+    @Operation(summary = "전달 회차 디테일 조회")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description="전달 회차 디테일 조회 성공 ",
+                    content = {@Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = SendDetailDto.class)))})
+    })
+    @GetMapping("/detail/{chapterId}")
+    public ResponseEntity<?> getSendDetailData( @PathVariable Long chapterId, @Parameter(hidden = true)UserDto userDto) {
+        SendDetailDto sendDetails = sendService.getSendDetails(chapterId, userDto.getId());
+        return CommonResponse.createResponse(200, "공유 회차별 조회 성공", sendDetails);
     }
 }
