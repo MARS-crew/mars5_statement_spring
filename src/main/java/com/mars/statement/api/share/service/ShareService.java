@@ -9,9 +9,12 @@ import com.mars.statement.api.chapter.service.ChapterService;
 import com.mars.statement.api.chapter.service.SuggestService;
 import com.mars.statement.api.group.domain.GroupMember;
 import com.mars.statement.api.group.service.GroupMemberService;
+import com.mars.statement.api.share.domain.Share;
 import com.mars.statement.api.share.dto.*;
 import com.mars.statement.api.share.repository.ShareRepository;
+import com.mars.statement.global.exception.NotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -26,6 +29,10 @@ public class ShareService {
     private final SuggestService suggestService;
     private final ChapterService chapterService;
     private final ChapterMemberService chapterMemberService;
+
+    public Share getShareById(Long shareId) throws NotFoundException{
+        return shareRepository.findById(shareId).orElseThrow(() -> new NotFoundException(HttpStatus.NOT_FOUND.value(), "공유 정보를 찾을 수 없습니다."));
+    }
 
     public List<PersonalShareDto> getPersonalShareData(Long suggestId, Long myId) {
         List<Chapter> chapters = chapterService.getChaptersByMemberId(myId, suggestId);

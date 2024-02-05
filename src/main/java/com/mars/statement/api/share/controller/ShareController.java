@@ -4,9 +4,11 @@ package com.mars.statement.api.share.controller;
 import com.mars.statement.api.chapter.dto.CheckChapterDto;
 import com.mars.statement.api.share.dto.PersonalShareDto;
 import com.mars.statement.api.share.dto.ShareDetailDto;
+import com.mars.statement.api.share.service.LikeService;
 import com.mars.statement.api.share.service.ShareService;
 import com.mars.statement.global.dto.CommonResponse;
 import com.mars.statement.global.dto.UserDto;
+import com.mars.statement.global.exception.NotFoundException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
@@ -15,24 +17,20 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
 @Tag(name="공유")
+@RequiredArgsConstructor
 @RequestMapping("/api/v1/share")
 public class ShareController {
 
     private final ShareService shareService;
-
-    public ShareController(ShareService shareService){
-        this.shareService = shareService;
-    }
+    private final LikeService likeService;
 
     @Operation(summary = "공유 인물별 조회")
     @ApiResponses(value = {
@@ -71,5 +69,16 @@ public class ShareController {
         ShareDetailDto shareDetails = shareService.getShareDetails(chapterId, userDto.getId());
         return CommonResponse.createResponse(200, "공유 회차별 조회 성공", shareDetails);
     }
+    @Operation(summary = "공유 의견 좋아요 기능")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description="공유 의견 좋아요 기능 성공 ",
+                    content = {@Content(mediaType = "application/json", schema = @Schema(type = "integer"))})
+    })
+    @PostMapping("/detail/{chapterId}")
+    public ResponseEntity<?> updateLike(@PathVariable Long chapterId, @RequestBody Long shareId, @Parameter(hidden = true) UserDto userDto) throws NotFoundException {
+        int result = likeService.updateLike(chapterId, shareId, userDto.getId());
+        return CommonResponse.createResponse(200, "공유 의견 좋아요 기능 성공", shareId);
+    }
+
 
 }
