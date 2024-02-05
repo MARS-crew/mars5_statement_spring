@@ -14,10 +14,12 @@ import com.mars.statement.api.send.dto.*;
 import com.mars.statement.api.send.repository.SendRepository;
 import com.mars.statement.api.share.dto.ShareDetailDto;
 import com.mars.statement.api.share.dto.ShareMemberDetailDto;
+import com.mars.statement.global.exception.NotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -40,7 +42,7 @@ public class SendService {
     public int saveSendMessage(Long chapterId, List<SendMessageDto> messageDtoList, Long fromId) {
 
         try {
-            Chapter chapter = chapterService.findChapterById(chapterId);
+            Chapter chapter = chapterService.getChapterById(chapterId);
             ChapterMember from = chapterMemberService.getChapterMemberById(chapter.getId(), fromId);
 
             List<Send> sendList = new ArrayList<>();
@@ -116,21 +118,21 @@ public class SendService {
         List<Chapter> chapters = chapterService.getChaptersByMemberId(myId, suggestId);
         List<Long> chapterIds = chapters.stream().map(Chapter::getId).toList();
 
-        List<CheckChapterDto> checkChapterDtoList = sendRepository.findChapterSendsByIds(chapterIds,myId);
+        List<CheckChapterDto> checkChapterDtoList = sendRepository.findChapterSendsByIds(chapterIds, myId);
 
         List<ChapterSummaryDto> allChapterSummaryDtoList = new ArrayList<>();
 
         for (CheckChapterDto checkChapterDto : checkChapterDtoList) {
             allChapterSummaryDtoList.add(checkChapterDto.getChapterSummaryDto());
         }
-        return new CheckChapterDto(checkChapterDtoList.get(0).getSuggestId(), checkChapterDtoList.get(0).getSuggest(),allChapterSummaryDtoList);
+        return new CheckChapterDto(checkChapterDtoList.get(0).getSuggestId(), checkChapterDtoList.get(0).getSuggest(), allChapterSummaryDtoList);
     }
 
     public SendDetailDto getSendDetails(Long chapterId, Long myId) {
-        Chapter chapter = chapterService.findChapterById(chapterId);
+        Chapter chapter = chapterService.getChapterById(chapterId);
         ChapterMember member = chapterMemberService.getChapterMemberByChapterIdAndUserId(chapter.getId(), myId);
 
-        List<SendDetailDto> sendDetailList = sendRepository.findSendDetails(chapter.getId(),member.getId());
+        List<SendDetailDto> sendDetailList = sendRepository.findSendDetails(chapter.getId(), member.getId());
 
         List<SendMemberDetailDto> allChapterMemberDetailList = new ArrayList<>();
         for (SendDetailDto sendDetailDto : sendDetailList) {
@@ -141,5 +143,21 @@ public class SendService {
                 allChapterMemberDetailList);
 
     }
+
+    public Send getSendById(Long sendId) throws NotFoundException {
+        return sendRepository.findById(sendId).orElseThrow(() -> new NotFoundException(HttpStatus.NOT_FOUND.value(), "전달 정보를 찾을 수 없습니다."));
+    }
+
+    public int updateBookmark(Long sendId, Long myId) throws NotFoundException {
+
+        Send send = getSendById(sendId);
+
+        System.out.println(send.getId()+ " , bool" + send.getBookmark());
+
+        return sendRepository.updateBookmark(send.getId());
+
+
+    }
+
 
 }

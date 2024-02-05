@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.mars.statement.api.chapter.dto.ChapterWithMemberDto;
 import com.mars.statement.api.chapter.dto.CheckChapterDto;
 import com.mars.statement.api.chapter.service.ChapterService;
+import com.mars.statement.api.send.domain.Send;
 import com.mars.statement.api.send.dto.PersonalSendDto;
 import com.mars.statement.api.send.dto.SendDetailDto;
 import com.mars.statement.api.send.dto.SendMessageDto;
@@ -12,6 +13,7 @@ import com.mars.statement.api.send.service.SendService;
 import com.mars.statement.api.share.dto.ShareDetailDto;
 import com.mars.statement.global.dto.CommonResponse;
 import com.mars.statement.global.dto.UserDto;
+import com.mars.statement.global.exception.NotFoundException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
@@ -22,6 +24,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -106,5 +109,19 @@ public class SendController {
     public ResponseEntity<?> getSendDetailData( @PathVariable Long chapterId, @Parameter(hidden = true)UserDto userDto) {
         SendDetailDto sendDetails = sendService.getSendDetails(chapterId, userDto.getId());
         return CommonResponse.createResponse(200, "공유 회차별 조회 성공", sendDetails);
+    }
+    @Operation(summary = "전달 북마크 처리")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description="전달 북마크 처리 성공 ",
+                    content = {@Content(mediaType = "application/json", schema = @Schema(type = "integer"))})
+    })
+    @GetMapping("/bookmark/{sendId}")
+    public ResponseEntity<?> updateBookmark(@PathVariable Long sendId, @Parameter(hidden = true) UserDto userDto) {
+        try {
+            int result = sendService.updateBookmark(sendId, userDto.getId());
+            return CommonResponse.createResponse(200, "전달 북마크 처리 성공", sendId);
+        } catch (NotFoundException e) {
+            return CommonResponse.createResponseMessage(HttpStatus.NOT_FOUND.value(), e.getMessage());
+        }
     }
 }
