@@ -1,10 +1,10 @@
 package com.mars.statement.api.share.controller;
 
-
 import com.mars.statement.api.chapter.dto.CheckChapterDto;
 import com.mars.statement.api.share.dto.LikeRequest;
 import com.mars.statement.api.share.dto.PersonalShareDto;
 import com.mars.statement.api.share.dto.ShareDetailDto;
+import com.mars.statement.api.share.dto.ShareOpinionDto;
 import com.mars.statement.api.share.service.LikeService;
 import com.mars.statement.api.share.service.ShareService;
 import com.mars.statement.global.dto.CommonResponse;
@@ -12,10 +12,8 @@ import com.mars.statement.global.dto.UserDto;
 import com.mars.statement.global.exception.NotFoundException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
-import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -23,8 +21,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 import static com.mars.statement.global.dto.ExampleResponse.*;
 
@@ -113,5 +109,10 @@ public class ShareController {
             return CommonResponse.createResponseMessage(404, "챕터 또는 멤버를 찾을 수 없습니다: " + e.getMessage());
         }
 
+    }
+    @Operation(summary = "주제별 의견작성")
+    @PostMapping("/create/{chapterId}")
+    public ResponseEntity<?> insertShare(@PathVariable Long chapterId, @RequestBody ShareOpinionDto shareOpinionDto, @Parameter(hidden = true) UserDto userDto) throws NotFoundException {
+        return shareService.insertShare(chapterId,shareOpinionDto,userDto.getId());
     }
 }
