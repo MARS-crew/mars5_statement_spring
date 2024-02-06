@@ -35,21 +35,17 @@ public class CreateChapterService {
         // 1. 주제 조회
         Suggest suggest = suggestRepository.findById(createChapterDto.getSuggestId())
                 .orElseThrow(() -> new NotFoundException(404, "Suggest not found"));
-System.out.println(suggest.getGroup().getId());
+
         // 2. 그룹 조회 (주제의 그룹)
         // 그룹 아이디로 주제를 소유한 그룹인지 판단
         Group group = suggest.getGroup();
 
         // 3. 현재 사용자가 주어진 그룹의 멤버인지 확인
         GroupMember groupMember = groupMemberService.findGroupMemberByIdAndGroupId(myId, group.getId());
-        System.out.println("id"+ groupMember.getId());
-        System.out.println("groupid"+groupMember.getGroup().getId());
+
         if (!groupMember.getGroup().getId().equals(group.getId())) {
             throw new ForbiddenException("Constructor is not a member of the group that owns the suggest.");
         }
-        System.out.println(groupMember.getGroup());
-        System.out.println(group.getId());
-        System.out.println(groupMember.getGroup().getId().equals(group.getId()));
 
 
         // 3. 회차 생성 및 그룹 설정
@@ -57,9 +53,9 @@ System.out.println(suggest.getGroup().getId());
                 .suggest(suggest)
                 .build();
         Chapter savedChapter = chapterRepository.save(chapter);
-        System.out.println("회차생성");
+
         // 4. 회차에 생성자와 멤버 추가
-        chapterMemberService.addMemberToChapter(savedChapter.getId(), groupMember.getId(), createChapterDto.getMemberIds());
+        chapterMemberService.addMemberToChapter(savedChapter.getId(), myId, createChapterDto.getMemberIds());
 
         return CommonResponse.createResponse(HttpStatus.OK.value(), "주제생성 완료", savedChapter.getId());
     }
