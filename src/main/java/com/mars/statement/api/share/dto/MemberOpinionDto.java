@@ -1,5 +1,6 @@
 package com.mars.statement.api.share.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.Transient;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -16,6 +17,7 @@ public class MemberOpinionDto {
     private String memberName;
     private String memberImg;
 
+    @JsonIgnore
     private OpinionDto opinionDto;
 
     @Transient
@@ -30,5 +32,9 @@ public class MemberOpinionDto {
     public MemberOpinionDto(Long memberId, String memberName, String memberImg, List<OpinionDto> opinionList) {
         this.memberId = memberId; this.memberName=memberName;
         this.memberImg = memberImg; this.opinionList = opinionList;
+    }
+
+    public MemberOpinionDto(List<OpinionDto> opinionList){
+        this.opinionList = opinionList;
     }
 }

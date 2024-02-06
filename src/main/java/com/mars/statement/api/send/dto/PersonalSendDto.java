@@ -29,4 +29,9 @@ public class PersonalSendDto {
         this.memberMessageDto = memberOpinionDto;
         this.messageList = Collections.singletonList(memberMessageDto);
     }
+    public PersonalSendDto(Long suggestId, String suggest, List<MemberMessageDto> messageList) {
+        this.suggestId = suggestId;
+        this.suggest = suggest;
+        this.messageList = messageList;
+    }
 }

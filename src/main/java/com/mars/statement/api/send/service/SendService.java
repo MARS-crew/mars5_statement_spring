@@ -2,6 +2,7 @@ package com.mars.statement.api.send.service;
 
 import com.mars.statement.api.chapter.domain.Chapter;
 import com.mars.statement.api.chapter.domain.ChapterMember;
+import com.mars.statement.api.chapter.domain.Suggest;
 import com.mars.statement.api.chapter.dto.ChapterSummaryDto;
 import com.mars.statement.api.chapter.dto.CheckChapterDto;
 import com.mars.statement.api.chapter.service.ChapterMemberService;
@@ -69,53 +70,56 @@ public class SendService {
         }
     }
 
-    public List<PersonalSendDto> getPersonalSendData(Long groupId, Long suggestId, Long myId) {
-
+    public PersonalSendDto getPersonalSendData(Long suggestId, Long myId) throws NotFoundException {
+        Suggest suggest = suggestService.getSuggestById(suggestId);
         // 챕터 조회
-        List<Chapter> chapters = chapterService.getChaptersByMemberId(myId, suggestId);
-
-        GroupMember member = groupMemberService.getGroupMemberByGroupIdAndUser(groupId, myId);
+        List<Chapter> chapters = chapterService.getChaptersByMemberId(myId, suggest);
+        GroupMember member = groupMemberService.getGroupMemberByGroupIdAndUser(suggest.getGroup().getId(), myId);
 
         List<Long> chapterIds = chapters.stream().map(Chapter::getId).toList();
 
         // 리스트
         List<PersonalSendDto> personalSends = sendRepository.findPersonalSharesByIds(chapterIds, member.getId());
 
-        return personalSends.stream()
+        if (personalSends.isEmpty()) {
+            throw new NotFoundException(HttpStatus.NOT_FOUND.value(), "해당 제안 정보를 찾을 수 없습니다.");
+        }
+
+        List<MemberMessageDto> allMemberMessageList = personalSends.stream()
                 .collect(Collectors.groupingBy(
-                        PersonalSendDto::getSuggestId,
-                        Collectors.groupingBy(
-                                personalSendDto -> personalSendDto.getMessageList().get(0).getMemberId(),
+                        personalSendDto -> personalSendDto.getMemberMessageDto().getMemberId(),
+                        Collectors.mapping(
+                                PersonalSendDto::getMessageList,
                                 Collectors.toList()
                         )
                 ))
                 .entrySet().stream()
-                .flatMap(suggestEntry -> suggestEntry.getValue().entrySet().stream()
-                        .map(memberEntry -> {
-                            Long sId = suggestEntry.getKey();
-                            Long memberId = memberEntry.getKey();
-                            List<PersonalSendDto> personalSendDto = memberEntry.getValue();
+                .map(memberEntry ->{
+                    Long memberId = memberEntry.getKey();
+                    List<MessageDto> messageList = memberEntry.getValue().stream()
+                            .flatMap(List::stream)
+                            .flatMap(dto -> dto.getMessageList().stream())
+                            .toList();
 
-                            List<MessageDto> messageDtoList = personalSendDto.stream()
-                                    .flatMap(dto -> dto.getMessageList().stream())
-                                    .map(MemberMessageDto::getMessageList)
-                                    .flatMap(List::stream)
-                                    .collect(Collectors.toList());
+                    MemberMessageDto memberMessageDto = personalSends.stream()
+                            .filter(dto -> dto.getMemberMessageDto().getMemberId().equals(memberId))
+                            .findFirst()
+                            .map(PersonalSendDto::getMemberMessageDto)
+                            .orElseThrow();
 
-                            MemberMessageDto mergedMemberMessageDto = new MemberMessageDto(
-                                    memberId,
-                                    personalSendDto.get(0).getMessageList().get(0).getMemberName(),
-                                    personalSendDto.get(0).getMessageList().get(0).getMemberImg(),
-                                    messageDtoList
-                            );
-                            return new PersonalSendDto(sId, personalSendDto.get(0).getSuggest(), mergedMemberMessageDto);
-                        }))
+                    return new MemberMessageDto(memberMessageDto.getMemberId(), memberMessageDto.getMemberName(),
+                            memberMessageDto.getMemberImg(), messageList);
+                })
                 .toList();
-
+        return new PersonalSendDto(personalSends.get(0).getSuggestId(), personalSends.get(0).getSuggest(), allMemberMessageList);
     }
 
-    public CheckChapterDto getChapterSendData(Long suggestId, Long myId) {
-        List<Chapter> chapters = chapterService.getChaptersByMemberId(myId, suggestId);
+    public CheckChapterDto getChapterSendData(Long suggestId, Long myId) throws NotFoundException {
+        Suggest suggest = suggestService.getSuggestById(suggestId);
+        if(!suggest.getType().equals("send")){
+            throw new NotFoundException(HttpStatus.NOT_FOUND.value(), "전달 주제가 아닙니다.");
+        }
+        List<Chapter> chapters = chapterService.getChaptersByMemberId(myId,suggest);
         List<Long> chapterIds = chapters.stream().map(Chapter::getId).toList();
 
         List<CheckChapterDto> checkChapterDtoList = sendRepository.findChapterSendsByIds(chapterIds, myId);
@@ -128,7 +132,7 @@ public class SendService {
         return new CheckChapterDto(checkChapterDtoList.get(0).getSuggestId(), checkChapterDtoList.get(0).getSuggest(), allChapterSummaryDtoList);
     }
 
-    public SendDetailDto getSendDetails(Long chapterId, Long myId) {
+    public SendDetailDto getSendDetails(Long chapterId, Long myId) throws NotFoundException {
         Chapter chapter = chapterService.getChapterById(chapterId);
         ChapterMember member = chapterMemberService.getChapterMemberByChapterIdAndUserId(chapter.getId(), myId);
 

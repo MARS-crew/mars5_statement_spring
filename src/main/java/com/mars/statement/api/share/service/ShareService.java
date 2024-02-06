@@ -2,6 +2,7 @@ package com.mars.statement.api.share.service;
 
 import com.mars.statement.api.chapter.domain.Chapter;
 import com.mars.statement.api.chapter.domain.ChapterMember;
+import com.mars.statement.api.chapter.domain.Suggest;
 import com.mars.statement.api.chapter.dto.CheckChapterDto;
 import com.mars.statement.api.chapter.dto.ChapterSummaryDto;
 import com.mars.statement.api.chapter.service.ChapterMemberService;
@@ -30,49 +31,59 @@ public class ShareService {
     private final ChapterService chapterService;
     private final ChapterMemberService chapterMemberService;
 
-    public Share getShareById(Long shareId) throws NotFoundException{
+    public Share getShareById(Long shareId) throws NotFoundException {
         return shareRepository.findById(shareId).orElseThrow(() -> new NotFoundException(HttpStatus.NOT_FOUND.value(), "공유 정보를 찾을 수 없습니다."));
     }
 
-    public List<PersonalShareDto> getPersonalShareData(Long suggestId, Long myId) {
-        List<Chapter> chapters = chapterService.getChaptersByMemberId(myId, suggestId);
+    public PersonalShareDto getPersonalShareData(Long suggestId, Long myId) throws NotFoundException {
+        Suggest suggest = suggestService.getSuggestById(suggestId);
+
+        List<Chapter> chapters = chapterService.getChaptersByMemberId(myId, suggest);
         List<Long> chapterIds = chapters.stream().map(Chapter::getId).toList();
 
         List<PersonalShareDto> personalShares = shareRepository.findPersonalSharesByIds(chapterIds);
 
-        return personalShares.stream()
+        if (personalShares.isEmpty()) {
+            throw new NotFoundException(HttpStatus.NOT_FOUND.value(), "해당 공유 정보를 찾을 수 없습니다.");
+        }
+
+        List<MemberOpinionDto> allMemberOpinionList = personalShares.stream()
                 .collect(Collectors.groupingBy(
-                        PersonalShareDto::getSuggestId,
-                        Collectors.groupingBy(
-                                PersonalShareDto -> PersonalShareDto.getOpinionList().get(0).getMemberId(),
+                        personalShareDto -> personalShareDto.getMemberOpinionDto().getMemberId(),
+                        Collectors.mapping(
+                                PersonalShareDto::getOpinionList,
                                 Collectors.toList()
                         )
                 ))
                 .entrySet().stream()
-                .flatMap(suggestEntry -> suggestEntry.getValue().entrySet().stream()
-                        .map(memberEntry -> {
-                            Long sId = suggestEntry.getKey();
-                            Long memberId = memberEntry.getKey();
-                            List<PersonalShareDto> PersonalShareDtos = memberEntry.getValue();
+                .map(memberEntry -> {
+                    Long memberId = memberEntry.getKey();
+                    List<OpinionDto> opinionList = memberEntry.getValue().stream()
+                            .flatMap(List::stream)
+                            .flatMap(dto -> dto.getOpinionList().stream())
+                            .collect(Collectors.toList());
 
-                            List<OpinionDto> opinionDtoList = PersonalShareDtos.stream()
-                                    .flatMap(dto -> dto.getOpinionList().stream())
-                                    .map(MemberOpinionDto::getOpinionList)
-                                    .flatMap(List::stream)
-                                    .collect(Collectors.toList());
-
-                            MemberOpinionDto mergedMemberOpinionDto = new MemberOpinionDto(memberId,
-                                    PersonalShareDtos.get(0).getMemberOpinionDto().getMemberName(),
-                                    PersonalShareDtos.get(0).getMemberOpinionDto().getMemberImg(), opinionDtoList);
-
-                            return new PersonalShareDto(sId, PersonalShareDtos.get(0).getSuggest(), mergedMemberOpinionDto);
-
-                        }))
+                    MemberOpinionDto memberOpinionDto = personalShares.stream()
+                            .filter(dto -> dto.getMemberOpinionDto().getMemberId().equals(memberId))
+                            .findFirst()
+                            .map(PersonalShareDto::getMemberOpinionDto)
+                            .orElseThrow();
+                    return new MemberOpinionDto(memberOpinionDto.getMemberId(), memberOpinionDto.getMemberName(),
+                            memberOpinionDto.getMemberImg(), opinionList);
+                })
                 .toList();
+        return new PersonalShareDto(personalShares.get(0).getSuggestId(), personalShares.get(0).getSuggest(), allMemberOpinionList);
+
     }
 
-    public CheckChapterDto getChapterShareData(Long suggestId, Long myId) {
-        List<Chapter> chapters = chapterService.getChaptersByMemberId(myId, suggestId);
+    public CheckChapterDto getChapterShareData(Long suggestId, Long myId) throws NotFoundException {
+
+        Suggest suggest = suggestService.getSuggestById(suggestId);
+        if(!suggest.getType().equals("share")){
+            throw new NotFoundException(HttpStatus.NOT_FOUND.value(), "공유 주제가 아닙니다.");
+        }
+
+        List<Chapter> chapters = chapterService.getChaptersByMemberId(myId, suggest);
         List<Long> chapterIds = chapters.stream().map(Chapter::getId).toList();
 
         List<CheckChapterDto> checkChapterDtoList = shareRepository.findChapterSharesByIds(chapterIds);
@@ -82,13 +93,18 @@ public class ShareService {
         for (CheckChapterDto checkChapterDto : checkChapterDtoList) {
             allChapterSummaryDtoList.add(checkChapterDto.getChapterSummaryDto());
         }
-        return new CheckChapterDto(checkChapterDtoList.get(0).getSuggestId(), checkChapterDtoList.get(0).getSuggest(),allChapterSummaryDtoList);
+        return new CheckChapterDto(checkChapterDtoList.get(0).getSuggestId(), checkChapterDtoList.get(0).getSuggest(), allChapterSummaryDtoList);
     }
-    public ShareDetailDto getShareDetails(Long chapterId, Long myId) {
+
+    public ShareDetailDto getShareDetails(Long chapterId, Long myId) throws NotFoundException {
         Chapter chapter = chapterService.getChapterById(chapterId);
         ChapterMember member = chapterMemberService.getChapterMemberByChapterIdAndUserId(chapter.getId(), myId);
 
-        List<ShareDetailDto> shareDetailList = shareRepository.findShareDetails(chapter.getId(),member.getId());
+        List<ShareDetailDto> shareDetailList = shareRepository.findShareDetails(chapter.getId(), member.getId());
+
+        if (shareDetailList.isEmpty()) {
+            throw new NotFoundException(HttpStatus.NOT_FOUND.value(), "해당 공유 상세 정보를 찾을 수 없습니다.");
+        }
 
         List<ShareMemberDetailDto> allChapterMemberDetailList = new ArrayList<>();
         for (ShareDetailDto shareDetailDto : shareDetailList) {

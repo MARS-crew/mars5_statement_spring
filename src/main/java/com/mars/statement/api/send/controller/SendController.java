@@ -5,6 +5,7 @@ import com.mars.statement.api.chapter.dto.ChapterWithMemberDto;
 import com.mars.statement.api.chapter.dto.CheckChapterDto;
 import com.mars.statement.api.chapter.service.ChapterService;
 import com.mars.statement.api.send.domain.Send;
+import com.mars.statement.api.send.dto.BookmarkRequest;
 import com.mars.statement.api.send.dto.PersonalSendDto;
 import com.mars.statement.api.send.dto.SendDetailDto;
 import com.mars.statement.api.send.dto.SendMessageDto;
@@ -18,6 +19,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -29,6 +31,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+
+import static com.mars.statement.global.dto.ExampleResponse.*;
 
 @RestController
 @Tag(name = "전달")
@@ -79,49 +83,69 @@ public class SendController {
     @Operation(summary = "전달 인물별 조회")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "전달 인물별 조회 성공 ",
-                    content = {@Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = PersonalSendDto.class)))})
+                    content = @Content(mediaType = "application/json", examples = @ExampleObject(value = SUCCESS_PERSONAL_SEND))),
+            @ApiResponse(responseCode = "404", description = "챕터 또는 멤버를 찾을 수 없음",
+                    content = @Content(mediaType = "application/json", examples = @ExampleObject(value = NOT_FOUND_ERROR_RESPONSE))),
     })
-    @GetMapping("/personal/{groupId}/{suggestId}")
-    public ResponseEntity<?> getPersonalSendDataList(@PathVariable Long groupId, @PathVariable Long suggestId) {
-        Long myId = 3L; // 로그인 데이터
-        List<PersonalSendDto> personalSendDataList = sendService.getPersonalSendData(groupId, suggestId, myId);
+    @GetMapping("/personal/{suggestId}")
+    public ResponseEntity<?> getPersonalSendDataList(@PathVariable Long suggestId, @Parameter(hidden = true) UserDto userDto) throws NotFoundException {
+        try {
+            PersonalSendDto personalSendDataList = sendService.getPersonalSendData(suggestId, userDto.getId());
 
-        return CommonResponse.createResponse(200, "전달 인물별 조회 성공", personalSendDataList);
+            return CommonResponse.createResponse(200, "전달 인물별 조회 성공", personalSendDataList);
+        } catch (NotFoundException e) {
+            return CommonResponse.createResponseMessage(HttpStatus.NOT_FOUND.value(),"챕터 또는 멤버를 찾을 수 없습니다: " + e.getMessage());
+        }
     }
+
     @Operation(summary = "전달 회차별 조회")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description="전달 회차별 조회 성공 ",
-                    content = {@Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = CheckChapterDto.class)))})
+            @ApiResponse(responseCode = "200", description = "전달 회차별 조회 성공 ",
+                    content = @Content(mediaType = "application/json", examples = @ExampleObject(value = SUCCESS_CHAPTER_SEND))),
+            @ApiResponse(responseCode = "404", description = "챕터 또는 멤버를 찾을 수 없음",
+                    content = @Content(mediaType = "application/json", examples = @ExampleObject(value = NOT_FOUND_ERROR_RESPONSE))),
     })
     @GetMapping("/chapter/{suggestId}")
-    public ResponseEntity<?> getChapterSendDataList( @PathVariable Long suggestId, @Parameter(hidden = true) UserDto userDto) {
-        CheckChapterDto chapterDtoList = sendService.getChapterSendData(suggestId, userDto.getId());
-
-        return CommonResponse.createResponse(200, "전달 회차별 조회 성공", chapterDtoList);
-
+    public ResponseEntity<?> getChapterSendDataList(@PathVariable Long suggestId, @Parameter(hidden = true) UserDto userDto) throws NotFoundException {
+        try {
+            CheckChapterDto chapterDtoList = sendService.getChapterSendData(suggestId, userDto.getId());
+            return CommonResponse.createResponse(200, "전달 회차별 조회 성공", chapterDtoList);
+        } catch (NotFoundException e) {
+            return CommonResponse.createResponseMessage(HttpStatus.NOT_FOUND.value(), "챕터 또는 멤버를 찾을 수 없습니다: "+ e.getMessage());
+        }
     }
+
     @Operation(summary = "전달 회차 디테일 조회")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description="전달 회차 디테일 조회 성공 ",
-                    content = {@Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = SendDetailDto.class)))})
+            @ApiResponse(responseCode = "200", description = "전달 회차 디테일 조회 성공",
+                    content = @Content(mediaType = "application/json", examples = @ExampleObject(value = SUCCESS_SEND_DETAIL))),
+            @ApiResponse(responseCode = "404", description = "챕터 또는 멤버를 찾을 수 없음",
+                    content = @Content(mediaType = "application/json", examples = @ExampleObject(value = NOT_FOUND_ERROR_RESPONSE))),
     })
     @GetMapping("/detail/{chapterId}")
-    public ResponseEntity<?> getSendDetailData( @PathVariable Long chapterId, @Parameter(hidden = true)UserDto userDto) {
-        SendDetailDto sendDetails = sendService.getSendDetails(chapterId, userDto.getId());
-        return CommonResponse.createResponse(200, "공유 회차별 조회 성공", sendDetails);
+    public ResponseEntity<?> getSendDetailData(@PathVariable Long chapterId, @Parameter(hidden = true) UserDto userDto) throws NotFoundException {
+        try {
+            SendDetailDto sendDetails = sendService.getSendDetails(chapterId, userDto.getId());
+            return CommonResponse.createResponse(200, "전달 회차별 조회 성공", sendDetails);
+        } catch (NotFoundException e) {
+            return CommonResponse.createResponseMessage(HttpStatus.NOT_FOUND.value(),"챕터 또는 멤버를 찾을 수 없습니다: " +  e.getMessage());
+        }
     }
+
     @Operation(summary = "전달 북마크 처리")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description="전달 북마크 처리 성공 ",
-                    content = {@Content(mediaType = "application/json", schema = @Schema(type = "integer"))})
+            @ApiResponse(responseCode = "200", description = "전달 북마크 처리 성공 ",
+                    content = {@Content(mediaType = "application/json", examples = @ExampleObject(value = SUCCESS_BOOKMARK))}),
+            @ApiResponse(responseCode = "404", description = "챕터 또는 멤버를 찾을 수 없음",
+                    content = @Content(mediaType = "application/json", examples = @ExampleObject(value = NOT_FOUND_ERROR_RESPONSE))),
     })
-    @GetMapping("/bookmark/{sendId}")
-    public ResponseEntity<?> updateBookmark(@PathVariable Long sendId, @Parameter(hidden = true) UserDto userDto) {
+    @PostMapping("/bookmark")
+    public ResponseEntity<?> updateBookmark(@RequestBody BookmarkRequest request, @Parameter(hidden = true) UserDto userDto) {
         try {
-            int result = sendService.updateBookmark(sendId, userDto.getId());
-            return CommonResponse.createResponse(200, "전달 북마크 처리 성공", sendId);
+            int result = sendService.updateBookmark(request.getSendId(), userDto.getId());
+            return CommonResponse.createResponse(200, "전달 북마크 처리 성공", request);
         } catch (NotFoundException e) {
-            return CommonResponse.createResponseMessage(HttpStatus.NOT_FOUND.value(), e.getMessage());
+            return CommonResponse.createResponseMessage(HttpStatus.NOT_FOUND.value(),"챕터 또는 멤버를 찾을 수 없습니다: " + e.getMessage());
         }
     }
 }

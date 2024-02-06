@@ -20,13 +20,16 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+import static com.mars.statement.global.dto.ExampleResponse.*;
+
 @RestController
-@Tag(name="공유")
+@Tag(name = "공유")
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/share")
 public class ShareController {
@@ -36,51 +39,63 @@ public class ShareController {
 
     @Operation(summary = "공유 인물별 조회")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description="공유 인물별 조회 성공 ",
-                    content = {@Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = PersonalShareDto.class)))})
-
+            @ApiResponse(responseCode = "200", description = "공유 인물별 조회 성공 ",
+                    content = @Content(mediaType = "application/json", examples = @ExampleObject(value = SUCCESS_PERSONAL_SHARE))),
+            @ApiResponse(responseCode = "404", description = "챕터 또는 멤버를 찾을 수 없음",
+                    content = @Content(mediaType = "application/json", examples = @ExampleObject(value = NOT_FOUND_ERROR_RESPONSE))),
     })
     @GetMapping("/personal/{suggestId}")
-    public ResponseEntity<?> getPersonalShareDataList(@PathVariable Long suggestId) {
-        Long myId = 1L; // 로그인 데이터
-        List<PersonalShareDto> chapterDtoList = shareService.getPersonalShareData(suggestId, myId);
-
-        return CommonResponse.createResponse(200, "공유 인물별 조회 성공", chapterDtoList);
-
+    public ResponseEntity<?> getPersonalShareDataList(@PathVariable Long suggestId, @Parameter(hidden = true) UserDto userDto) throws NotFoundException {
+        try {
+            PersonalShareDto chapterDtoList = shareService.getPersonalShareData(suggestId, userDto.getId());
+            return CommonResponse.createResponse(200, "공유 인물별 조회 성공", chapterDtoList);
+        } catch (NotFoundException e) {
+            return CommonResponse.createResponseMessage(404, "챕터 또는 멤버를 찾을 수 없습니다: " + e.getMessage());
+        }
     }
+
     @Operation(summary = "공유 회차별 조회")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description="공유 회차별 조회 성공 ",
-                    content = {@Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = CheckChapterDto.class)))})
+            @ApiResponse(responseCode = "200", description = "공유 회차별 조회 성공 ",
+                    content = @Content(mediaType = "application/json", examples = @ExampleObject(value = SUCCESS_CHAPTER_SHARE))),
+            @ApiResponse(responseCode = "404", description = "챕터 또는 멤버를 찾을 수 없음",
+                    content = @Content(mediaType = "application/json", examples = @ExampleObject(value = NOT_FOUND_ERROR_RESPONSE))),
     })
     @GetMapping("/chapter/{suggestId}")
-    public ResponseEntity<?> getChapterShareDataList( @PathVariable Long suggestId, @Parameter(hidden = true)UserDto userDto) {
-        CheckChapterDto chapterDtoList = shareService.getChapterShareData(suggestId, userDto.getId());
-
-        return CommonResponse.createResponse(200, "공유 회차별 조회 성공", chapterDtoList);
-
+    public ResponseEntity<?> getChapterShareDataList(@PathVariable Long suggestId, @Parameter(hidden = true) UserDto userDto) throws NotFoundException {
+        try {
+            CheckChapterDto chapterDtoList = shareService.getChapterShareData(suggestId, userDto.getId());
+            return CommonResponse.createResponse(200, "공유 회차별 조회 성공", chapterDtoList);
+        } catch (NotFoundException e) {
+            return CommonResponse.createResponseMessage(404, "챕터 또는 멤버를 찾을 수 없습니다: " + e.getMessage());
+        }
     }
 
     @Operation(summary = "공유 회차 디테일 조회")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description="공유 회차 디테일 조회 성공 ",
-                    content = {@Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = ShareDetailDto.class)))})
+            @ApiResponse(responseCode = "200", description = "공유 회차 디테일 조회 성공",
+                    content = @Content(mediaType = "application/json", examples = @ExampleObject(value = SUCCESS_SHARE_DETAIL))),
+            @ApiResponse(responseCode = "404", description = "챕터 또는 멤버를 찾을 수 없음",
+                    content = @Content(mediaType = "application/json", examples = @ExampleObject(value = NOT_FOUND_ERROR_RESPONSE))),
     })
     @GetMapping("/detail/{chapterId}")
-    public ResponseEntity<?> getShareDetailData( @PathVariable Long chapterId, @Parameter(hidden = true)UserDto userDto) {
-        ShareDetailDto shareDetails = shareService.getShareDetails(chapterId, userDto.getId());
-        return CommonResponse.createResponse(200, "공유 회차별 조회 성공", shareDetails);
+    public ResponseEntity<?> getShareDetailData(@PathVariable Long chapterId, @Parameter(hidden = true) UserDto userDto) throws NotFoundException {
+        try {
+            ShareDetailDto shareDetails = shareService.getShareDetails(chapterId, userDto.getId());
+            return CommonResponse.createResponse(200, "공유 회차 디테일 조회 성공", shareDetails);
+        } catch (NotFoundException e) {
+            return CommonResponse.createResponseMessage(404, "챕터 또는 멤버를 찾을 수 없습니다: " + e.getMessage());
+        }
     }
+
     @Operation(summary = "공유 의견 좋아요 기능")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description="공유 의견 좋아요 기능 성공 ",
-                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = LikeRequest.class))),
+            @ApiResponse(responseCode = "200", description = "공유 의견 좋아요 기능 성공 ",
+                    content = @Content(mediaType = "application/json", examples = @ExampleObject(value = SUCCESS_ADD_LIKE))),
             @ApiResponse(responseCode = "200", description = "공유 의견 좋아요 기능 취소 성공",
-                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = LikeRequest.class))),
-            @ApiResponse(responseCode = "500", description = "챕터 또는 멤버를 찾을 수 없음",
-                    content = @Content(mediaType = "application/json", examples = @ExampleObject(value = "{\"code\":404,\"message\":\"내부 서버 오류.\"}"))),
+                    content = @Content(mediaType = "application/json", examples = @ExampleObject(value = SUCCESS_DEL_LIKE))),
             @ApiResponse(responseCode = "404", description = "챕터 또는 멤버를 찾을 수 없음",
-                    content = @Content(mediaType = "application/json", examples = @ExampleObject(value = "{\"code\":404,\"message\":\"챕터 또는 멤버를 찾을 수 없습니다.\"}"))),
+                    content = @Content(mediaType = "application/json", examples = @ExampleObject(value = NOT_FOUND_ERROR_RESPONSE))),
     })
     @PostMapping("/detail/{chapterId}")
     public ResponseEntity<?> updateLike(@PathVariable Long chapterId, @RequestBody LikeRequest request, @Parameter(hidden = true) UserDto userDto) {
@@ -92,10 +107,10 @@ public class ShareController {
             } else if (result == 1) {
                 return CommonResponse.createResponse(200, "공유 의견 좋아요 성공", request);
             } else {
-                return CommonResponse.createResponseMessage(500, "내부 서버 오류");
+                return CommonResponse.createResponseMessage(HttpStatus.INTERNAL_SERVER_ERROR.value(), "내부 서버 오류");
             }
         } catch (NotFoundException e) {
-            return CommonResponse.createResponseMessage(404, "챕터 또는 멤버를 찾을 수 없습니다");
+            return CommonResponse.createResponseMessage(404, "챕터 또는 멤버를 찾을 수 없습니다: " + e.getMessage());
         }
 
     }
