@@ -9,7 +9,6 @@ import com.mars.statement.api.group.repository.GroupMemberRepository;
 import com.mars.statement.global.exception.NotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

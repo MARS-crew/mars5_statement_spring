@@ -33,14 +33,15 @@ public class CreateSuggestService {
                 .type(suggestDto.getType())
                 .groupMember(groupMember)
                 .build());
-
+        System.out.println("suggest완료");
         CreateChapterDto createChapterDto = CreateChapterDto.builder()
                 .constructorId(savedSuggest.getGroupMember().getId())
                 .suggestId(savedSuggest.getId())
-                //.groupId(suggestDto.getGroupId())
+                .groupId(suggestDto.getGroupId())
                 .memberIds(suggestDto.getMemberIds())
                 .build();
-
+        System.out.println(suggestDto.getGroupId());
+        System.out.println("dto완료");
         return createChapterService.createChapterAndAddMembers(createChapterDto,myId);
     }
 }

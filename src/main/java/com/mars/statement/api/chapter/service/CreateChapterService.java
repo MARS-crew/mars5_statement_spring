@@ -3,6 +3,7 @@ package com.mars.statement.api.chapter.service;
 import com.mars.statement.api.chapter.domain.Chapter;
 import com.mars.statement.api.chapter.domain.Suggest;
 import com.mars.statement.api.chapter.dto.CreateChapterDto;
+import com.mars.statement.api.chapter.dto.SuggestDto;
 import com.mars.statement.api.chapter.repository.ChapterRepository;
 import com.mars.statement.api.chapter.repository.SuggestRepository;
 import com.mars.statement.api.group.domain.Group;
@@ -34,30 +35,31 @@ public class CreateChapterService {
         // 1. 주제 조회
         Suggest suggest = suggestRepository.findById(createChapterDto.getSuggestId())
                 .orElseThrow(() -> new NotFoundException(404, "Suggest not found"));
-
+System.out.println(suggest.getGroup().getId());
         // 2. 그룹 조회 (주제의 그룹)
         // 그룹 아이디로 주제를 소유한 그룹인지 판단
         Group group = suggest.getGroup();
 
         // 3. 현재 사용자가 주어진 그룹의 멤버인지 확인
         GroupMember groupMember = groupMemberService.findGroupMemberByIdAndGroupId(myId, group.getId());
-        if (!groupMember.getGroup().equals(group)) {
+        System.out.println("id"+ groupMember.getId());
+        System.out.println("groupid"+groupMember.getGroup().getId());
+        if (!groupMember.getGroup().getId().equals(group.getId())) {
             throw new ForbiddenException("Constructor is not a member of the group that owns the suggest.");
         }
-System.out.println(groupMember.getId());
-        System.out.println(groupMember.getGroup().getId());
+        System.out.println(groupMember.getGroup());
         System.out.println(group.getId());
+        System.out.println(groupMember.getGroup().getId().equals(group.getId()));
 
 
         // 3. 회차 생성 및 그룹 설정
         Chapter chapter = Chapter.builder()
                 .suggest(suggest)
-                //.group(group)
                 .build();
         Chapter savedChapter = chapterRepository.save(chapter);
-
+        System.out.println("회차생성");
         // 4. 회차에 생성자와 멤버 추가
-        chapterMemberService.addMemberToChapter(savedChapter.getId(), myId, createChapterDto.getMemberIds());
+        chapterMemberService.addMemberToChapter(savedChapter.getId(), groupMember.getId(), createChapterDto.getMemberIds());
 
         return CommonResponse.createResponse(HttpStatus.OK.value(), "주제생성 완료", savedChapter.getId());
     }
