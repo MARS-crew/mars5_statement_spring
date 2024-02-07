@@ -4,7 +4,6 @@ import com.mars.statement.api.chapter.dto.CheckChapterDto;
 import com.mars.statement.api.share.dto.*;
 import com.mars.statement.api.share.service.LikeService;
 import com.mars.statement.api.share.service.ShareService;
-import com.mars.statement.api.share.service.ShareSummaryService;
 import com.mars.statement.global.dto.CommonResponse;
 import com.mars.statement.global.dto.UserDto;
 import com.mars.statement.global.exception.ForbiddenException;
@@ -31,7 +30,6 @@ public class ShareController {
 
     private final ShareService shareService;
     private final LikeService likeService;
-    private final ShareSummaryService shareSummaryService;
 
     @Operation(summary = "공유 인물별 조회")
     @ApiResponses(value = {
@@ -119,6 +117,6 @@ public class ShareController {
     @Operation(summary = "서머리 작성")
     @PostMapping("/summary/{chapterId}")
     public ResponseEntity<?> summaryShare(@PathVariable Long chapterId, @RequestBody ShareSummaryDto shareSummaryDto, @Parameter(hidden = true) UserDto userDto) throws ForbiddenException {
-        return shareSummaryService.summaryShare(chapterId,shareSummaryDto,userDto.getId());
+        return shareService.summaryShare(chapterId,shareSummaryDto,userDto.getId());
     }
 }

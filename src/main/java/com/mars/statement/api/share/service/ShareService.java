@@ -14,6 +14,7 @@ import com.mars.statement.api.share.domain.Share;
 import com.mars.statement.api.share.dto.*;
 import com.mars.statement.api.share.repository.ShareRepository;
 import com.mars.statement.global.dto.CommonResponse;
+import com.mars.statement.global.exception.ForbiddenException;
 import com.mars.statement.global.exception.NotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -146,6 +147,22 @@ public class ShareService {
 
         // 응답 생성
         return CommonResponse.createResponseMessage(HttpStatus.OK.value(), "의견 작성 성공");
+    }
+    @Transactional
+    public ResponseEntity<?> summaryShare(Long chapterId,ShareSummaryDto shareSummaryDto,Long myId) throws ForbiddenException {
+        String summary = shareSummaryDto.getSummary();
+
+        ChapterMember chapterMember = chapterMemberRepository.findChapterMemberByChapterIdAndUserId(chapterId, myId);
+
+        // ChapterMember 엔티티가 없거나 생성자가 아니면 권한이 없음
+        if (!(chapterMember.getIs_constructor() == 1)) {
+            throw new ForbiddenException("You are not authorized to share summary for this chapter.");
+        }
+
+        chapterMember.setSummary(summary);
+        chapterMemberRepository.save(chapterMember);
+
+        return CommonResponse.createResponseMessage(HttpStatus.OK.value(), "서머리 작성 성공");
     }
 
 

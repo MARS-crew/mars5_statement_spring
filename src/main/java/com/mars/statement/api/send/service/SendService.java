@@ -5,6 +5,7 @@ import com.mars.statement.api.chapter.domain.ChapterMember;
 import com.mars.statement.api.chapter.domain.Suggest;
 import com.mars.statement.api.chapter.dto.ChapterSummaryDto;
 import com.mars.statement.api.chapter.dto.CheckChapterDto;
+import com.mars.statement.api.chapter.repository.ChapterMemberRepository;
 import com.mars.statement.api.chapter.service.ChapterMemberService;
 import com.mars.statement.api.chapter.service.ChapterService;
 import com.mars.statement.api.chapter.service.SuggestService;
@@ -15,12 +16,14 @@ import com.mars.statement.api.send.dto.*;
 import com.mars.statement.api.send.repository.SendRepository;
 import com.mars.statement.api.share.dto.ShareDetailDto;
 import com.mars.statement.api.share.dto.ShareMemberDetailDto;
+import com.mars.statement.global.dto.CommonResponse;
 import com.mars.statement.global.exception.NotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -36,6 +39,7 @@ public class SendService {
     private final GroupMemberService groupMemberService;
     private final SuggestService suggestService;
     private final ChapterService chapterService;
+    private final ChapterMemberRepository chapterMemberRepository;
 
     private final SendRepository sendRepository;
 
@@ -159,6 +163,22 @@ public class SendService {
         return sendRepository.updateBookmark(send.getId());
 
 
+    }
+    @Transactional
+    public ResponseEntity<?> summarySend(Long chapterId, SendSummaryDto sendSummaryDto, Long myId) throws  NotFoundException {
+        String summary = sendSummaryDto.getSummary();
+
+        // 주어진 챕터의 멤버인지 확인
+        ChapterMember chapterMember = chapterMemberRepository.findChapterMemberByChapterIdAndUserId(chapterId, myId);
+        if (chapterMember == null) {
+            throw new NotFoundException(404, "User is not a member of this chapter");
+        }
+
+        // 요약 정보 업데이트
+        chapterMember.setSummary(summary);
+        chapterMemberRepository.save(chapterMember);
+
+        return CommonResponse.createResponseMessage(HttpStatus.OK.value(), "서머리 작성 성공");
     }
 
 
