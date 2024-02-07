@@ -2,15 +2,9 @@ package com.mars.statement.api.chapter.controller;
 
 import com.mars.statement.api.chapter.dto.CreateChapterDto;
 import com.mars.statement.api.chapter.service.CreateChapterService;
-import com.mars.statement.api.share.dto.LikeRequest;
 import com.mars.statement.global.dto.UserDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.ExampleObject;
-import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

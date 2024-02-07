@@ -1,14 +1,13 @@
 package com.mars.statement.api.share.controller;
 
 import com.mars.statement.api.chapter.dto.CheckChapterDto;
-import com.mars.statement.api.share.dto.LikeRequest;
-import com.mars.statement.api.share.dto.PersonalShareDto;
-import com.mars.statement.api.share.dto.ShareDetailDto;
-import com.mars.statement.api.share.dto.ShareOpinionDto;
+import com.mars.statement.api.share.dto.*;
 import com.mars.statement.api.share.service.LikeService;
 import com.mars.statement.api.share.service.ShareService;
+import com.mars.statement.api.share.service.ShareSummaryService;
 import com.mars.statement.global.dto.CommonResponse;
 import com.mars.statement.global.dto.UserDto;
+import com.mars.statement.global.exception.ForbiddenException;
 import com.mars.statement.global.exception.NotFoundException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -32,6 +31,7 @@ public class ShareController {
 
     private final ShareService shareService;
     private final LikeService likeService;
+    private final ShareSummaryService shareSummaryService;
 
     @Operation(summary = "공유 인물별 조회")
     @ApiResponses(value = {
@@ -114,5 +114,11 @@ public class ShareController {
     @PostMapping("/create/{chapterId}")
     public ResponseEntity<?> insertShare(@PathVariable Long chapterId, @RequestBody ShareOpinionDto shareOpinionDto, @Parameter(hidden = true) UserDto userDto) throws NotFoundException {
         return shareService.insertShare(chapterId,shareOpinionDto,userDto.getId());
+    }
+
+    @Operation(summary = "서머리 작성")
+    @PostMapping("/summary/{chapterId}")
+    public ResponseEntity<?> summaryShare(@PathVariable Long chapterId, @RequestBody ShareSummaryDto shareSummaryDto, @Parameter(hidden = true) UserDto userDto) throws ForbiddenException {
+        return shareSummaryService.summaryShare(chapterId,shareSummaryDto,userDto.getId());
     }
 }

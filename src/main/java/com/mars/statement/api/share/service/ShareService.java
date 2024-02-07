@@ -9,6 +9,7 @@ import com.mars.statement.api.chapter.repository.ChapterMemberRepository;
 import com.mars.statement.api.chapter.repository.ChapterRepository;
 import com.mars.statement.api.chapter.service.ChapterMemberService;
 import com.mars.statement.api.chapter.service.ChapterService;
+import com.mars.statement.api.chapter.service.SuggestService;
 import com.mars.statement.api.share.domain.Share;
 import com.mars.statement.api.share.dto.*;
 import com.mars.statement.api.share.repository.ShareRepository;
@@ -34,6 +35,7 @@ public class ShareService {
     private final ChapterService chapterService;
     private final ChapterMemberService chapterMemberService;
     private final ChapterMemberRepository chapterMemberRepository;
+    private final SuggestService suggestService;
 
     public Share getShareById(Long shareId) throws NotFoundException {
         return shareRepository.findById(shareId).orElseThrow(() -> new NotFoundException(HttpStatus.NOT_FOUND.value(), "공유 정보를 찾을 수 없습니다."));
