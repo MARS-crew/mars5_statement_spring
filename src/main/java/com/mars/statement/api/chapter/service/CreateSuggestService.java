@@ -41,6 +41,6 @@ public class CreateSuggestService {
                 .memberIds(suggestDto.getMemberIds())
                 .build();
 
-        return createChapterService.createChapterAndAddMembers(createChapterDto,myId);
+        return createChapterService.createChapterAndAddMembers(createChapterDto.getSuggestId(),createChapterDto,myId);
     }
 }

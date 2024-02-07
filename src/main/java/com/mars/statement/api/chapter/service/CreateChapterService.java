@@ -28,9 +28,9 @@ public class CreateChapterService {
 
     private final SuggestRepository suggestRepository;
     @Transactional
-    public ResponseEntity<?> createChapterAndAddMembers(CreateChapterDto createChapterDto,Long myId) throws Exception {
+    public ResponseEntity<?> createChapterAndAddMembers(Long suggestId,CreateChapterDto createChapterDto,Long myId) throws Exception {
         // 1. 주제 조회
-        Suggest suggest = suggestRepository.findById(createChapterDto.getSuggestId())
+        Suggest suggest = suggestRepository.findById(suggestId)
                 .orElseThrow(() -> new NotFoundException(404, "Suggest not found"));
 
         // 2. 그룹 조회 (주제의 그룹)
