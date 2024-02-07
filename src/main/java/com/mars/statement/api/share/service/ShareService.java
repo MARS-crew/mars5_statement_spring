@@ -5,31 +5,35 @@ import com.mars.statement.api.chapter.domain.ChapterMember;
 import com.mars.statement.api.chapter.domain.Suggest;
 import com.mars.statement.api.chapter.dto.CheckChapterDto;
 import com.mars.statement.api.chapter.dto.ChapterSummaryDto;
+import com.mars.statement.api.chapter.repository.ChapterMemberRepository;
+import com.mars.statement.api.chapter.repository.ChapterRepository;
 import com.mars.statement.api.chapter.service.ChapterMemberService;
 import com.mars.statement.api.chapter.service.ChapterService;
-import com.mars.statement.api.chapter.service.SuggestService;
-import com.mars.statement.api.group.domain.GroupMember;
-import com.mars.statement.api.group.service.GroupMemberService;
 import com.mars.statement.api.share.domain.Share;
 import com.mars.statement.api.share.dto.*;
 import com.mars.statement.api.share.repository.ShareRepository;
+import com.mars.statement.global.dto.CommonResponse;
 import com.mars.statement.global.exception.NotFoundException;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class ShareService {
 
     private final ShareRepository shareRepository;
-    private final GroupMemberService groupMemberService;
-    private final SuggestService suggestService;
+    private final ChapterRepository chapterRepository;
     private final ChapterService chapterService;
     private final ChapterMemberService chapterMemberService;
+    private final ChapterMemberRepository chapterMemberRepository;
 
     public Share getShareById(Long shareId) throws NotFoundException {
         return shareRepository.findById(shareId).orElseThrow(() -> new NotFoundException(HttpStatus.NOT_FOUND.value(), "공유 정보를 찾을 수 없습니다."));
@@ -115,5 +119,32 @@ public class ShareService {
                 allChapterMemberDetailList);
 
     }
+
+    @Transactional
+    public ResponseEntity<?> insertShare(Long chapterId, ShareOpinionDto shareOpinionDto, Long myId) throws NotFoundException {
+        // 챕터의 타입이 'share'인지 확인
+        String chapterType = chapterRepository.findChapterTypeById(chapterId);
+
+        if (!chapterType.equals("share")) {
+            throw new NotFoundException(404, "You can only share opinions in this chapter");
+        }
+
+        // 챕터 멤버 확인
+        Optional<ChapterMember> myChapterMember = Optional.ofNullable(chapterMemberRepository.findChapterMemberByChapterIdAndUserId(chapterId, myId));
+        ChapterMember chapterMember = myChapterMember.orElseThrow(() -> new NotFoundException(404, "Chapter member not found for the current user"));
+
+        // 새로운 Share 엔티티 생성 및 저장
+        Share share = Share.builder()
+                .chapterMember(chapterMember)
+                .opinion(shareOpinionDto.getOpinion())
+                .location(shareOpinionDto.getLocation())
+                .build();
+
+        shareRepository.save(share);
+
+        // 응답 생성
+        return CommonResponse.createResponseMessage(HttpStatus.OK.value(), "의견 작성 성공");
+    }
+
 
 }

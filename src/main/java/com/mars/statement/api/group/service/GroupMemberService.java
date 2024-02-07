@@ -35,4 +35,12 @@ public class GroupMemberService {
         }
         return myGroups;
     }
+
+    public GroupMember findGroupMemberById(Long groupMemberId){
+        return groupMemberRepository.findById(groupMemberId).orElse(null);
+    }
+
+    public GroupMember findGroupMemberByIdAndGroupId(Long memberId, Long groupId) {
+        return groupMemberRepository.findByUserIdAndGroupId(memberId, groupId);
+    }
 }

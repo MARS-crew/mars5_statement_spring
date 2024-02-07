@@ -23,4 +23,8 @@ public interface ChapterRepository extends JpaRepository<Chapter, Long> {
             "LEFT JOIN FETCH c.suggest s " +
             "WHERE cm.groupMember.id = :memberId AND s.id = :suggestId")
     List<ChapterMember> findChaptersByMemberId(Long memberId, Long suggestId);
+
+    @Query("SELECT c.suggest.type FROM Chapter c WHERE c.id = :chapterId")
+    String findChapterTypeById(@Param("chapterId") Long chapterId);
 }
+
