@@ -44,20 +44,35 @@ public class SendService {
     private final SendRepository sendRepository;
 
     @Transactional
-    public int saveSendMessage(Long chapterId, List<SendMessageDto> messageDtoList, Long fromId) {
-
+    public int saveSendMessage(Long chapterId, List<SendMessageDto> messageDtoList, Long myId) {
         try {
             Chapter chapter = chapterService.getChapterById(chapterId);
-            ChapterMember from = chapterMemberService.getChapterMemberById(chapter.getId(), fromId);
+            ChapterMember from = chapterMemberService.getChapterMemberByChapterIdAndUserId(chapter.getId(), myId);
+
+            // 확인: 보내는 멤버가 챕터에 속해 있는지 확인
+            if (from == null || !chapterMemberRepository.existsByChapterIdAndMemberId(chapterId, from.getId())) {
+                throw new IllegalArgumentException("보내는 멤버가 챕터에 속해 있지 않습니다.");
+            }
 
             List<Send> sendList = new ArrayList<>();
 
             for (SendMessageDto messageDto : messageDtoList) {
-                ChapterMember to = chapterMemberService.getChapterMemberById(chapter.getId(), messageDto.getTo_id());
-                System.out.println(to.getId());
+                Long toId = messageDto.getTo_id();
+
+                // 확인: 받는 멤버가 챕터에 속해 있는지 확인
+                if (!chapterMemberRepository.existsByChapterIdAndMemberId(chapterId, toId)) {
+                    throw new IllegalArgumentException("받는 멤버가 챕터에 속해 있지 않습니다.");
+                }
+
+                // 받는 멤버가 챕터에 속해 있으면, 해당 멤버를 to로 설정
+                ChapterMember to = new ChapterMember();
+                to.setId(toId);
+
+                // Send 인스턴스 생성 및 sendList에 추가
                 Send send = new Send(chapter, from, to, messageDto.getMessage());
                 sendList.add(send);
             }
+
 
             List<Send> savedSends = sendRepository.saveAll(sendList);
 

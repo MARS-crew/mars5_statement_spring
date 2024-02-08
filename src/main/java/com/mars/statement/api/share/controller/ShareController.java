@@ -109,7 +109,7 @@ public class ShareController {
 
     }
     @Operation(summary = "주제별 의견작성")
-    @PostMapping("/create/{chapterId}")
+    @PostMapping("/write/{chapterId}")
     public ResponseEntity<?> insertShare(@PathVariable Long chapterId, @RequestBody ShareOpinionDto shareOpinionDto, @Parameter(hidden = true) UserDto userDto) throws NotFoundException {
         return shareService.insertShare(chapterId,shareOpinionDto,userDto.getId());
     }

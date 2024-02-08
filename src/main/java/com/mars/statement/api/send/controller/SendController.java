@@ -53,7 +53,7 @@ public class SendController {
 
     @Operation(summary = "메세지 작성")
     @PostMapping("/write/{chapterId}")
-    public ResponseEntity<Object> writeMessage(@PathVariable Long chapterId, @RequestBody List<SendMessageDto> messageDtoList) {
+    public ResponseEntity<Object> writeMessage(@PathVariable Long chapterId, @RequestBody List<SendMessageDto> messageDtoList, @Parameter(hidden = true) UserDto userDto) {
 
 
         int code;
@@ -64,7 +64,9 @@ public class SendController {
             message = "메세지 전달 실패: 요청 데이터 null";
         } else {
             Long toId = 1L; // 로그인 데이터
-            int result = sendService.saveSendMessage(chapterId, messageDtoList, toId);
+            System.out.print(chapterId);
+            System.out.print(userDto.getId());
+            int result = sendService.saveSendMessage(chapterId, messageDtoList, userDto.getId());
 
             if (result == 0) {
                 code = 200;
