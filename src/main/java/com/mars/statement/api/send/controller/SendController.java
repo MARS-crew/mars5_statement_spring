@@ -5,15 +5,14 @@ import com.mars.statement.api.chapter.dto.ChapterWithMemberDto;
 import com.mars.statement.api.chapter.dto.CheckChapterDto;
 import com.mars.statement.api.chapter.service.ChapterService;
 import com.mars.statement.api.send.domain.Send;
-import com.mars.statement.api.send.dto.BookmarkRequest;
-import com.mars.statement.api.send.dto.PersonalSendDto;
-import com.mars.statement.api.send.dto.SendDetailDto;
-import com.mars.statement.api.send.dto.SendMessageDto;
+import com.mars.statement.api.send.dto.*;
 import com.mars.statement.api.send.service.SendService;
 
 import com.mars.statement.api.share.dto.ShareDetailDto;
+import com.mars.statement.api.share.dto.ShareSummaryDto;
 import com.mars.statement.global.dto.CommonResponse;
 import com.mars.statement.global.dto.UserDto;
+import com.mars.statement.global.exception.ForbiddenException;
 import com.mars.statement.global.exception.NotFoundException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -147,5 +146,10 @@ public class SendController {
         } catch (NotFoundException e) {
             return CommonResponse.createResponseMessage(HttpStatus.NOT_FOUND.value(),"챕터 또는 멤버를 찾을 수 없습니다: " + e.getMessage());
         }
+    }
+    @Operation(summary = "멤버별 서머리 작성")
+    @PostMapping("/summary/{chapterId}")
+    public ResponseEntity<?> summarySend(@PathVariable Long chapterId, @RequestBody SendSummaryDto sendSummaryDto, @Parameter(hidden = true) UserDto userDto) throws NotFoundException {
+        return sendService.summarySend(chapterId,sendSummaryDto,userDto.getId());
     }
 }

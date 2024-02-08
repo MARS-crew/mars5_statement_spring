@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @Tag(name = "회차")
-@RequestMapping("/api/chapters")
+@RequestMapping("/api/v1/chapters")
 @RequiredArgsConstructor
 public class ChapterController {
 
