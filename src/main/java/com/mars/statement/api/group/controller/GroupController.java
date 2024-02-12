@@ -51,7 +51,7 @@ public class GroupController {
             @Content(mediaType = "application/json", examples = @ExampleObject(value = "{\"code\":404,\"status\":\"NOT_FOUND\",\"message\":\"유저를 찾을 수 없습니다.\"}")))
     })
     @PostMapping("/create")
-    public ResponseEntity<?> createGroup(@RequestBody GroupCreateRequest request, UserDto userDto) throws Exception {
+    public ResponseEntity<?> createGroup(@RequestBody GroupCreateRequest request, @Parameter(hidden = true) UserDto userDto) throws Exception {
         return groupService.createGroup(request, userDto);
     }
 }

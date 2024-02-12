@@ -69,5 +69,5 @@ jobs:
           sudo docker stop statement
           sudo docker rm statement
           sudo docker rmi 2tory/mars5_statement:latest-amd64
-          sudo docker run -d -p 8080:8080 --name statement --restart always 2tory/mars5_statement:latest-amd64
+          sudo docker run -d -p 8080:8080 --name statement -v ~/statement:/app/log --restart always 2tory/mars5_statement:latest-amd64
           sudo docker network connect maria_default statement
