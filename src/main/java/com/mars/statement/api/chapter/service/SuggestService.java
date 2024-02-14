@@ -23,7 +23,7 @@ public class SuggestService {
         Optional<Suggest> optionalSuggest = suggestRepository.findById(suggestId);
 
         if (optionalSuggest.isEmpty()) {
-            throw new NotFoundException(HttpStatus.NOT_FOUND.value(), "해당 제안 정보를 찾을 수 없습니다.");
+            throw new NotFoundException(HttpStatus.NOT_FOUND.value(), "해당 주제 정보를 찾을 수 없습니다.");
         }
 
         return optionalSuggest.get();
