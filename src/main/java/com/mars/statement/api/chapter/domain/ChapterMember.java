@@ -42,7 +42,7 @@ public class ChapterMember {
     private String userName;
 
     @Column(name= "is_constructor", nullable=true)
-    private Long is_constructor;
+    private Boolean is_constructor;
 
 
 }

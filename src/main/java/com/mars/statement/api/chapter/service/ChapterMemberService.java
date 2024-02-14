@@ -37,7 +37,7 @@ public class ChapterMemberService {
             }
 
             // 생성자 여부 설정: 로그인한 사용자의 ID와 멤버의 ID가 일치하면 생성자로 설정
-            Long isConstructor = (memberId==(memberMyId.getId()) ? 1L : 0L);
+            Boolean isConstructor = (memberId.equals(memberMyId.getId()));
 
             ChapterMember chapterMember = ChapterMember.builder()
                     .chapter(chapter)
