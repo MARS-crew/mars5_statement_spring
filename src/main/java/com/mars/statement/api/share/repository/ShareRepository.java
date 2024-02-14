@@ -40,7 +40,7 @@ public interface ShareRepository extends JpaRepository<Share, Long> {
             "JOIN c.chapter ch " +
             "JOIN ch.suggest s " +
             "JOIN c.groupMember gm " +
-            "WHERE ch.id IN :chapterIds AND c.is_constructor = 1")
+            "WHERE ch.id IN :chapterIds AND c.is_constructor = true")
     List<CheckChapterDto> findChapterSharesByIds(@Param("chapterIds") List<Long> chapterIds);
 
     @Query("SELECT NEW com.mars.statement.api.share.dto.ShareDetailDto(" +
@@ -60,5 +60,5 @@ public interface ShareRepository extends JpaRepository<Share, Long> {
             "JOIN cm.groupMember gm " +
             "JOIN gm.user u " +
             "WHERE c.id = :chapterId")
-    List<ShareDetailDto> findShareDetails(@Param("chapterId")Long chapterId, Long myId);
+    List<ShareDetailDto> findShareDetails(@Param("chapterId") Long chapterId, Long myId);
 }

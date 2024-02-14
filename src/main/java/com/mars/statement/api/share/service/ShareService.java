@@ -155,7 +155,7 @@ public class ShareService {
         ChapterMember chapterMember = chapterMemberRepository.findChapterMemberByChapterIdAndUserId(chapterId, myId);
 
         // ChapterMember 엔티티가 없거나 생성자가 아니면 권한이 없음
-        if (!(chapterMember.getIs_constructor() == 1)) {
+        if (!(chapterMember.getIs_constructor())) {
             throw new ForbiddenException("You are not authorized to share summary for this chapter.");
         }
 
