@@ -58,6 +58,10 @@ public class ChapterService {
 
         List<ChapterMember> chapterMembers = chapterRepository.findChaptersByMemberId(member.getId(), suggest.getId());
 
+        if(chapterMembers == null || chapterMembers.isEmpty()){
+            throw  new NotFoundException(HttpStatus.NOT_FOUND.value(), "참여한 챕터가 없습니다.");
+        }
+
         List<Chapter> chapters = new ArrayList<>();
         for (ChapterMember chapterMember : chapterMembers) {
             chapters.add(chapterMember.getChapter());

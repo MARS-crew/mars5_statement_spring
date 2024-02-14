@@ -91,6 +91,8 @@ public class ShareService {
         }
 
         List<Chapter> chapters = chapterService.getChaptersByMemberId(myId, suggest);
+
+
         List<Long> chapterIds = chapters.stream().map(Chapter::getId).toList();
 
         List<CheckChapterDto> checkChapterDtoList = shareRepository.findChapterSharesByIds(chapterIds);
