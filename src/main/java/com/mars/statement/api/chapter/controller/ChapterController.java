@@ -20,7 +20,7 @@ public class ChapterController {
 
     @Operation(summary = "회차 작성")
     @PostMapping("/create/{suggestId}")
-    public ResponseEntity<?> createChapter(@PathVariable Long suggestId,@RequestBody CreateChapterDto createChapterDto, @Parameter(hidden = true) UserDto userDto) throws Exception {
+    public ResponseEntity<?> createChapter(@PathVariable("suggestId") Long suggestId,@RequestBody CreateChapterDto createChapterDto, @Parameter(hidden = true) UserDto userDto) throws Exception {
         return createChapterService.createChapterAndAddMembers(suggestId,createChapterDto,userDto.getId());
     }
 }

@@ -23,19 +23,6 @@ public class GroupMemberService {
         return groupMemberRepository.findByGroupIdAndUserId(groupId, userId);
     }
 
-    public List<Group> getMyGroups(Long userId) {
-        List<Group> myGroups = new ArrayList<>();
-        Optional<User> userOptional = userRepository.findById(userId);
-        User user = userOptional.get();
-
-        List<GroupMember> myMemberLists = groupMemberRepository.findByUser(user);
-        for (GroupMember myMemberList : myMemberLists){
-            Group myGroup = myMemberList.getGroup();
-            myGroups.add(myGroup);
-        }
-        return myGroups;
-    }
-
     public GroupMember findGroupMemberById(Long groupMemberId){
         return groupMemberRepository.findById(groupMemberId).orElse(null);
     }

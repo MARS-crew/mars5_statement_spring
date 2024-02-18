@@ -48,6 +48,9 @@ public class CreateChapterService {
         // 3. 회차 생성 및 그룹 설정
         Chapter chapter = Chapter.builder()
                 .suggest(suggest)
+                .joinCnt(1)
+                .writeCnt(0)
+                .summaryBool(false)
                 .build();
         Chapter savedChapter = chapterRepository.save(chapter);
 

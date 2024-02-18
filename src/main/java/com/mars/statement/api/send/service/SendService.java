@@ -6,6 +6,7 @@ import com.mars.statement.api.chapter.domain.Suggest;
 import com.mars.statement.api.chapter.dto.ChapterSummaryDto;
 import com.mars.statement.api.chapter.dto.CheckChapterDto;
 import com.mars.statement.api.chapter.repository.ChapterMemberRepository;
+import com.mars.statement.api.chapter.repository.ChapterRepository;
 import com.mars.statement.api.chapter.service.ChapterMemberService;
 import com.mars.statement.api.chapter.service.ChapterService;
 import com.mars.statement.api.chapter.service.SuggestService;
@@ -17,6 +18,7 @@ import com.mars.statement.api.send.repository.SendRepository;
 import com.mars.statement.api.share.dto.ShareDetailDto;
 import com.mars.statement.api.share.dto.ShareMemberDetailDto;
 import com.mars.statement.global.dto.CommonResponse;
+import com.mars.statement.global.dto.UserDto;
 import com.mars.statement.global.exception.NotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -24,6 +26,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -39,6 +42,7 @@ public class SendService {
     private final GroupMemberService groupMemberService;
     private final SuggestService suggestService;
     private final ChapterService chapterService;
+    private final ChapterRepository chapterRepository;
     private final ChapterMemberRepository chapterMemberRepository;
 
     private final SendRepository sendRepository;
@@ -82,6 +86,9 @@ public class SendService {
                     return -1;
                 }
             }
+
+            chapter.increaseWriteCnt();
+            chapterRepository.save(chapter);
 
             return 0;
         } catch (Exception e) {
@@ -193,8 +200,10 @@ public class SendService {
         chapterMember.setSummary(summary);
         chapterMemberRepository.save(chapterMember);
 
+        Chapter chapter = chapterService.getChapterById(chapterId);
+        chapter.changeSummaryBool();
+        chapterRepository.save(chapter);
+
         return CommonResponse.createResponseMessage(HttpStatus.OK.value(), "서머리 작성 성공");
     }
-
-
 }

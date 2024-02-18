@@ -48,7 +48,7 @@ public interface SendRepository extends JpaRepository<Send, Long> {
             "JOIN c.groupMember gm " +
             "JOIN gm.user u " +
             "WHERE ch.id IN :chapterIds AND u.id = :myId")
-    List<CheckChapterDto> findChapterSendsByIds(@Param("chapterIds") List<Long> chapterIds, Long myId);
+    List<CheckChapterDto> findChapterSendsByIds(@Param("chapterIds") List<Long> chapterIds, @Param("myId") Long myId);
 
     @Query("SELECT NEW com.mars.statement.api.send.dto.SendDetailDto(" +
             "s.id AS suggestId, s.suggest, " +
@@ -66,7 +66,7 @@ public interface SendRepository extends JpaRepository<Send, Long> {
             "JOIN cm.groupMember gm " +
             "JOIN gm.user u " +
             "WHERE c.id = :chapterId and cm.id != :myId AND my.id = :myId")
-    List<SendDetailDto> findSendDetails(@Param("chapterId")Long chapterId, Long myId);
+    List<SendDetailDto> findSendDetails(@Param("chapterId")Long chapterId, @Param("myId") Long myId);
 
     @Transactional
     @Modifying( clearAutomatically=true)

@@ -60,5 +60,5 @@ public interface ShareRepository extends JpaRepository<Share, Long> {
             "JOIN cm.groupMember gm " +
             "JOIN gm.user u " +
             "WHERE c.id = :chapterId")
-    List<ShareDetailDto> findShareDetails(@Param("chapterId") Long chapterId, Long myId);
+    List<ShareDetailDto> findShareDetails(@Param("chapterId") Long chapterId, @Param("myId") Long myId);
 }
