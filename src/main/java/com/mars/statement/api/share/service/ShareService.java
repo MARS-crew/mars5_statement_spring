@@ -14,6 +14,7 @@ import com.mars.statement.api.share.domain.Share;
 import com.mars.statement.api.share.dto.*;
 import com.mars.statement.api.share.repository.ShareRepository;
 import com.mars.statement.global.dto.CommonResponse;
+import com.mars.statement.global.dto.UserDto;
 import com.mars.statement.global.exception.ForbiddenException;
 import com.mars.statement.global.exception.NotFoundException;
 import jakarta.transaction.Transactional;
@@ -138,6 +139,11 @@ public class ShareService {
         Optional<ChapterMember> myChapterMember = Optional.ofNullable(chapterMemberRepository.findChapterMemberByChapterIdAndUserId(chapterId, myId));
         ChapterMember chapterMember = myChapterMember.orElseThrow(() -> new NotFoundException(404, "Chapter member not found for the current user"));
 
+        // 챕터 writeCnt ++
+        Chapter chapter = chapterService.getChapterById(chapterId);
+        chapter.increaseWriteCnt();
+        chapterRepository.save(chapter);
+
         // 새로운 Share 엔티티 생성 및 저장
         Share share = Share.builder()
                 .chapterMember(chapterMember)
@@ -151,10 +157,11 @@ public class ShareService {
         return CommonResponse.createResponseMessage(HttpStatus.OK.value(), "의견 작성 성공");
     }
     @Transactional
-    public ResponseEntity<?> summaryShare(Long chapterId,ShareSummaryDto shareSummaryDto,Long myId) throws ForbiddenException {
+    public ResponseEntity<?> summaryShare(Long chapterId,ShareSummaryDto shareSummaryDto,Long myId) throws Exception {
         String summary = shareSummaryDto.getSummary();
 
         ChapterMember chapterMember = chapterMemberRepository.findChapterMemberByChapterIdAndUserId(chapterId, myId);
+        Chapter chapter = chapterService.getChapterById(chapterId);
 
         // ChapterMember 엔티티가 없거나 생성자가 아니면 권한이 없음
         if (!(chapterMember.getIs_constructor())) {
@@ -162,10 +169,11 @@ public class ShareService {
         }
 
         chapterMember.setSummary(summary);
+        chapter.changeSummaryBool();
+
+        chapterRepository.save(chapter);
         chapterMemberRepository.save(chapterMember);
 
         return CommonResponse.createResponseMessage(HttpStatus.OK.value(), "서머리 작성 성공");
     }
-
-
 }

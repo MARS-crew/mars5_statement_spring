@@ -3,6 +3,7 @@ package com.mars.statement.api.chapter.domain;
 import com.mars.statement.api.group.domain.Group;
 import com.mars.statement.api.group.domain.GroupMember;
 import jakarta.persistence.*;
+import jakarta.persistence.criteria.CriteriaBuilder;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -30,7 +31,14 @@ public class Chapter {
     @CreatedDate
     @Column(name = "reg_dt")
     private Timestamp reg_dt;
-
+    @Column(name = "join_cnt")
+    private Integer joinCnt;
+    @Column(name = "write_cnt")
+    private Integer writeCnt;
+    @Column(name = "summary_bool")
+    private Boolean summaryBool;
+    @Column(name = "member_cnt")
+    private Integer memberCnt;
 
     @OneToMany(mappedBy = "chapter")
     private Set<ChapterMember> chapterMembers;
@@ -42,4 +50,13 @@ public class Chapter {
         return chapterMembers;
     }
 
+    public void increaseJoinCnt() {
+        this.joinCnt++;
+    }
+    public void increaseWriteCnt() {
+        this.writeCnt++;
+    }
+    public void changeSummaryBool() {
+        this.summaryBool = true;
+    }
 }
