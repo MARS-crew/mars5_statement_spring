@@ -11,6 +11,7 @@ import com.mars.statement.api.send.service.SendService;
 import com.mars.statement.api.share.dto.ShareDetailDto;
 import com.mars.statement.api.share.dto.ShareSummaryDto;
 import com.mars.statement.global.dto.CommonResponse;
+import com.mars.statement.global.dto.SwaggerExampleValue;
 import com.mars.statement.global.dto.UserDto;
 import com.mars.statement.global.exception.ForbiddenException;
 import com.mars.statement.global.exception.NotFoundException;
@@ -44,7 +45,7 @@ public class SendController {
 
 
     @GetMapping("/{chapterId}")
-    public ResponseEntity<Object> getChapterWithMembers(@PathVariable Long chapterId) throws JsonProcessingException {
+    public ResponseEntity<Object> getChapterWithMembers(@PathVariable("chapterId") Long chapterId) throws JsonProcessingException {
         ChapterWithMemberDto chapter = chapterService.getChapterWithMembers(chapterId);
 
 
@@ -53,7 +54,7 @@ public class SendController {
 
     @Operation(summary = "메세지 작성")
     @PostMapping("/write/{chapterId}")
-    public ResponseEntity<Object> writeMessage(@PathVariable Long chapterId, @RequestBody List<SendMessageDto> messageDtoList, @Parameter(hidden = true) UserDto userDto) {
+    public ResponseEntity<Object> writeMessage(@PathVariable("chapterId") Long chapterId, @RequestBody List<SendMessageDto> messageDtoList, @Parameter(hidden = true) UserDto userDto) {
 
 
         int code;
@@ -89,7 +90,7 @@ public class SendController {
                     content = @Content(mediaType = "application/json", examples = @ExampleObject(value = NOT_FOUND_ERROR_RESPONSE))),
     })
     @GetMapping("/personal/{suggestId}")
-    public ResponseEntity<?> getPersonalSendDataList(@PathVariable Long suggestId, @Parameter(hidden = true) UserDto userDto) throws NotFoundException {
+    public ResponseEntity<?> getPersonalSendDataList(@PathVariable("suggestId") Long suggestId, @Parameter(hidden = true) UserDto userDto) throws NotFoundException {
         try {
             PersonalSendDto personalSendDataList = sendService.getPersonalSendData(suggestId, userDto.getId());
 
@@ -107,7 +108,7 @@ public class SendController {
                     content = @Content(mediaType = "application/json", examples = @ExampleObject(value = NOT_FOUND_ERROR_RESPONSE))),
     })
     @GetMapping("/chapter/{suggestId}")
-    public ResponseEntity<?> getChapterSendDataList(@PathVariable Long suggestId, @Parameter(hidden = true) UserDto userDto) throws NotFoundException {
+    public ResponseEntity<?> getChapterSendDataList(@PathVariable("suggestId") Long suggestId, @Parameter(hidden = true) UserDto userDto) throws NotFoundException {
         try {
             CheckChapterDto chapterDtoList = sendService.getChapterSendData(suggestId, userDto.getId());
             return CommonResponse.createResponse(200, "전달 회차별 조회 성공", chapterDtoList);
@@ -124,7 +125,7 @@ public class SendController {
                     content = @Content(mediaType = "application/json", examples = @ExampleObject(value = NOT_FOUND_ERROR_RESPONSE))),
     })
     @GetMapping("/detail/{chapterId}")
-    public ResponseEntity<?> getSendDetailData(@PathVariable Long chapterId, @Parameter(hidden = true) UserDto userDto) throws NotFoundException {
+    public ResponseEntity<?> getSendDetailData(@PathVariable("chapterId") Long chapterId, @Parameter(hidden = true) UserDto userDto) throws NotFoundException {
         try {
             SendDetailDto sendDetails = sendService.getSendDetails(chapterId, userDto.getId());
             return CommonResponse.createResponse(200, "전달 회차별 조회 성공", sendDetails);
@@ -151,7 +152,51 @@ public class SendController {
     }
     @Operation(summary = "멤버별 서머리 작성")
     @PostMapping("/summary/{chapterId}")
-    public ResponseEntity<?> summarySend(@PathVariable Long chapterId, @RequestBody SendSummaryDto sendSummaryDto, @Parameter(hidden = true) UserDto userDto) throws NotFoundException {
+    public ResponseEntity<?> summarySend(@PathVariable("chapterId") Long chapterId, @RequestBody SendSummaryDto sendSummaryDto, @Parameter(hidden = true) UserDto userDto) throws NotFoundException {
         return sendService.summarySend(chapterId,sendSummaryDto,userDto.getId());
+    }
+    @Operation(summary = "Send 입장")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "send 입장 성공",
+                    content = @Content(mediaType = "application/json", examples = @ExampleObject(value = SwaggerExampleValue.JOIN_RESPONSE))),
+            @ApiResponse(responseCode = "404", description = "멤버가 회차에 속해있지 않음",
+                    content = @Content(mediaType = "application/json", examples = @ExampleObject(value = "{\"code\":404,\"status\":\"NOT_FOUND\",\"message\":\"User is not a member of this chapter\"}"))),
+    })
+    @PostMapping("/join/{chapterId}")
+    public ResponseEntity<?> joinSend(@PathVariable("chapterId") Long chapterId, @Parameter(hidden = true) UserDto userDto) throws NotFoundException {
+        return chapterService.join(chapterId, userDto);
+    }
+    @Operation(summary = "Send 입장 확인")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "send 입장 확인 성공",
+                    content = @Content(mediaType = "application/json", examples = @ExampleObject(value = SwaggerExampleValue.GET_JOIN_RESPONSE))),
+            @ApiResponse(responseCode = "404", description = "멤버가 회차에 속해있지 않음",
+                    content = @Content(mediaType = "application/json", examples = @ExampleObject(value = "{\"code\":404,\"status\":\"NOT_FOUND\",\"message\":\"User is not a member of this chapter\"}"))),
+    })
+    @GetMapping("/join/{chapterId}")
+    public ResponseEntity<?> getJoinSend(@PathVariable("chapterId") Long chapterId, @Parameter(hidden = true) UserDto userDto) throws NotFoundException {
+        return chapterService.getJoin(chapterId, userDto);
+    }
+    @Operation(summary = "Send 작성 확인")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "send 작성 확인 성공",
+                    content = @Content(mediaType = "application/json", examples = @ExampleObject(value = SwaggerExampleValue.GET_WRITE_RESPONSE))),
+            @ApiResponse(responseCode = "404", description = "멤버가 회차에 속해있지 않음",
+                    content = @Content(mediaType = "application/json", examples = @ExampleObject(value = "{\"code\":404,\"status\":\"NOT_FOUND\",\"message\":\"User is not a member of this chapter\"}"))),
+    })
+    @GetMapping("/write/{chapterId}")
+    public ResponseEntity<?> getWriteSend(@PathVariable("chapterId") Long chapterId, @Parameter(hidden = true) UserDto userDto) throws NotFoundException {
+        return chapterService.getWriteCnt(chapterId, userDto);
+    }
+    @Operation(summary = "Send 서머리 작성 확인")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "send 서머리 확인 성공",
+                    content = @Content(mediaType = "application/json", examples = @ExampleObject(value = SwaggerExampleValue.GET_SUMMARY_RESPONSE))),
+            @ApiResponse(responseCode = "404", description = "멤버가 회차에 속해있지 않음",
+                    content = @Content(mediaType = "application/json", examples = @ExampleObject(value = "{\"code\":404,\"status\":\"NOT_FOUND\",\"message\":\"User is not a member of this chapter\"}"))),
+    })
+    @GetMapping("/summary/{chapterId}")
+    public ResponseEntity<?> getSummaryBoolSend(@PathVariable("chapterId") Long chapterId, @Parameter(hidden = true) UserDto userDto) throws NotFoundException {
+        return chapterService.getSummaryBool(chapterId, userDto);
     }
 }
