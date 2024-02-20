@@ -1,6 +1,6 @@
 package com.mars.statement.api.chapter.controller;
 
-import com.mars.statement.api.chapter.dto.CreateSuggestDto;
+import com.mars.statement.api.chapter.dto.CreateChapterDto;
 import com.mars.statement.api.chapter.service.CreateChapterService;
 import com.mars.statement.global.dto.UserDto;
 import io.swagger.v3.oas.annotations.Operation;
@@ -13,6 +13,8 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 import static com.mars.statement.global.dto.ExampleResponse.*;
 
@@ -34,7 +36,9 @@ public class ChapterController {
                     content = @Content(mediaType = "application/json", examples = @ExampleObject(value = "{\"code\":404,\"status\":\"NOT_FOUND\",\"message\":\"주제 또는 그룹을 찾을 수 없습니다.\"}")))
     })
     @PostMapping("/create/{suggestId}")
-    public ResponseEntity<?> createChapter(@PathVariable("suggestId") Long suggestId, @RequestBody CreateSuggestDto createSuggestDto, @Parameter(hidden = true) UserDto userDto) throws Exception {
-        return createChapterService.createChapterAndAddMembers(suggestId,createSuggestDto,userDto.getId());
+    public ResponseEntity<?> createChapter(@PathVariable("suggestId") Long suggestId, @RequestBody CreateChapterDto createChapterDto, @Parameter(hidden = true) UserDto userDto) throws Exception {
+        List<Long> memberIds = createChapterDto.getMemberIds();
+        return createChapterService.createChapterAndAddMembers(suggestId, userDto.getId(), memberIds);
     }
+
 }
