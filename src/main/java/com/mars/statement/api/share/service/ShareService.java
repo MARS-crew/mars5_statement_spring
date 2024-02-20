@@ -14,7 +14,6 @@ import com.mars.statement.api.share.domain.Share;
 import com.mars.statement.api.share.dto.*;
 import com.mars.statement.api.share.repository.ShareRepository;
 import com.mars.statement.global.dto.CommonResponse;
-import com.mars.statement.global.dto.UserDto;
 import com.mars.statement.global.exception.ForbiddenException;
 import com.mars.statement.global.exception.NotFoundException;
 import jakarta.transaction.Transactional;
@@ -168,7 +167,7 @@ public class ShareService {
             throw new ForbiddenException("You are not authorized to share summary for this chapter.");
         }
 
-        chapterMember.setSummary(summary);
+        chapterMember.withSummary(summary);
         chapter.changeSummaryBool();
 
         chapterRepository.save(chapter);

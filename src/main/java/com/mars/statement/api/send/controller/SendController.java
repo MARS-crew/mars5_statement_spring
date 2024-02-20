@@ -4,23 +4,17 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.mars.statement.api.chapter.dto.ChapterWithMemberDto;
 import com.mars.statement.api.chapter.dto.CheckChapterDto;
 import com.mars.statement.api.chapter.service.ChapterService;
-import com.mars.statement.api.send.domain.Send;
 import com.mars.statement.api.send.dto.*;
 import com.mars.statement.api.send.service.SendService;
 
-import com.mars.statement.api.share.dto.ShareDetailDto;
-import com.mars.statement.api.share.dto.ShareSummaryDto;
 import com.mars.statement.global.dto.CommonResponse;
 import com.mars.statement.global.dto.SwaggerExampleValue;
 import com.mars.statement.global.dto.UserDto;
-import com.mars.statement.global.exception.ForbiddenException;
 import com.mars.statement.global.exception.NotFoundException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
-import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -53,6 +47,12 @@ public class SendController {
     }
 
     @Operation(summary = "메세지 작성")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "send 메세지 작성 성공",
+                    content = @Content(mediaType = "application/json", examples = @ExampleObject(value =SUCCESS_SEND_WRITE))),
+            @ApiResponse(responseCode = "404", description = "챕터 또는 멤버를 찾을 수 없음",
+                    content = @Content(mediaType = "application/json", examples = @ExampleObject(value = NOT_FOUND_ERROR_RESPONSE))),
+    })
     @PostMapping("/write/{chapterId}")
     public ResponseEntity<Object> writeMessage(@PathVariable("chapterId") Long chapterId, @RequestBody List<SendMessageDto> messageDtoList, @Parameter(hidden = true) UserDto userDto) {
 
@@ -65,8 +65,6 @@ public class SendController {
             message = "메세지 전달 실패: 요청 데이터 null";
         } else {
             Long toId = 1L; // 로그인 데이터
-            System.out.print(chapterId);
-            System.out.print(userDto.getId());
             int result = sendService.saveSendMessage(chapterId, messageDtoList, userDto.getId());
 
             if (result == 0) {
@@ -90,7 +88,7 @@ public class SendController {
                     content = @Content(mediaType = "application/json", examples = @ExampleObject(value = NOT_FOUND_ERROR_RESPONSE))),
     })
     @GetMapping("/personal/{suggestId}")
-    public ResponseEntity<?> getPersonalSendDataList(@PathVariable("suggestId") Long suggestId, @Parameter(hidden = true) UserDto userDto) throws NotFoundException {
+    public ResponseEntity<?> getPersonalSendDataList(@PathVariable("suggestId") Long suggestId, @Parameter(hidden = true) UserDto userDto) {
         try {
             PersonalSendDto personalSendDataList = sendService.getPersonalSendData(suggestId, userDto.getId());
 
@@ -150,7 +148,14 @@ public class SendController {
             return CommonResponse.createResponseMessage(HttpStatus.NOT_FOUND.value(),"챕터 또는 멤버를 찾을 수 없습니다: " + e.getMessage());
         }
     }
+
     @Operation(summary = "멤버별 서머리 작성")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "send 서머리 작성 성공",
+                    content = @Content(mediaType = "application/json", examples = @ExampleObject(value =SUCCESS_SEND_SUMMARY))),
+            @ApiResponse(responseCode = "404", description = "챕터 또는 멤버를 찾을 수 없음",
+                    content = @Content(mediaType = "application/json", examples = @ExampleObject(value = NOT_FOUND_ERROR_RESPONSE))),
+    })
     @PostMapping("/summary/{chapterId}")
     public ResponseEntity<?> summarySend(@PathVariable("chapterId") Long chapterId, @RequestBody SendSummaryDto sendSummaryDto, @Parameter(hidden = true) UserDto userDto) throws NotFoundException {
         return sendService.summarySend(chapterId,sendSummaryDto,userDto.getId());

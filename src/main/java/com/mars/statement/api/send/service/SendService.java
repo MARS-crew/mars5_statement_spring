@@ -23,6 +23,7 @@ import com.mars.statement.global.exception.NotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -34,6 +35,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class SendService {
@@ -197,7 +199,7 @@ public class SendService {
         }
 
         // 요약 정보 업데이트
-        chapterMember.setSummary(summary);
+        chapterMember.withSummary(summary);
         chapterMemberRepository.save(chapterMember);
 
         Chapter chapter = chapterService.getChapterById(chapterId);

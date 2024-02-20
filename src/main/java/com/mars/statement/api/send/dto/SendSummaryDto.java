@@ -8,8 +8,7 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 public class SendSummaryDto {
-    private Long chapterId;
-    private Long memberId;
+
     private String summary;
 
 }

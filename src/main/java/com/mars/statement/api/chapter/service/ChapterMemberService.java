@@ -9,10 +9,12 @@ import com.mars.statement.api.group.repository.GroupMemberRepository;
 import com.mars.statement.global.exception.NotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+@Slf4j
 @RequiredArgsConstructor
 @Service
 public class ChapterMemberService {

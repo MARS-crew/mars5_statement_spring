@@ -8,9 +8,10 @@ import com.mars.statement.api.share.domain.Like;
 import com.mars.statement.api.share.repository.LikeRepository;
 import com.mars.statement.global.exception.NotFoundException;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class LikeService {

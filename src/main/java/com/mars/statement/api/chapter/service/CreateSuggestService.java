@@ -1,7 +1,7 @@
 package com.mars.statement.api.chapter.service;
 
 import com.mars.statement.api.chapter.domain.Suggest;
-import com.mars.statement.api.chapter.dto.CreateChapterDto;
+import com.mars.statement.api.chapter.dto.CreateSuggestDto;
 import com.mars.statement.api.chapter.dto.SuggestDto;
 import com.mars.statement.api.chapter.repository.SuggestRepository;
 import com.mars.statement.api.group.domain.Group;
@@ -14,7 +14,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-
+@Slf4j
 @RequiredArgsConstructor
 @Service
 public class CreateSuggestService {
@@ -34,13 +34,13 @@ public class CreateSuggestService {
                 .groupMember(groupMember)
                 .build());
 
-        CreateChapterDto createChapterDto = CreateChapterDto.builder()
+        CreateSuggestDto createSuggestDto = CreateSuggestDto.builder()
                 .constructorId(savedSuggest.getGroupMember().getId())
                 .suggestId(savedSuggest.getId())
                 .groupId(suggestDto.getGroupId())
                 .memberIds(suggestDto.getMemberIds())
                 .build();
 
-        return createChapterService.createChapterAndAddMembers(createChapterDto.getSuggestId(),createChapterDto,myId);
+        return createChapterService.createChapterAndAddMembers(createSuggestDto.getSuggestId(),createSuggestDto,myId);
     }
 }
