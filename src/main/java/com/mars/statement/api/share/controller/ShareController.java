@@ -8,7 +8,6 @@ import com.mars.statement.api.share.service.ShareService;
 import com.mars.statement.global.dto.CommonResponse;
 import com.mars.statement.global.dto.SwaggerExampleValue;
 import com.mars.statement.global.dto.UserDto;
-import com.mars.statement.global.exception.ForbiddenException;
 import com.mars.statement.global.exception.NotFoundException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -111,17 +110,33 @@ public class ShareController {
         }
 
     }
+
     @Operation(summary = "주제별 의견작성")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "share 의견 작성 성공",
+                    content = @Content(mediaType = "application/json", examples = @ExampleObject(value =SUCCESS_SHARE_WRITE))),
+            @ApiResponse(responseCode = "403", description = "권한이 없습니다",
+                    content = @Content(mediaType = "application/json", examples = @ExampleObject(value = "{\"code\":403,\"status\":\"FOR_BIDDEN\",\"message\":\"권한이 없습니다.\"}"))),
+            @ApiResponse(responseCode = "404", description = "챕터 멤버를 찾을 수 없음",
+                    content = @Content(mediaType = "application/json", examples = @ExampleObject(value = "{\"code\":404,\"status\":\"NOT_FOUND\",\"message\":\"챕터 멤버를 찾을 수 없습니다.\"}"))),
+    })
     @PostMapping("/write/{chapterId}")
     public ResponseEntity<?> insertShare(@PathVariable("chapterId") Long chapterId, @RequestBody ShareOpinionDto shareOpinionDto, @Parameter(hidden = true) UserDto userDto) throws NotFoundException {
         return shareService.insertShare(chapterId,shareOpinionDto,userDto.getId());
     }
 
     @Operation(summary = "서머리 작성")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "share 서머리 작성 성공",
+                    content = @Content(mediaType = "application/json", examples = @ExampleObject(value =SUCCESS_SHARE_SUMMARY))),
+            @ApiResponse(responseCode = "403", description = "권한이 없습니다",
+                    content = @Content(mediaType = "application/json", examples = @ExampleObject(value = "{\"code\":403,\"status\":\"FOR_BIDDEN\",\"message\":\"You are not authorized to share summary for this chapter.\"}"))),
+    })
     @PostMapping("/summary/{chapterId}")
     public ResponseEntity<?> summaryShare(@PathVariable("chapterId") Long chapterId, @RequestBody ShareSummaryDto shareSummaryDto, @Parameter(hidden = true) UserDto userDto) throws Exception {
         return shareService.summaryShare(chapterId,shareSummaryDto,userDto.getId());
     }
+
     @Operation(summary = "Share 입장")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "share 입장 성공",
@@ -133,6 +148,7 @@ public class ShareController {
     public ResponseEntity<?> joinSend(@PathVariable("chapterId") Long chapterId, @Parameter(hidden = true) UserDto userDto) throws NotFoundException {
         return chapterService.join(chapterId, userDto);
     }
+
     @Operation(summary = "Share 입장 확인")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "share 입장 확인 성공",
@@ -144,6 +160,7 @@ public class ShareController {
     public ResponseEntity<?> getJoinSend(@PathVariable("chapterId") Long chapterId, @Parameter(hidden = true) UserDto userDto) throws NotFoundException {
         return chapterService.getJoin(chapterId, userDto);
     }
+
     @Operation(summary = "Share 작성 확인")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "share 작성 확인 성공",
@@ -155,6 +172,7 @@ public class ShareController {
     public ResponseEntity<?> getWriteSend(@PathVariable("chapterId") Long chapterId, @Parameter(hidden = true) UserDto userDto) throws NotFoundException {
         return chapterService.getWriteCnt(chapterId, userDto);
     }
+
     @Operation(summary = "Share 서머리 작성 확인")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "share 서머리 확인 성공",

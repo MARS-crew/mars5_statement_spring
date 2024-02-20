@@ -44,5 +44,8 @@ public class ChapterMember {
     @Column(name= "is_constructor", nullable=true)
     private Boolean is_constructor;
 
-
+    public ChapterMember withSummary(String summary) {
+        this.summary = summary;
+        return this;
+    }
 }

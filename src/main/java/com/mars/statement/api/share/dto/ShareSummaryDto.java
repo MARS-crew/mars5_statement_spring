@@ -9,8 +9,6 @@ import lombok.*;
 @NoArgsConstructor
 public class ShareSummaryDto {
 
-    private Long chapterId;
-    private Long memberId;
     private String summary;
 
 }

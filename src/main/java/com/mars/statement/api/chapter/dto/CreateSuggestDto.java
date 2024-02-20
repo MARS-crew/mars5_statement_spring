@@ -1,7 +1,10 @@
 package com.mars.statement.api.chapter.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.util.List;
 
@@ -9,7 +12,11 @@ import java.util.List;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class CreateChapterDto {
+public class CreateSuggestDto {
+
+    private Long groupId;
+    private Long suggestId;
+    private Long constructorId;
 
     @JsonProperty("memberIds")
     private List<Long> memberIds;

@@ -197,7 +197,7 @@ public class SendService {
         }
 
         // 요약 정보 업데이트
-        chapterMember.setSummary(summary);
+        chapterMember = chapterMember.withSummary(summary);
         chapterMemberRepository.save(chapterMember);
 
         Chapter chapter = chapterService.getChapterById(chapterId);

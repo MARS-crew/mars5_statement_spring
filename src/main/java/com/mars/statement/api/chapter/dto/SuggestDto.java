@@ -15,7 +15,6 @@ public class SuggestDto {
     private Long groupId;
     private String suggest;
     private String type;
-    private Long constructorId;
 
     @JsonProperty("memberIds")
     private List<Long> memberIds;
