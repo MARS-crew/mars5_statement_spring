@@ -10,7 +10,6 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class CreateChapterDto {
-
     @JsonProperty("memberIds")
     private List<Long> memberIds;
 }

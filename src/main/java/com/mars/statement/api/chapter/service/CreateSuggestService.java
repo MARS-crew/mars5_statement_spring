@@ -1,7 +1,6 @@
 package com.mars.statement.api.chapter.service;
 
 import com.mars.statement.api.chapter.domain.Suggest;
-import com.mars.statement.api.chapter.dto.CreateSuggestDto;
 import com.mars.statement.api.chapter.dto.SuggestDto;
 import com.mars.statement.api.chapter.repository.SuggestRepository;
 import com.mars.statement.api.group.domain.Group;
@@ -34,13 +33,13 @@ public class CreateSuggestService {
                 .groupMember(groupMember)
                 .build());
 
-        CreateSuggestDto createSuggestDto = CreateSuggestDto.builder()
+        /*CreateChapterDto createChapterDto = CreateChapterDto.builder()
                 .constructorId(savedSuggest.getGroupMember().getId())
                 .suggestId(savedSuggest.getId())
                 .groupId(suggestDto.getGroupId())
                 .memberIds(suggestDto.getMemberIds())
-                .build();
+                .build();*/
 
-        return createChapterService.createChapterAndAddMembers(createSuggestDto.getSuggestId(),createSuggestDto,myId);
+        return createChapterService.createChapterAndAddMembers(savedSuggest.getId(),myId,suggestDto.getMemberIds());
     }
 }
