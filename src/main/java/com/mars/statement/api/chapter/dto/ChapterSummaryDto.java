@@ -10,7 +10,7 @@ import java.sql.Timestamp;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ChapterSummaryDto {
-
+    private Long seq;
     private Long chapterId;
     private Timestamp regDt;
     private String memberName;
