@@ -120,7 +120,7 @@ public class ShareService {
             allChapterMemberDetailList.add(shareDetailDto.getShareMemberDetailDto());
         }
         return new ShareDetailDto(shareDetailList.get(0).getSuggestId(), shareDetailList.get(0).getSuggest(),
-                shareDetailList.get(0).getChapterId(), shareDetailList.get(0).getSummary(),
+                shareDetailList.get(0).getChapterId(), shareDetailList.get(0).getRegDt(), shareDetailList.get(0).getSummary(),
                 allChapterMemberDetailList);
 
     }

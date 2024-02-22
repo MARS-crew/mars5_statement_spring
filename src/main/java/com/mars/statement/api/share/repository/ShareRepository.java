@@ -45,10 +45,10 @@ public interface ShareRepository extends JpaRepository<Share, Long> {
 
     @Query("SELECT NEW com.mars.statement.api.share.dto.ShareDetailDto(" +
             "s.id as suggestId, s.suggest, " +
-            "c.id as chapterId, cm.summary, " +
+            "c.id as chapterId, c.reg_dt AS regDt, cm.summary, " +
             "NEW com.mars.statement.api.share.dto.ShareMemberDetailDto(" +
             "o.id as opinionId, o.chapterMember.id as memberId, u.name as memberName, " +
-            "o.opinion, o.regDt, o.location, " +
+            "o.opinion, o.location, " +
             "l.like" +
             ")" +
             ") " +
