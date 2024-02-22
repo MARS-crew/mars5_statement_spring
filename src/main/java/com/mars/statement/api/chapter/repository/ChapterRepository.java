@@ -7,8 +7,11 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface ChapterRepository extends JpaRepository<Chapter, Long> {
+
+    Long countBySuggest_Id(Long suggestId);
     @Query("SELECT c FROM Chapter c " +
             "LEFT JOIN FETCH c.suggest suggest " +
             "LEFT JOIN FETCH c.chapterMembers cm " +

@@ -40,6 +40,9 @@ public class Chapter {
     @Column(name = "member_cnt")
     private Integer memberCnt;
 
+    @Column(name = "seq")
+    private Long seq;
+
     @OneToMany(mappedBy = "chapter")
     private Set<ChapterMember> chapterMembers;
 
