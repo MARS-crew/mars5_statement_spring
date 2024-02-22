@@ -17,7 +17,6 @@ public class ShareMemberDetailDto {
     private Long memberId;
     private String memberName;
     private String opinion;
-    private Timestamp regDt;
     private String location;
     private Boolean like;
 
