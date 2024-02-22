@@ -7,6 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.sql.Timestamp;
 import java.util.List;
 
 @Getter
@@ -18,6 +19,7 @@ public class SendDetailDto {
     private String suggest;
     private Long seq;
     private Long chapterId;
+    private Timestamp regDt;
     private String summary;
 
     @JsonIgnore
@@ -25,14 +27,14 @@ public class SendDetailDto {
     @Transient
     private List<SendMemberDetailDto> memberDetailList;
 
-    public SendDetailDto(Long suggestId, String suggest, Long seq, Long chapterId, String summary, SendMemberDetailDto sendMemberDetailDto){
+    public SendDetailDto(Long suggestId, String suggest, Long seq, Long chapterId, Timestamp regDt, String summary, SendMemberDetailDto sendMemberDetailDto){
         this.suggestId = suggestId; this.suggest = suggest;
-        this.seq = seq; this.chapterId = chapterId; this.summary = summary;
+        this.seq = seq; this.chapterId = chapterId; this.regDt = regDt; this.summary = summary;
         this.sendMemberDetailDto = sendMemberDetailDto;
     }
-    public SendDetailDto(Long suggestId, String suggest, Long seq, Long chapterId, String summary, List<SendMemberDetailDto> memberDetailList){
+    public SendDetailDto(Long suggestId, String suggest, Long seq, Long chapterId, Timestamp regDt, String summary, List<SendMemberDetailDto> memberDetailList){
         this.suggestId = suggestId; this.suggest = suggest;
-        this.seq = seq; this.chapterId = chapterId; this.summary = summary;
+        this.seq = seq; this.chapterId = chapterId; this.regDt = regDt; this.summary = summary;
         this.memberDetailList = memberDetailList;
     }
 

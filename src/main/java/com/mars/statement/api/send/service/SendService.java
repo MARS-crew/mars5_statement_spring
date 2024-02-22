@@ -171,7 +171,7 @@ public class SendService {
             allChapterMemberDetailList.add(sendDetailDto.getSendMemberDetailDto());
         }
         return new SendDetailDto(sendDetailList.get(0).getSuggestId(), sendDetailList.get(0).getSuggest(),
-                sendDetailList.get(0).getSeq(), sendDetailList.get(0).getChapterId(), sendDetailList.get(0).getSummary(),
+                sendDetailList.get(0).getSeq(), sendDetailList.get(0).getChapterId(), sendDetailList.get(0).getRegDt(), sendDetailList.get(0).getSummary(),
                 allChapterMemberDetailList);
 
     }
