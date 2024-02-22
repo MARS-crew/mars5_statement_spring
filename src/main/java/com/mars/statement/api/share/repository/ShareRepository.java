@@ -33,8 +33,7 @@ public interface ShareRepository extends JpaRepository<Share, Long> {
     @Query("SELECT NEW com.mars.statement.api.chapter.dto.CheckChapterDto(" +
             "s.id as suggestId, s.suggest, " +
             "NEW com.mars.statement.api.chapter.dto.ChapterSummaryDto( " +
-            "ROW_NUMBER() OVER(ORDER by ch.id) AS seq, " +
-            "ch.id as chapterId, c.reg_dt as regDt, gm.user.name as memberName, c.summary" +
+            "ch.seq, ch.id as chapterId, c.reg_dt as regDt, gm.user.name as memberName, c.summary" +
             ")" +
             ")" +
             "FROM ChapterMember c " +
@@ -42,7 +41,7 @@ public interface ShareRepository extends JpaRepository<Share, Long> {
             "JOIN ch.suggest s " +
             "JOIN c.groupMember gm " +
             "WHERE ch.id IN :chapterIds AND c.is_constructor = true " +
-            "ORDER BY c.reg_dt DESC")
+            "ORDER BY ch.seq DESC")
     List<CheckChapterDto> findChapterSharesByIds(@Param("chapterIds") List<Long> chapterIds);
 
     @Query("SELECT NEW com.mars.statement.api.share.dto.ShareDetailDto(" +
