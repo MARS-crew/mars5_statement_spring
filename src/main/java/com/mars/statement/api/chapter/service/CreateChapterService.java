@@ -47,6 +47,8 @@ public class CreateChapterService {
             throw new ForbiddenException("생성자가 해당 주제를 소유한 그룹의 멤버가 아닙니다");
         }
 
+        Long chapterSeq = chapterRepository.countBySuggest_Id(suggest.getId());
+        System.out.println("dddd " + chapterSeq);
 
         // 3. 회차 생성 및 그룹 설정
         Chapter chapter = Chapter.builder()
@@ -56,7 +58,9 @@ public class CreateChapterService {
                 .summaryBool(false)
                 //.memberCnt(createChapterDto.getMemberIds().size())
                 .memberCnt(memberIds.size())
+                .seq(chapterSeq+1)
                 .build();
+
         Chapter savedChapter = chapterRepository.save(chapter);
 
         // 4. 회차에 생성자와 멤버 추가
