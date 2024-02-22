@@ -14,7 +14,6 @@ public class SendMemberDetailDto {
     private Long fromId;
     private String memberName;
     private String message;
-    private Timestamp regDt;
     private String location;
     private Boolean bookmark_yn;
 }
