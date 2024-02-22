@@ -54,7 +54,7 @@ public interface SendRepository extends JpaRepository<Send, Long> {
 
     @Query("SELECT NEW com.mars.statement.api.send.dto.SendDetailDto(" +
             "s.id AS suggestId, s.suggest, " +
-            "my.id AS chapterId, my.summary, " +
+            "c.seq, my.id AS chapterId, my.summary, " +
             "NEW com.mars.statement.api.send.dto.SendMemberDetailDto(" +
             "m.id AS sendId, m.from.id AS memberId, u.name AS memberName, " +
             "m.message, m.regDt, m.location, m.bookmark " +
