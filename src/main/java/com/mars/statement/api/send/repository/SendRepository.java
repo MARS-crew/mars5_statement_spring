@@ -22,7 +22,7 @@ public interface SendRepository extends JpaRepository<Send, Long> {
             "NEW com.mars.statement.api.send.dto.MemberMessageDto(" +
             "gm.id AS memberId, u.name AS memberName, u.img AS memberImg, " +
             "NEW com.mars.statement.api.send.dto.MessageDto(" +
-            "c.id AS chapterId, cm.id AS chapterMemberId, c.reg_dt AS regDt, m.message, m.location" +
+            "c.seq, c.id AS chapterId, cm.id AS chapterMemberId, c.reg_dt AS regDt, m.message, m.location" +
             ")" +
             ")" +
             ")" +
@@ -33,13 +33,14 @@ public interface SendRepository extends JpaRepository<Send, Long> {
             "LEFT JOIN ChapterMember cm ON cm.id = m.from.id " +
             "INNER JOIN GroupMember gm ON gm.id = cm.groupMember.id " +
             "INNER JOIN User u ON u.id = gm.user.id " +
-            "WHERE c.id IN :chapterIds AND my_cm.groupMember.id = :myId")
+            "WHERE c.id IN :chapterIds AND my_cm.groupMember.id = :myId " +
+            "ORDER BY c.seq DESC")
     List<PersonalSendDto> findPersonalSharesByIds(@Param("chapterIds") List<Long> chapterIds, @Param("myId") Long myId);
 
     @Query("SELECT NEW com.mars.statement.api.chapter.dto.CheckChapterDto(" +
             "s.id AS suggestId, s.suggest, " +
             "NEW com.mars.statement.api.chapter.dto.ChapterSummaryDto(" +
-            "ch.id AS chapterId, c.reg_dt AS regDt, u.name AS memberName, c.summary" +
+            "ch.seq, ch.id AS chapterId, c.reg_dt AS regDt, u.name AS memberName, c.summary" +
             ")" +
             ")" +
             "FROM ChapterMember c " +
@@ -47,7 +48,8 @@ public interface SendRepository extends JpaRepository<Send, Long> {
             "JOIN ch.suggest s " +
             "JOIN c.groupMember gm " +
             "JOIN gm.user u " +
-            "WHERE ch.id IN :chapterIds AND u.id = :myId")
+            "WHERE ch.id IN :chapterIds AND u.id = :myId " +
+            "ORDER BY ch.seq DESC")
     List<CheckChapterDto> findChapterSendsByIds(@Param("chapterIds") List<Long> chapterIds, @Param("myId") Long myId);
 
     @Query("SELECT NEW com.mars.statement.api.send.dto.SendDetailDto(" +
