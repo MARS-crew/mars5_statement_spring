@@ -18,7 +18,7 @@ public interface ShareRepository extends JpaRepository<Share, Long> {
             "NEW com.mars.statement.api.share.dto.MemberOpinionDto(" +
             "gm.id as memberId, gm.user.name as memberName, gm.user.img as memberImg, " +
             "NEW com.mars.statement.api.share.dto.OpinionDto(" +
-            "ch.id as chapterId, c.reg_dt as regDt, o.opinion, o.location" +
+            "ch.seq, ch.id as chapterId, c.reg_dt as regDt, o.opinion, o.location" +
             ")" +
             ")" +
             ")" +
@@ -27,7 +27,8 @@ public interface ShareRepository extends JpaRepository<Share, Long> {
             "JOIN ch.suggest s " +
             "JOIN c.groupMember gm " +
             "JOIN Share o ON o.chapterMember.id = c.id " +
-            "WHERE ch.id IN :chapterIds")
+            "WHERE ch.id IN :chapterIds " +
+            "ORDER BY ch.seq DESC")
     List<PersonalShareDto> findPersonalSharesByIds(@Param("chapterIds") List<Long> chapterIds);
 
     @Query("SELECT NEW com.mars.statement.api.chapter.dto.CheckChapterDto(" +
