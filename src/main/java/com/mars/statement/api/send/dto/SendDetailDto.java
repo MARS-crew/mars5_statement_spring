@@ -16,6 +16,7 @@ public class SendDetailDto {
 
     private Long suggestId;
     private String suggest;
+    private Long seq;
     private Long chapterId;
     private String summary;
 
@@ -24,14 +25,14 @@ public class SendDetailDto {
     @Transient
     private List<SendMemberDetailDto> memberDetailList;
 
-    public SendDetailDto(Long suggestId, String suggest, Long chapterId, String summary, SendMemberDetailDto sendMemberDetailDto){
+    public SendDetailDto(Long suggestId, String suggest, Long seq, Long chapterId, String summary, SendMemberDetailDto sendMemberDetailDto){
         this.suggestId = suggestId; this.suggest = suggest;
-        this.chapterId = chapterId; this.summary = summary;
+        this.seq = seq; this.chapterId = chapterId; this.summary = summary;
         this.sendMemberDetailDto = sendMemberDetailDto;
     }
-    public SendDetailDto(Long suggestId, String suggest, Long chapterId, String summary, List<SendMemberDetailDto> memberDetailList){
+    public SendDetailDto(Long suggestId, String suggest, Long seq, Long chapterId, String summary, List<SendMemberDetailDto> memberDetailList){
         this.suggestId = suggestId; this.suggest = suggest;
-        this.chapterId = chapterId; this.summary = summary;
+        this.seq = seq; this.chapterId = chapterId; this.summary = summary;
         this.memberDetailList = memberDetailList;
     }
 
