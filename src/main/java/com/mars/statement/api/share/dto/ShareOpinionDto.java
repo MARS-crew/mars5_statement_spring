@@ -8,7 +8,6 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ShareOpinionDto {
-    private Long chapterMemberId;
     private String opinion;
     private String location;
 }
