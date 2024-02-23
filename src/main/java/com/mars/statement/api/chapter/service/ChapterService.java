@@ -3,11 +3,8 @@ package com.mars.statement.api.chapter.service;
 import com.mars.statement.api.chapter.domain.Chapter;
 import com.mars.statement.api.chapter.domain.ChapterMember;
 import com.mars.statement.api.chapter.domain.Suggest;
-import com.mars.statement.api.chapter.dto.ChapterMemberDto;
-import com.mars.statement.api.chapter.dto.ChapterWithMemberDto;
+import com.mars.statement.api.chapter.dto.*;
 
-import com.mars.statement.api.chapter.dto.GetJoinCntDto;
-import com.mars.statement.api.chapter.dto.GetWriteCntDto;
 import com.mars.statement.api.chapter.repository.ChapterMemberRepository;
 import com.mars.statement.api.chapter.repository.ChapterRepository;
 import com.mars.statement.api.group.domain.GroupMember;
@@ -88,7 +85,18 @@ public class ChapterService {
         chapter.increaseJoinCnt();
         chapterRepository.save(chapter);
 
-        return CommonResponse.createResponseMessage(HttpStatus.OK.value(), chapter.getSuggest().getType() + " 입장 성공");
+        List<ChapterMember> members = chapterMemberRepository.findByChapter(chapter);
+        List<ChapterJoinDto> chapterJoinDtos = new ArrayList<>();
+        for (ChapterMember member : members) {
+            ChapterJoinDto data = ChapterJoinDto.builder()
+                    .userId(member.getGroupMember().getUser().getId())
+                    .name(member.getGroupMember().getUser().getName())
+                    .build();
+            chapterJoinDtos.add(data);
+        }
+        System.out.println(members);
+
+        return CommonResponse.createResponse(HttpStatus.OK.value(), chapter.getSuggest().getType() + " 입장 성공", chapterJoinDtos);
     }
 
     public ResponseEntity<?> getJoin(Long chapterId, UserDto userDto) throws NotFoundException {
@@ -134,5 +142,4 @@ public class ChapterService {
 
         return CommonResponse.createResponse(HttpStatus.OK.value(), chapter.getSuggest().getType() + " 서머리 작성 확인 성공", chapter.getSummaryBool());
     }
-
 }

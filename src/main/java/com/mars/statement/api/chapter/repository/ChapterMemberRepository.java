@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface ChapterMemberRepository extends JpaRepository<ChapterMember, Long> {
@@ -18,5 +19,6 @@ public interface ChapterMemberRepository extends JpaRepository<ChapterMember, Lo
     @Query("SELECT COUNT(cm) > 0 FROM ChapterMember cm WHERE cm.chapter.id = :chapterId AND cm.id = :memberId")
     boolean existsByChapterIdAndMemberId(@Param("chapterId") Long chapterId, @Param("memberId") Long memberId);
 
+    List<ChapterMember> findByChapter(Chapter chapter);
 
 }
