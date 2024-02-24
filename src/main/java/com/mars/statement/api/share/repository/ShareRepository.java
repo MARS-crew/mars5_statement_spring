@@ -1,5 +1,6 @@
 package com.mars.statement.api.share.repository;
 
+import com.mars.statement.api.chapter.domain.ChapterMember;
 import com.mars.statement.api.chapter.dto.CheckChapterDto;
 import com.mars.statement.api.share.domain.Share;
 import com.mars.statement.api.share.dto.PersonalShareDto;
@@ -63,4 +64,6 @@ public interface ShareRepository extends JpaRepository<Share, Long> {
             "JOIN gm.user u " +
             "WHERE c.id = :chapterId")
     List<ShareDetailDto> findShareDetails(@Param("chapterId") Long chapterId, @Param("myId") Long myId);
+
+    Share findByChapterMember(ChapterMember member);
 }

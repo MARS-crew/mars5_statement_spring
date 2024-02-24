@@ -1,5 +1,6 @@
 package com.mars.statement.api.chapter.service;
 
+import com.mars.statement.api.auth.repository.UserRepository;
 import com.mars.statement.api.chapter.domain.Chapter;
 import com.mars.statement.api.chapter.domain.ChapterMember;
 import com.mars.statement.api.chapter.domain.Suggest;
@@ -9,6 +10,10 @@ import com.mars.statement.api.chapter.repository.ChapterMemberRepository;
 import com.mars.statement.api.chapter.repository.ChapterRepository;
 import com.mars.statement.api.group.domain.GroupMember;
 import com.mars.statement.api.group.service.GroupMemberService;
+import com.mars.statement.api.send.domain.Send;
+import com.mars.statement.api.send.repository.SendRepository;
+import com.mars.statement.api.share.domain.Share;
+import com.mars.statement.api.share.repository.ShareRepository;
 import com.mars.statement.global.dto.CommonResponse;
 import com.mars.statement.global.dto.UserDto;
 import com.mars.statement.global.exception.NotFoundException;
@@ -27,9 +32,10 @@ import java.util.List;
 public class ChapterService {
 
     private final ChapterRepository chapterRepository;
-
     private final GroupMemberService groupMemberService;
     private final ChapterMemberRepository chapterMemberRepository;
+    private final ShareRepository shareRepository;
+    private final SendRepository sendRepository;
 
     public Chapter getChapterById(Long id) throws NotFoundException {
         return chapterRepository.findById(id).orElseThrow(() ->
@@ -91,6 +97,7 @@ public class ChapterService {
             ChapterJoinDto data = ChapterJoinDto.builder()
                     .userId(member.getGroupMember().getUser().getId())
                     .name(member.getGroupMember().getUser().getName())
+                    .img(member.getGroupMember().getUser().getImg())
                     .build();
             chapterJoinDtos.add(data);
         }
@@ -141,5 +148,51 @@ public class ChapterService {
         Chapter chapter = getChapterById(chapterId);
 
         return CommonResponse.createResponse(HttpStatus.OK.value(), chapter.getSuggest().getType() + " 서머리 작성 확인 성공", chapter.getSummaryBool());
+    }
+
+    public ResponseEntity<?> getShareOpinion(Long chapterId, UserDto userDto) throws NotFoundException {
+        // 주어진 챕터의 멤버인지 확인
+        ChapterMember chapterMember = chapterMemberRepository.findChapterMemberByChapterIdAndUserId(chapterId, userDto.getId());
+        if (chapterMember == null) {
+            throw new NotFoundException(404, "User is not a member of this chapter");
+        }
+        List<GetOpinionDto> getOpinionDtos = new ArrayList<>();
+        Chapter chapter = getChapterById(chapterId);
+        List<ChapterMember> members = chapterMemberRepository.findByChapter(chapter);
+        List<Share> shares = new ArrayList<>();
+        Long constructorId = 0l;
+        for (ChapterMember member : members) {
+            shares.add(shareRepository.findByChapterMember(member));
+            if (member.getIs_constructor()){
+                constructorId = member.getGroupMember().getUser().getId();
+            }
+        }
+        for (Share share : shares) {
+            getOpinionDtos.add(GetOpinionDto.builder()
+                    .userId(share.getChapterMember().getGroupMember().getUser().getId())
+                    .opinion(share.getOpinion()).build());
+        }
+
+        return CommonResponse.createResponse(HttpStatus.OK.value(), "조회 성공",
+                OpinionResDto.builder().opinions(getOpinionDtos).constructorId(constructorId).build());
+
+    }
+    public ResponseEntity<?> getSendMessage(Long chapterId, UserDto userDto) throws NotFoundException {
+        ChapterMember chapterMember = chapterMemberRepository.findChapterMemberByChapterIdAndUserId(chapterId, userDto.getId());
+        if (chapterMember == null) {
+            throw new NotFoundException(404, "User is not a member of this chapter");
+        }
+
+        Chapter chapter = getChapterById(chapterId);
+        List<GetMessageDto> getMessageDtos = new ArrayList<>();
+        List<Send> sends = sendRepository.findByToAndChapter(chapterMember, chapter);
+        for (Send send : sends) {
+            getMessageDtos.add(GetMessageDto.builder()
+                    .userId(send.getFrom().getGroupMember().getUser().getId())
+                    .message(send.getMessage()).build());
+        }
+
+        return CommonResponse.createResponse(HttpStatus.OK.value(), "조회 성공", MessageResDto.builder().messages(getMessageDtos).build());
+
     }
 }
