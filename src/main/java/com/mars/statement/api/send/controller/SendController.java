@@ -204,4 +204,16 @@ public class SendController {
     public ResponseEntity<?> getSummaryBoolSend(@PathVariable("chapterId") Long chapterId, @Parameter(hidden = true) UserDto userDto) throws NotFoundException {
         return chapterService.getSummaryBool(chapterId, userDto);
     }
+
+    @Operation(summary = "Send 작성 완료 후 조회")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "조회 성공",
+                    content = @Content(mediaType = "application/json", examples = @ExampleObject(value = SwaggerExampleValue.GET_WRITE_AFTER_SEND))),
+            @ApiResponse(responseCode = "404", description = "멤버가 회차에 속해있지 않음",
+                    content = @Content(mediaType = "application/json", examples = @ExampleObject(value = "{\"code\":404,\"status\":\"NOT_FOUND\",\"message\":\"User is not a member of this chapter\"}"))),
+    })
+    @GetMapping("/write/after/{chapterId}")
+    public ResponseEntity<?> getWriteAfterSend(@PathVariable("chapterId") Long chapterId, @Parameter(hidden = true) UserDto userDto) throws  NotFoundException {
+        return chapterService.getSendMessage(chapterId, userDto);
+    }
 }

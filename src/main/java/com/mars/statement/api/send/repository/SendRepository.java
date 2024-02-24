@@ -1,5 +1,7 @@
 package com.mars.statement.api.send.repository;
 
+import com.mars.statement.api.chapter.domain.Chapter;
+import com.mars.statement.api.chapter.domain.ChapterMember;
 import com.mars.statement.api.chapter.dto.CheckChapterDto;
 import com.mars.statement.api.send.domain.Send;
 import com.mars.statement.api.send.dto.PersonalSendDto;
@@ -76,5 +78,7 @@ public interface SendRepository extends JpaRepository<Send, Long> {
             "SET s.bookmark = CASE WHEN s.bookmark = true THEN false ELSE true END " +
             "WHERE s.id = :sendId")
     int updateBookmark(@Param("sendId")Long sendId);
+
+    List<Send> findByToAndChapter(ChapterMember member, Chapter chapterId);
 
 }
