@@ -33,6 +33,7 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -50,52 +51,50 @@ public class SendService {
     private final SendRepository sendRepository;
 
     @Transactional
-    public int saveSendMessage(Long chapterId, List<SendMessageDto> messageDtoList, Long myId) {
-        try {
-            Chapter chapter = chapterService.getChapterById(chapterId);
-            ChapterMember from = chapterMemberService.getChapterMemberByChapterIdAndUserId(chapter.getId(), myId);
+    public ResponseEntity<?> saveSendMessage(Long chapterId, List<SendMessageDto> messageDtoList, Long myId) throws NotFoundException {
+        Chapter chapter = chapterService.getChapterById(chapterId);
+//            ChapterMember from = chapterMemberService.getChapterMemberByChapterIdAndUserId(chapter.getId(), myId);
 
-            // 확인: 보내는 멤버가 챕터에 속해 있는지 확인
-            if (from == null || !chapterMemberRepository.existsByChapterIdAndMemberId(chapterId, from.getId())) {
-                throw new IllegalArgumentException("보내는 멤버가 챕터에 속해 있지 않습니다.");
-            }
+        // 확인: 보내는 멤버가 챕터에 속해 있는지 확인
+        Optional<ChapterMember> myChapterMember = Optional.ofNullable(chapterMemberRepository.findChapterMemberByChapterIdAndUserId(chapterId, myId));
+        ChapterMember from = myChapterMember.orElseThrow(() -> new NotFoundException(404, "보내는 멤버가 챕터에 속해 있지 않습니다."));
 
-            List<Send> sendList = new ArrayList<>();
+        System.out.println("from: " + from.getId());
+        List<Send> sendList = new ArrayList<>();
 
-            for (SendMessageDto messageDto : messageDtoList) {
-                Long toId = messageDto.getTo_id();
+        for (SendMessageDto messageDto : messageDtoList) {
+            Long toId = messageDto.getTo_id();
 
-                // 확인: 받는 멤버가 챕터에 속해 있는지 확인
-                if (!chapterMemberRepository.existsByChapterIdAndMemberId(chapterId, toId)) {
-                    throw new IllegalArgumentException("받는 멤버가 챕터에 속해 있지 않습니다.");
-                }
+            // 확인: 받는 멤버가 챕터에 속해 있는지 확인
+            Optional<ChapterMember> checkChapterMember = Optional.ofNullable(chapterMemberRepository.findChapterMemberByChapterIdAndUserId(chapterId, toId));
+            ChapterMember to = checkChapterMember.orElseThrow(() -> new NotFoundException(404, "받는 멤버가 챕터에 속해 있지 않습니다."));
+            System.out.println("to: " + to.getId());
 
-                // 받는 멤버가 챕터에 속해 있으면, 해당 멤버를 to로 설정
-                ChapterMember to = new ChapterMember();
-                to.setId(toId);
-
-                // Send 인스턴스 생성 및 sendList에 추가
-                Send send = new Send(chapter, from, to, messageDto.getMessage());
-                sendList.add(send);
-            }
-
-
-            List<Send> savedSends = sendRepository.saveAll(sendList);
-
-            for (Send savedSend : savedSends) {
-                if (savedSend.getId() == null) {
-                    System.out.println("메세지 저장 실패");
-                    return -1;
-                }
-            }
-
-            chapter.increaseWriteCnt();
-            chapterRepository.save(chapter);
-
-            return 0;
-        } catch (Exception e) {
-            throw new RuntimeException("메세지 저장 중에 오류가 발생했습니다.", e);
+            Send send = Send.builder()
+                    .chapter(chapter)
+                    .from(from)
+                    .to(to)
+                    .message(messageDto.getMessage())
+                    .location(messageDto.getLocation())
+                    .build();
+            sendList.add(send);
         }
+
+
+        List<Send> savedSends = sendRepository.saveAll(sendList);
+
+        for (Send savedSend : savedSends) {
+            if (savedSend.getId() == null) {
+                System.out.println("메세지 저장 실패");
+                return CommonResponse.createResponseMessage(HttpStatus.INTERNAL_SERVER_ERROR.value(), "메세지 작성 성공");
+            }
+        }
+
+        chapter.increaseWriteCnt();
+        chapterRepository.save(chapter);
+
+        return CommonResponse.createResponseMessage(HttpStatus.OK.value(), "메세지 작성 성공");
+
     }
 
     public PersonalSendDto getPersonalSendData(Long suggestId, Long myId) throws NotFoundException {
@@ -122,7 +121,7 @@ public class SendService {
                         )
                 ))
                 .entrySet().stream()
-                .map(memberEntry ->{
+                .map(memberEntry -> {
                     Long memberId = memberEntry.getKey();
                     List<MessageDto> messageList = memberEntry.getValue().stream()
                             .flatMap(List::stream)
@@ -144,10 +143,10 @@ public class SendService {
 
     public CheckChapterDto getChapterSendData(Long suggestId, Long myId) throws NotFoundException {
         Suggest suggest = suggestService.getSuggestById(suggestId);
-        if(!suggest.getType().equals("send")){
+        if (!suggest.getType().equals("send")) {
             throw new NotFoundException(HttpStatus.NOT_FOUND.value(), "전달 주제가 아닙니다.");
         }
-        List<Chapter> chapters = chapterService.getChaptersByMemberId(myId,suggest);
+        List<Chapter> chapters = chapterService.getChaptersByMemberId(myId, suggest);
         List<Long> chapterIds = chapters.stream().map(Chapter::getId).toList();
 
         List<CheckChapterDto> checkChapterDtoList = sendRepository.findChapterSendsByIds(chapterIds, myId);
@@ -188,8 +187,9 @@ public class SendService {
 
 
     }
+
     @Transactional
-    public ResponseEntity<?> summarySend(Long chapterId, SendSummaryDto sendSummaryDto, Long myId) throws  NotFoundException {
+    public ResponseEntity<?> summarySend(Long chapterId, SendSummaryDto sendSummaryDto, Long myId) throws NotFoundException {
         String summary = sendSummaryDto.getSummary();
 
         // 주어진 챕터의 멤버인지 확인

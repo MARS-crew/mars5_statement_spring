@@ -54,30 +54,11 @@ public class SendController {
                     content = @Content(mediaType = "application/json", examples = @ExampleObject(value = NOT_FOUND_ERROR_RESPONSE))),
     })
     @PostMapping("/write/{chapterId}")
-    public ResponseEntity<Object> writeMessage(@PathVariable("chapterId") Long chapterId, @RequestBody List<SendMessageDto> messageDtoList, @Parameter(hidden = true) UserDto userDto) {
+    public ResponseEntity<?> writeMessage(@PathVariable("chapterId") Long chapterId, @RequestBody List<SendMessageDto> messageDtoList, @Parameter(hidden = true) UserDto userDto) throws NotFoundException {
 
+        return sendService.saveSendMessage(chapterId, messageDtoList, userDto.getId());
 
-        int code;
-        String message;
-
-        if (messageDtoList == null) {
-            code = 400;
-            message = "메세지 전달 실패: 요청 데이터 null";
-        } else {
-            Long toId = 1L; // 로그인 데이터
-            int result = sendService.saveSendMessage(chapterId, messageDtoList, userDto.getId());
-
-            if (result == 0) {
-                code = 200;
-                message = "메세지 전달 성공";
-            } else {
-                code = 500;
-                message = (result == -1) ? "메세지 전달 실패: 데이터 저장 오류" : "메세지 전달 실패: 기타 원인";
-
-            }
-        }
-
-        return CommonResponse.createResponseMessage(code, message);
+//        return CommonResponse.createResponseMessage(code, message);
     }
 
     @Operation(summary = "전달 인물별 조회")

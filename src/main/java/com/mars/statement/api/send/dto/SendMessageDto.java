@@ -13,5 +13,6 @@ public class SendMessageDto {
 
     private Long to_id;
     private String message;
+    private String location;
 
 }
