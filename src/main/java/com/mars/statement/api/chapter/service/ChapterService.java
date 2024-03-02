@@ -1,11 +1,9 @@
 package com.mars.statement.api.chapter.service;
 
-import com.mars.statement.api.auth.repository.UserRepository;
 import com.mars.statement.api.chapter.domain.Chapter;
 import com.mars.statement.api.chapter.domain.ChapterMember;
 import com.mars.statement.api.chapter.domain.Suggest;
 import com.mars.statement.api.chapter.dto.*;
-
 import com.mars.statement.api.chapter.repository.ChapterMemberRepository;
 import com.mars.statement.api.chapter.repository.ChapterRepository;
 import com.mars.statement.api.group.domain.GroupMember;
@@ -96,12 +94,12 @@ public class ChapterService {
         for (ChapterMember member : members) {
             ChapterJoinDto data = ChapterJoinDto.builder()
                     .userId(member.getGroupMember().getUser().getId())
+                    .groupMemberId(member.getGroupMember().getId())
                     .name(member.getGroupMember().getUser().getName())
                     .img(member.getGroupMember().getUser().getImg())
                     .build();
             chapterJoinDtos.add(data);
         }
-        System.out.println(members);
 
         return CommonResponse.createResponse(HttpStatus.OK.value(), chapter.getSuggest().getType() + " 입장 성공", chapterJoinDtos);
     }

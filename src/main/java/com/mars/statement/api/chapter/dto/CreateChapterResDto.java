@@ -5,13 +5,13 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-@Builder
+import java.util.List;
+
 @Getter
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class ChapterJoinDto {
-    private Long userId;
-    private Long groupMemberId;
-    private String name;
-    private String img;
+public class CreateChapterResDto {
+    private List<ChapterJoinDto> chapterJoinDto;
+    private Long chapterId;
 }

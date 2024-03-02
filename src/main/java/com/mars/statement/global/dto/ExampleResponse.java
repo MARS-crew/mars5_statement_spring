@@ -29,9 +29,9 @@ public class ExampleResponse {
     public static final String SUCCESS_SEND_WRITE = "{\"code\":200,\"status\":\"OK\",\"message\":\"send 의견 작성 성공\"}";
 
     // suggest
-    public static final String SUCCESS_SUGGEST = "{\"code\":200,\"status\":\"OK\",\"message\":\"주제생성 완료\",\"data\":{\"chapterId\":0}}";
+    public static final String SUCCESS_SUGGEST = "{\"code\":200,\"status\":\"OK\",\"message\":\"주제생성 완료\",\"data\":{\"chapterJoinDto\":[{\"userId\" : 1,\"groupMemberId\":1,\"name\":\"mars\",\"img\":\"img uri\"},{\"userId\" : 2,\"groupMemberId\":2,\"name\":\"mars2\",\"img\":\"img uri\"}],\"chapterId\":0}}";
 
     //chapter
-    public static final String SUCCESS_CHAPTER = "{\"code\":200,\"status\":\"OK\",\"message\":\"회차생성 완료\",\"data\":{\"chapterId\":0}}";
+    public static final String SUCCESS_CHAPTER = "{\"code\":200,\"status\":\"OK\",\"message\":\"회차생성 완료\",\"data\":{\"chapterJoinDto\":[{\"userId\" : 1,\"groupMemberId\":1,\"name\":\"mars\",\"img\":\"img uri\"},{\"userId\" : 2,\"groupMemberId\":2,\"name\":\"mars2\",\"img\":\"img uri\"}],\"chapterId\":0}}";
 
 }

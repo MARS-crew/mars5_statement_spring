@@ -1,7 +1,11 @@
 package com.mars.statement.api.chapter.service;
 
 import com.mars.statement.api.chapter.domain.Chapter;
+import com.mars.statement.api.chapter.domain.ChapterMember;
 import com.mars.statement.api.chapter.domain.Suggest;
+import com.mars.statement.api.chapter.dto.ChapterJoinDto;
+import com.mars.statement.api.chapter.dto.CreateChapterResDto;
+import com.mars.statement.api.chapter.repository.ChapterMemberRepository;
 import com.mars.statement.api.chapter.repository.ChapterRepository;
 import com.mars.statement.api.chapter.repository.SuggestRepository;
 import com.mars.statement.api.group.domain.Group;
@@ -17,6 +21,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
@@ -30,6 +35,7 @@ public class CreateChapterService {
     private final ChapterMemberService chapterMemberService;
 
     private final SuggestRepository suggestRepository;
+    private final ChapterMemberRepository chapterMemberRepository;
     @Transactional
     public ResponseEntity<?> createChapterAndAddMembers(Long suggestId, Long myId, List<Long> memberIds) throws Exception {
         // 1. 주제 조회
@@ -56,7 +62,6 @@ public class CreateChapterService {
                 .joinCnt(1)
                 .writeCnt(0)
                 .summaryBool(false)
-                //.memberCnt(createChapterDto.getMemberIds().size())
                 .memberCnt(memberIds.size())
                 .seq(chapterSeq+1)
                 .build();
@@ -66,6 +71,21 @@ public class CreateChapterService {
         // 4. 회차에 생성자와 멤버 추가
         chapterMemberService.addMemberToChapter(savedChapter.getId(), myId, memberIds ,group.getId());
 
-        return CommonResponse.createResponse(HttpStatus.OK.value(), "주제생성 완료", savedChapter.getId());
+        List<ChapterMember> members = chapterMemberRepository.findByChapter(chapter);
+        List<ChapterJoinDto> chapterJoinDtos = new ArrayList<>();
+        for (ChapterMember member : members) {
+            ChapterJoinDto data = ChapterJoinDto.builder()
+                    .userId(member.getGroupMember().getUser().getId())
+                    .groupMemberId(member.getGroupMember().getId())
+                    .name(member.getGroupMember().getUser().getName())
+                    .img(member.getGroupMember().getUser().getImg())
+                    .build();
+            chapterJoinDtos.add(data);
+        }
+
+        return CommonResponse.createResponse(HttpStatus.OK.value(), "주제생성 완료",
+                CreateChapterResDto.builder()
+                .chapterJoinDto(chapterJoinDtos)
+                        .chapterId(savedChapter.getId()).build());
     }
 }
