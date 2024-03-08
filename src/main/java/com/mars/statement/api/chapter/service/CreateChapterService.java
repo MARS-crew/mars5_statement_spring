@@ -8,6 +8,7 @@ import com.mars.statement.api.chapter.dto.CreateChapterResDto;
 import com.mars.statement.api.chapter.repository.ChapterMemberRepository;
 import com.mars.statement.api.chapter.repository.ChapterRepository;
 import com.mars.statement.api.chapter.repository.SuggestRepository;
+import com.mars.statement.api.fcm.service.FcmService;
 import com.mars.statement.api.group.domain.Group;
 import com.mars.statement.api.group.domain.GroupMember;
 import com.mars.statement.api.group.service.GroupMemberService;
@@ -36,6 +37,7 @@ public class CreateChapterService {
 
     private final SuggestRepository suggestRepository;
     private final ChapterMemberRepository chapterMemberRepository;
+    private final FcmService fcmService;
     @Transactional
     public ResponseEntity<?> createChapterAndAddMembers(Long suggestId, Long myId, List<Long> memberIds) throws Exception {
         // 1. 주제 조회
@@ -81,7 +83,10 @@ public class CreateChapterService {
                     .img(member.getGroupMember().getUser().getImg())
                     .build();
             chapterJoinDtos.add(data);
+            fcmService.sendMessageTo(member.getGroupMember().getUser().getFcmToken(),"CO:MIT",groupMember.getUser().getName()+"님이 "+suggest.getSuggest()+"주제의 회차를 생성했습니다.");
         }
+
+
 
         return CommonResponse.createResponse(HttpStatus.OK.value(), "주제생성 완료",
                 CreateChapterResDto.builder()

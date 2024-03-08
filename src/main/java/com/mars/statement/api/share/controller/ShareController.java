@@ -21,6 +21,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
+
 import static com.mars.statement.global.dto.ExampleResponse.*;
 
 @RestController
@@ -107,6 +109,8 @@ public class ShareController {
             }
         } catch (NotFoundException e) {
             return CommonResponse.createResponseMessage(404, "챕터 또는 멤버를 찾을 수 없습니다: " + e.getMessage());
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
 
     }
