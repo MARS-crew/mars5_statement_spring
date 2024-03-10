@@ -38,10 +38,13 @@ jobs:
         touch ./src/main/resources/application-db.properties
         echo "${{ secrets.DB_PROPERTIES }}" > ./src/main/resources/application-db.properties
 
-    - name: Add firebase-secret.json
-      run: |
-        touch ./src/main/resources/firebase-secret.json
-        echo "${{ secrets.FIREBASE_SECRET }}" > ./src/main/resources/firebase-secret.json
+    - name: create-json
+      id: create-json
+      uses: jsdaniell/create-json@v1.2.3
+      with:
+        name: "firebase-secret.json"
+        json: ${{ secrets.FIREBASE_SECRET }}
+        dir: './src/main/resources/'
 
     - name: Set up JDK 17
       uses: actions/setup-java@v3
