@@ -34,11 +34,9 @@ public class LikeService {
         ChapterMember member = chapterMemberService.getChapterMemberByChapterIdAndUserId(chapter.getId(),myId);
         Like like = getLikeById(shareId);
         if (like != null) {
-            System.out.println("like 있으면 shareId: " + like.getShare().getId());
             likeRepository.delete(like);
             return 0;
         } else {
-            System.out.println("like 없으면 shareId: " + shareId);
             Like newLike = Like.builder()
                     .share(shareService.getShareById(shareId))
                     .member(member)
@@ -46,7 +44,7 @@ public class LikeService {
                     .build();
             likeRepository.save(newLike);
             fcmService.sendMessageTo(shareService.getShareById(shareId).getChapterMember().getGroupMember().getUser().getFcmToken(), "CO:MIT",
-                    member.getUserName()+"님이 좋아요를 눌렀습니다.");
+                    member.getGroupMember().getUser().getName()+"님이 좋아요를 눌렀습니다.");
 
             return 1;
         }
