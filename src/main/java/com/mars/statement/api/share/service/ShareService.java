@@ -111,6 +111,15 @@ public class ShareService {
 
         List<ShareDetailDto> shareDetailList = shareRepository.findShareDetails(chapter.getId(), member.getId());
 
+        List<ChapterMember> chapterMembers = chapterMemberRepository.findByChapter(chapter);
+        ChapterMember chapterSummary = new ChapterMember();
+
+        for (ChapterMember chapterMember:chapterMembers){
+            if(chapterMember.getSummary()!=null){
+                chapterSummary = chapterMember;
+            }
+        }
+
         if (shareDetailList.isEmpty()) {
             throw new NotFoundException(HttpStatus.NOT_FOUND.value(), "해당 공유 상세 정보를 찾을 수 없습니다.");
         }
@@ -120,7 +129,7 @@ public class ShareService {
             allChapterMemberDetailList.add(shareDetailDto.getShareMemberDetailDto());
         }
         return new ShareDetailDto(shareDetailList.get(0).getSuggestId(), shareDetailList.get(0).getSuggest(),
-                shareDetailList.get(0).getSeq(), shareDetailList.get(0).getChapterId(), shareDetailList.get(0).getRegDt(), shareDetailList.get(0).getSummary(),
+                shareDetailList.get(0).getSeq(), shareDetailList.get(0).getChapterId(), shareDetailList.get(0).getRegDt(), chapterSummary.getSummary(),
                 allChapterMemberDetailList);
 
     }
