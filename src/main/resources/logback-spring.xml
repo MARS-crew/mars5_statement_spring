@@ -44,11 +44,12 @@
     </appender>
 
     <logger name="com.mars.statement.global.filter.ReqResLoggingFilter" level="INFO" additivity="false">
-        <appender-ref ref="FILTER_LOG" />
+        <appender-ref ref="FILTER_LOG"/>
     </logger>
 
     <root level="INFO">
         <appender-ref ref="CONSOLE"/>
         <appender-ref ref="FILE"/>
+        <appender-ref ref="FILTER_LOG"/>
     </root>
 </configuration>
