@@ -33,11 +33,6 @@ jobs:
         username: ${{ secrets.DOCKERHUB_USERNAME }}
         password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-#    - name: Add application-db.properties
-#      run: |
-#        touch ./src/main/resources/application-db.properties
-#        echo "${{ secrets.DB_PROPERTIES }}" > ./src/main/resources/application-db.properties
-
     - name: create-json
       id: create-json
       uses: jsdaniell/create-json@v1.2.3
