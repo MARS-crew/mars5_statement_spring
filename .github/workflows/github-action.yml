@@ -62,11 +62,11 @@ jobs:
       run: |
         mkdir -p ~/.ssh
         touch ~/.ssh/known_hosts
-        ssh-keyscan ${{ secrets.EC2_HOST_DEV }} >> ~/.ssh/known_hosts
+        ssh-keyscan ${{ secrets.HOST }} >> ~/.ssh/known_hosts
 
     - name: Set Permissions for Private Key
       run: |
-        echo "${{ secrets.DEPLOY_SSH_KEY }}" > $HOME/key.pem
+        echo "${{ secrets.SSH_KEY }}" > $HOME/key.pem
         chmod 400 $HOME/key.pem
 
     - name: Copy files to EC2 instance
