@@ -58,9 +58,17 @@ jobs:
     - name: Build with Gradle
       run: ./gradlew build -x test
 
-    - name: Build and push Docker image
-      run: |
-        docker buildx build --platform linux/arm64,linux/amd64 -t 2tory/mars5_statement:latest-arm64 -t 2tory/mars5_statement:latest-amd64 --file Dockerfile . --push
+    - name: Set up SSH key
+      uses: webfactory/ssh-agent@v0.5.3
+      with:
+        ssh-private-key: ${{ secrets.SSH_KEY }}
+
+    - name: Copy JAR file to server
+      run: scp -i ${{ secrets.SSH_KEY }} build/libs/statement-0.0.1-SNAPSHOT.jar ${{ secrets.USERNAME }}@${{ secrets.HOST }}:/root/app/build/libs
+
+#    - name: Build and push Docker image
+#      run: |
+#        docker buildx build --platform linux/arm64,linux/amd64 -t 2tory/mars5_statement:latest-arm64 -t 2tory/mars5_statement:latest-amd64 --file Dockerfile . --push
 
   Deploy:
     runs-on: ubuntu-latest
@@ -74,8 +82,9 @@ jobs:
         key: ${{ secrets.SSH_KEY }}
         port: ${{ secrets.PORT }}
         script: |
-          sudo docker stop statement
-          sudo docker rm statement
-          sudo docker rmi 2tory/mars5_statement:latest-amd64
-          sudo docker run -d -p 8080:8080 --name statement -v /root/statement:/log --restart always 2tory/mars5_statement:latest-amd64
-          sudo docker network connect maria_default statement
+          sudo sh /root/restart.sh core-server
+#          sudo docker stop statement
+#          sudo docker rm statement
+#          sudo docker rmi 2tory/mars5_statement:latest-amd64
+#          sudo docker run -d -p 8080:8080 --name statement -v /root/statement:/log --restart always 2tory/mars5_statement:latest-amd64
+#          sudo docker network connect maria_default statement
