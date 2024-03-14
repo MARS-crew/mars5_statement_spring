@@ -1,0 +1,43 @@
+version: "3.1"
+
+services:
+  mariadb:
+    image: mariadb
+    networks:
+      - mars-networks
+    container_name: mariadb
+    environment:
+      MYSQL_ROOT_PASSWORD: qwer1595@!
+      MYSQL_DATABASE: mars
+      MYSQL_USER: admin
+      MYSQL_PASSWORD: qwer1595@!
+      TZ: Asia/Seoul
+      MYSQL_INITDB_SKIP_TZINFO: "false"
+    ports:
+      - "3306:3306"
+    volumes:
+      - mariadb-data:/var/lib/mysql
+    command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+
+  core-server:
+    networks:
+      - mars-networks
+    build:
+      context: ./app
+    container_name: core-server
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:mariadb://mariadb:3306/mars
+      - SPRING_DATASOURCE_USERNAME=admin
+      - SPRING_DATASOURCE_PASSWORD=qwer1595@!
+    restart: always
+    ports:
+      - "8080:8080"
+    depends_on:
+      - mariadb
+
+networks:
+  mars-networks:
+    driver: bridge
+
+volumes:
+  mariadb-data:
