@@ -21,6 +21,7 @@ bin/
 
 ### IntelliJ IDEA ###
 application-db.properties
+src/main/resources/application-local.yml
 
 .idea
 *.iws

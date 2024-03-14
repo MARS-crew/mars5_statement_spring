@@ -1,0 +1,30 @@
+spring:
+  lifecycle:
+    timeout-per-shutdown-phase: 30s
+  profiles:
+    active: local
+  config:
+    name: application
+  datasource:
+    driver-class-name: org.mariadb.jdbc.Driver
+
+logging:
+  level:
+    com:
+      mars:
+        statement:
+          api:
+            chapter:
+              service: DEBUG
+
+jwt:
+  secret: AvovaypIBWQCXnDAUq7wre3b6e9xXOmyte4AF9YEMs4=
+  accessTokenValidityInSeconds: 1800
+  refreshTokenValidityInSeconds: 604800
+
+fcm:
+  url: https://fcm.googleapis.com/v1/projects/comit-3037b/messages:send
+
+server:
+  port: 8080
+  shutdown: graceful
