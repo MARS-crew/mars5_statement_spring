@@ -58,13 +58,28 @@ jobs:
     - name: Build with Gradle
       run: ./gradlew build -x test
 
-    - name: Set up SSH key
-      uses: webfactory/ssh-agent@v0.5.3
-      with:
-        ssh-private-key: ${{ secrets.SSH_KEY }}
+    - name: Initialize Known Hosts
+      run: |
+        mkdir -p ~/.ssh
+        touch ~/.ssh/known_hosts
+        ssh-keyscan ${{ secrets.EC2_HOST_DEV }} >> ~/.ssh/known_hosts
 
-    - name: Copy JAR file to server
-      run: scp -i ${{ secrets.SSH_KEY }} build/libs/statement-0.0.1-SNAPSHOT.jar ${{ secrets.USERNAME }}@${{ secrets.HOST }}:/root/app/build/libs
+    - name: Set Permissions for Private Key
+      run: |
+        echo "${{ secrets.DEPLOY_SSH_KEY }}" > $HOME/key.pem
+        chmod 400 $HOME/key.pem
+
+    - name: Copy files to EC2 instance
+      run: |
+        scp -i $HOME/key.pem ./build/libs/statement-0.0.1-SNAPSHOT.jar ${{ secrets.USERNAME }}@${{ secrets.HOST }}:/root/app/build/libs
+
+#    - name: Set up SSH key
+#      uses: webfactory/ssh-agent@v0.5.3
+#      with:
+#        ssh-private-key: ${{ secrets.SSH_KEY }}
+#
+#    - name: Copy JAR file to server
+#      run: scp -i ${{ secrets.SSH_KEY }} build/libs/statement-0.0.1-SNAPSHOT.jar ${{ secrets.USERNAME }}@${{ secrets.HOST }}:/root/app/build/libs
 
 #    - name: Build and push Docker image
 #      run: |
